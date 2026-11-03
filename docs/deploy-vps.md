@@ -26,13 +26,15 @@ cp .env.example .env
 chmod 600 .env
 # Thay POSTGRES_PASSWORD, JWT_SECRET, ADMIN_PASSWORD bằng giá trị riêng đủ mạnh.
 # Giữ FRONTEND_BIND_ADDRESS=127.0.0.1.
-docker compose -f docker-compose.yml up -d --build
+docker compose -f docker-compose.yml build yin-backend-api
+docker compose -f docker-compose.yml build yin-frontend-web
+docker compose -f docker-compose.yml up -d --no-build
 docker compose -f docker-compose.yml ps
 curl -fsS http://127.0.0.1:4200/
 curl -fsS http://127.0.0.1:8080/actuator/health
 ```
 
-Lần build đầu có thể chậm trên 1 vCPU. Nếu backend khởi động trước database, Docker sẽ khởi động lại backend cho tới khi database sẵn sàng. Không commit `.env`.
+Build lần lượt từng image để tránh dồn RAM trên 1 vCPU/1,5 GB. Lần build đầu có thể chậm. Nếu backend khởi động trước database, Docker sẽ khởi động lại backend cho tới khi database sẵn sàng. Không commit `.env`.
 
 ```sh
 cp /opt/yin/deploy/nginx-yin.conf /etc/nginx/sites-available/yin.vn
@@ -55,7 +57,9 @@ Certbot sẽ hỏi email nhận thông báo chứng chỉ. Debian bật `certbot
 ```sh
 cd /opt/yin
 git pull --ff-only
-docker compose -f docker-compose.yml up -d --build
+docker compose -f docker-compose.yml build yin-backend-api
+docker compose -f docker-compose.yml build yin-frontend-web
+docker compose -f docker-compose.yml up -d --no-build
 ```
 
 Sao lưu database bằng `pg_dump` và volume `yin_media` theo lịch, giữ bản sao ngoài VPS. Database và ảnh là dữ liệu sống; Git chỉ chứa mã nguồn.
@@ -63,7 +67,7 @@ Sao lưu database bằng `pg_dump` và volume `yin_media` theo lịch, giữ b�
 ```sh
 mkdir -p /root/yin-backups
 docker exec yin-postgres-db pg_dump -U yin -d yin_db -Fc > /root/yin-backups/yin.dump
-docker run --rm -v yin_media:/data:ro -v /root/yin-backups:/backup alpine:3.20 \
+docker run --rm -v yin_yin_media:/data:ro -v /root/yin-backups:/backup alpine:3.20 \
   tar -czf /backup/yin-media.tar.gz -C /data .
 ```
 
