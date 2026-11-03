@@ -1,0 +1,24 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+.local/
+
+# Dependencies and generated outputs
+node_modules/
+**/node_modules/
+backend/target/
+frontend/dist/
+frontend/.angular/
+coverage/
+*.log
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local research and working notes
+.agents/
+scratch/

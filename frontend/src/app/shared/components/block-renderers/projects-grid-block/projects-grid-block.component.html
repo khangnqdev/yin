@@ -1,0 +1,58 @@
+<section class="yin-projects-section tracked-block" [attr.id]="block().id">
+  <div class="yin-container">
+    <div class="section-header">
+      <div class="yin-badge">
+        <yin-icon name="layout" [size]="14"></yin-icon>
+        <span>{{ block().badge || 'Công Trình Tiêu Biểu' }}</span>
+      </div>
+      <h2 class="section-title">{{ block().title || 'Hồ Sơ Năng Lực & Dự Án Thi Công Thực Tế' }}</h2>
+      <p class="section-subtitle">{{ block().subtitle || 'Các công trình phần mềm công nghệ cao được Yin thiết kế kiến trúc chuẩn mực và chuyển giao cho doanh nghiệp hàng đầu.' }}</p>
+    </div>
+
+    @if (block().showFilter) {
+      <div class="filter-tabs">
+        @for (cat of categories(); track cat) {
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="selectedCategory() === cat"
+            (click)="setCategory(cat)">
+            {{ cat === 'ALL' ? 'Tất Cả Lĩnh Vực' : cat }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="projects-grid">
+      @for (project of filteredProjects(); track project.id) {
+        <article class="project-card yin-card tracked-block" [attr.id]="'prj-' + project.id">
+          <div class="card-top">
+            <span class="project-category-pill">{{ project.category }}</span>
+            <span class="project-client">{{ project.client }}</span>
+          </div>
+
+          <h3 class="project-title">{{ project.title }}</h3>
+          <p class="project-summary">{{ project.summary }}</p>
+
+          <div class="metrics-box">
+            <yin-icon name="bar-chart" [size]="16"></yin-icon>
+            <span>{{ project.metrics }}</span>
+          </div>
+
+          <div class="tech-stack-chips">
+            @for (tech of project.technologies; track tech) {
+              <span class="tech-chip">{{ tech }}</span>
+            }
+          </div>
+
+          <div class="card-footer">
+            <yin-contact-link cssClass="detail-link">
+              <span>Khảo sát giải pháp tương tự</span>
+              <yin-icon name="arrow-right" [size]="14"></yin-icon>
+            </yin-contact-link>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

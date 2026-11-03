@@ -1,0 +1,310 @@
+<div class="admin-shell">
+  
+  <!-- Vertical Floating Sidebar (Pill Style from Reference) -->
+  <aside class="admin-sidebar" [class.collapsed]="isCollapsed()">
+    
+    <!-- Collapse / Expand Toggle Button on Right Edge -->
+    <button 
+      type="button" 
+      class="sidebar-collapse-btn" 
+      (click)="toggleCollapse()" 
+      [title]="isCollapsed() ? 'Mở rộng menu' : 'Thu gọn menu'"
+      aria-label="Toggle Sidebar">
+      <yin-icon [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'" [size]="14"></yin-icon>
+    </button>
+
+    <!-- Top Brand Area (Cross Emblem) -->
+    <div class="sidebar-top">
+      <a routerLink="/admin" class="sidebar-brand" title="Về trang tổng quan">
+        <div class="brand-emblem-box">
+          <yin-icon name="brand-cross" [size]="24" className="brand-emblem"></yin-icon>
+        </div>
+        @if (!isCollapsed()) {
+          <div class="brand-text-wrap">
+            <span class="brand-name">Yin Tech</span>
+            <span class="brand-badge">Console</span>
+          </div>
+        }
+      </a>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="sidebar-search">
+      @if (!isCollapsed()) {
+        <div class="search-box">
+          <yin-icon name="search" [size]="16" className="search-icon"></yin-icon>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Tìm kiếm…" 
+            [ngModel]="searchQuery()" 
+            (ngModelChange)="searchQuery.set($event)" />
+          <div class="search-badges">
+            <span class="key-badge">&#8984;</span>
+            <span class="key-badge">S</span>
+          </div>
+        </div>
+      } @else {
+        <button 
+          type="button" 
+          class="collapsed-search-btn" 
+          (click)="toggleCollapse()" 
+          title="Tìm kiếm (Bấm để mở rộng)">
+          <yin-icon name="search" [size]="18"></yin-icon>
+        </button>
+      }
+    </div>
+
+    <!-- Nav Items List -->
+    <nav class="sidebar-nav">
+      
+      <!-- Section: CHÍNH (MAIN) -->
+      @if (!isCollapsed()) {
+        <div class="nav-section-title">CHÍNH</div>
+      }
+
+      <!-- Item: Dashboard / Tổng quan (With tree branches) -->
+      <div 
+        class="nav-group-item" 
+        (mouseenter)="showFlyout()" 
+        (mouseleave)="hideFlyout()">
+        
+        <div 
+          class="nav-item-parent" 
+          routerLink="/admin" 
+          routerLinkActive="active" 
+          [routerLinkActiveOptions]="{ exact: true }">
+          
+          <div class="item-icon-box">
+            <yin-icon name="grid" [size]="18"></yin-icon>
+          </div>
+          
+          @if (!isCollapsed()) {
+            <span class="item-label">Tổng quan</span>
+            <button 
+              type="button" 
+              class="expand-chevron-btn" 
+              (click)="toggleDashboard($event)" 
+              title="Đóng / mở nhánh con">
+              <yin-icon [name]="isDashboardOpen() ? 'chevron-up' : 'chevron-down'" [size]="14"></yin-icon>
+            </button>
+          }
+        </div>
+
+        <!-- Tree Sub-items (When Expanded) -->
+        @if (!isCollapsed() && isDashboardOpen()) {
+          <div class="tree-branch-container">
+            <div class="tree-line"></div>
+            <div class="tree-items">
+              <a 
+                routerLink="/admin/analytics" 
+                routerLinkActive="active" 
+                class="tree-sub-link">
+                <span class="tree-connector"></span>
+                <span>Phân tích & Thống kê</span>
+              </a>
+              @if (canManageContent()) {
+              <a 
+                routerLink="/admin/pages" 
+                routerLinkActive="active" 
+                class="tree-sub-link">
+                <span class="tree-connector"></span>
+                <span>Quản lý trang</span>
+              </a>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Collapsed Floating Popover Flyout (Appears to the right in collapsed mode) -->
+        @if (isCollapsed() && isFlyoutHovered()) {
+          <div class="collapsed-flyout-popover">
+            <div class="flyout-header">Tổng quan</div>
+            <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="flyout-link">
+              <span>Trang chủ quản trị</span>
+            </a>
+            <a routerLink="/admin/analytics" routerLinkActive="active" class="flyout-link">
+              <span>Phân tích & Thống kê</span>
+            </a>
+            @if (canManageContent()) {
+            <a routerLink="/admin/pages" routerLinkActive="active" class="flyout-link">
+              <span>Quản lý trang</span>
+            </a>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Item: Quản trị khách hàng -->
+      @if (canManageContent()) {
+      <a routerLink="/admin/clients" routerLinkActive="active" class="nav-single-link" title="Quản trị khách hàng">
+        <div class="item-icon-box">
+          <yin-icon name="user" [size]="18"></yin-icon>
+        </div>
+        @if (!isCollapsed()) {
+          <span class="item-label">Quản trị khách hàng</span>
+        }
+      </a>
+      }
+
+      <!-- Item: Yêu cầu hỗ trợ -->
+      <a routerLink="/admin/support-requests" routerLinkActive="active" class="nav-single-link" title="Yêu cầu hỗ trợ">
+        <div class="item-icon-box">
+          <yin-icon name="wallet" [size]="18"></yin-icon>
+        </div>
+        @if (!isCollapsed()) {
+          <span class="item-label">Yêu cầu hỗ trợ</span>
+        }
+      </a>
+
+      <!-- Item: Khảo sát & Liên hệ -->
+      @if (canManageContent()) {
+      <a routerLink="/admin/contacts" routerLinkActive="active" class="nav-single-link" title="Khảo sát & Liên hệ">
+        <div class="item-icon-box">
+          <yin-icon name="bell" [size]="18"></yin-icon>
+        </div>
+        @if (!isCollapsed()) {
+          <span class="item-label">Khảo sát & Liên hệ</span>
+        }
+      </a>
+      }
+
+      <!-- Section: QUẢN TRỊ -->
+      @if (!isCollapsed()) {
+        <div class="nav-section-title section-spacing">QUẢN TRỊ</div>
+      }
+
+      <!-- Item: Quản lý bài viết -->
+      <a routerLink="/admin/articles" routerLinkActive="active" class="nav-single-link" title="Quản lý bài viết">
+        <div class="item-icon-box">
+          <yin-icon name="file-text" [size]="18"></yin-icon>
+        </div>
+        @if (!isCollapsed()) {
+          <span class="item-label">Quản lý bài viết</span>
+        }
+      </a>
+
+      <!-- Item: Tài khoản quản trị -->
+      @if (isAdmin()) {
+      <a routerLink="/admin/accounts" routerLinkActive="active" class="nav-single-link" title="Tài khoản quản trị">
+        <div class="item-icon-box">
+          <yin-icon name="shield" [size]="18"></yin-icon>
+        </div>
+        @if (!isCollapsed()) {
+          <span class="item-label">Tài khoản quản trị</span>
+        }
+      </a>
+      }
+
+      <!-- Item: Cài đặt & AI -->
+      @if (canManageContent()) {
+      <a routerLink="/admin/settings" routerLinkActive="active" class="nav-single-link" title="Cài đặt & AI Config">
+        <div class="item-icon-box">
+          <yin-icon name="settings" [size]="18"></yin-icon>
+        </div>
+        @if (!isCollapsed()) {
+          <span class="item-label">Cài đặt & AI</span>
+        }
+      </a>
+      }
+
+    </nav>
+
+    <!-- Bottom Profile & Theme Card -->
+    <div class="sidebar-footer">
+      
+      <!-- Expanded State Profile Card -->
+      @if (!isCollapsed()) {
+        <div class="profile-card-expanded">
+          
+          <div class="profile-main-row">
+            <div class="profile-avatar-circle">
+              {{ adminUser()?.username?.charAt(0)?.toUpperCase() || 'A' }}
+            </div>
+            
+            <div class="profile-text-wrap">
+              <span class="profile-name">{{ adminUser()?.username || 'admin' }}</span>
+              <span class="profile-role">Quản trị viên</span>
+            </div>
+
+            <!-- Theme Toggle Pill -->
+            <button 
+              type="button" 
+              class="theme-pill-btn" 
+              (click)="toggleTheme()" 
+              [title]="themeService.isDark() ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối'">
+              <yin-icon [name]="themeService.isDark() ? 'sun' : 'moon'" [size]="15"></yin-icon>
+              <span>{{ themeService.isDark() ? 'Sáng' : 'Tối' }}</span>
+            </button>
+          </div>
+
+          <!-- Bottom Action Links -->
+          <div class="profile-actions-row">
+            <a routerLink="/" class="profile-action-link" title="Mở trang chủ website khách">
+              <yin-icon name="eye" [size]="14"></yin-icon>
+              <span>Website Khách</span>
+            </a>
+            
+            <button type="button" class="profile-action-btn logout-text-btn" (click)="logout()" title="Đăng xuất khỏi hệ thống">
+              <yin-icon name="log-out" [size]="14"></yin-icon>
+              <span>Đăng xuất</span>
+            </button>
+          </div>
+
+        </div>
+      } 
+      
+      <!-- Collapsed State Profile Avatar Button -->
+      @else {
+        <div class="profile-card-collapsed">
+          <button 
+            type="button" 
+            class="collapsed-avatar-btn" 
+            (click)="toggleProfileMenu($event)" 
+            title="Menu tài khoản quản trị">
+            <div class="profile-avatar-circle">
+              {{ adminUser()?.username?.charAt(0)?.toUpperCase() || 'A' }}
+            </div>
+          </button>
+
+          <!-- Collapsed Menu Popover -->
+          @if (isProfileMenuOpen()) {
+            <div class="collapsed-profile-popover" (mouseleave)="closeProfileMenu()">
+              <div class="popover-user-info">
+                <strong>{{ adminUser()?.username || 'admin' }}</strong>
+                <span>Quản trị viên</span>
+              </div>
+              
+              <div class="popover-divider"></div>
+
+              <button type="button" class="popover-menu-item" (click)="toggleTheme()">
+                <yin-icon [name]="themeService.isDark() ? 'sun' : 'moon'" [size]="16"></yin-icon>
+                <span>Chế độ {{ themeService.isDark() ? 'Sáng' : 'Tối' }}</span>
+              </button>
+
+              <a routerLink="/" class="popover-menu-item">
+                <yin-icon name="eye" [size]="16"></yin-icon>
+                <span>Xem Website Khách</span>
+              </a>
+
+              <button type="button" class="popover-menu-item logout-item" (click)="logout()">
+                <yin-icon name="log-out" [size]="16"></yin-icon>
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+
+  </aside>
+
+  <!-- Admin Main View Area -->
+  <div class="admin-main-wrap">
+    <main class="admin-content-area">
+      <router-outlet />
+    </main>
+  </div>
+
+</div>

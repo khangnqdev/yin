@@ -1,0 +1,192 @@
+<div class="admin-page-container">
+
+  <!-- Toast Notification -->
+  @if (toastMessage()) {
+    <div class="toast-notification" role="status">
+      <yin-icon name="check-circle" [size]="18"></yin-icon>
+      <span>{{ toastMessage() }}</span>
+    </div>
+  }
+
+  <!-- Page Header -->
+  <header class="page-header-row">
+    <div>
+      <div class="breadcrumb-tag">
+        <yin-icon name="message-square" [size]="14"></yin-icon>
+        <span>Trung Tâm Tiếp Nhận & Điều Phối Kỹ Thuật</span>
+      </div>
+      <h1 class="page-title">Quản Lý Yêu Cầu Hỗ Trợ & Khảo Sát</h1>
+      <p class="page-subtitle">
+        Theo dõi, phân bổ và cập nhật tiến độ giải quyết các yêu cầu kỹ thuật từ đối tác khách hàng.
+      </p>
+    </div>
+
+    <div class="header-stat-box">
+      <span class="stat-num">{{ totalCount() }}</span>
+      <span class="stat-lbl">Yêu cầu theo bộ lọc</span>
+    </div>
+  </header>
+
+  <!-- Filter Status Tabs -->
+  <div class="status-filter-bar yin-card">
+    <div class="filter-tabs">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="selectedStatus() === ''"
+        (click)="setStatusFilter('')">
+        Tất Cả Yêu Cầu
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn tab-open" 
+        [class.active]="selectedStatus() === 'OPEN'"
+        (click)="setStatusFilter('OPEN')">
+        Mới tiếp nhận
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn tab-in-progress" 
+        [class.active]="selectedStatus() === 'IN_PROGRESS'"
+        (click)="setStatusFilter('IN_PROGRESS')">
+        Đang xử lý
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn tab-resolved" 
+        [class.active]="selectedStatus() === 'RESOLVED'"
+        (click)="setStatusFilter('RESOLVED')">
+        Đã giải quyết
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn tab-closed" 
+        [class.active]="selectedStatus() === 'CLOSED'"
+        (click)="setStatusFilter('CLOSED')">
+        Đã đóng
+      </button>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert-box alert-error" role="alert">
+      <yin-icon name="alert-circle" [size]="18"></yin-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Tickets List -->
+  <div class="tickets-container">
+    @if (loading()) {
+      <div class="loading-state yin-card">
+        <p>Đang tải danh sách yêu cầu hỗ trợ…</p>
+      </div>
+    } @else if (requests().length === 0) {
+      <div class="empty-state yin-card">
+        <yin-icon name="inbox" [size]="38"></yin-icon>
+        <h3>Không có yêu cầu nào trong trạng thái này</h3>
+        <p>Hệ thống hiện tại chưa ghi nhận yêu cầu hỗ trợ nào phù hợp với bộ lọc bạn đã chọn.</p>
+      </div>
+    } @else {
+      <div class="requests-grid">
+        @for (req of requests(); track req.id) {
+          <article class="ticket-card yin-card" [class]="'border-status-' + req.status.toLowerCase()">
+            
+            <!-- Card Header -->
+            <div class="ticket-header">
+              <div class="client-meta">
+                <div class="client-avatar">{{ req.username?.charAt(0)?.toUpperCase() || 'C' }}</div>
+                <div class="client-info">
+                  <div class="client-name-row">
+                    <span class="client-username font-bold">{{ req.username }}</span>
+                    <span class="client-id-sub font-mono">ID: {{ req.clientId?.substring(0, 8) }}…</span>
+                  </div>
+                  <div class="client-contacts">
+                    <a [href]="'mailto:' + req.email" class="contact-link" [title]="'Gửi email tới ' + req.email">
+                      <yin-icon name="mail" [size]="13"></yin-icon>
+                      <span>{{ req.email }}</span>
+                    </a>
+                    <span class="contact-sep">&bull;</span>
+                    <a [href]="'tel:' + req.phone" class="contact-link font-mono" [title]="'Gọi số ' + req.phone">
+                      <yin-icon name="phone" [size]="13"></yin-icon>
+                      <span>{{ req.phone }}</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Status Selector -->
+              <div class="status-action-box">
+                <label [for]="'status-' + req.id" class="sr-only">Cập nhật trạng thái</label>
+                <select 
+                  [id]="'status-' + req.id"
+                  class="status-select" 
+                  [class]="'select-' + req.status.toLowerCase()"
+                  [ngModel]="req.status"
+                  (ngModelChange)="updateStatus(req, $event)"
+                  [disabled]="updatingId() === req.id">
+                  @for (st of availableStatuses; track st) {
+                    <option [value]="st">{{ getStatusLabel(st) }}</option>
+                  }
+                </select>
+                @if (updatingId() === req.id) {
+                  <span class="updating-text">Đang lưu…</span>
+                }
+              </div>
+            </div>
+
+            <!-- Subject (Safe text binding) -->
+            <h3 class="ticket-subject">{{ req.subject }}</h3>
+
+            <!-- Message (Safe text binding) -->
+            <div class="ticket-message-box">
+              <p class="ticket-message">{{ req.message }}</p>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="ticket-footer">
+              <div class="time-meta">
+                <span>Gửi lúc: <strong>{{ req.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</strong></span>
+                @if (req.updatedAt && req.updatedAt !== req.createdAt) {
+                  <span class="time-sep">&bull;</span>
+                  <span>Cập nhật: <strong>{{ req.updatedAt | date:'dd/MM/yyyy HH:mm:ss' }}</strong></span>
+                }
+              </div>
+              <span class="ticket-uuid font-mono">Ticket ID: {{ req.id }}</span>
+            </div>
+
+          </article>
+        }
+      </div>
+
+      <!-- Pagination -->
+      <footer class="pagination-footer yin-card">
+        <span class="page-info">
+          Trang <strong>{{ currentPage() + 1 }}</strong> trên <strong>{{ totalPages() }}</strong>
+        </span>
+        <div class="page-buttons">
+          <button 
+            type="button" 
+            class="yin-btn yin-btn-secondary" 
+            [disabled]="currentPage() === 0"
+            (click)="changePage(currentPage() - 1)">
+            &larr; Trang trước
+          </button>
+          <button 
+            type="button" 
+            class="yin-btn yin-btn-secondary" 
+            [disabled]="currentPage() + 1 >= totalPages()"
+            (click)="changePage(currentPage() + 1)">
+            Trang tiếp &rarr;
+          </button>
+        </div>
+      </footer>
+    }
+  </div>
+
+</div>
+

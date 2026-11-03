@@ -1,0 +1,220 @@
+<div class="settings-page-root">
+  <div class="settings-header">
+    <div class="header-titles">
+      <h1 class="page-title">Cài Đặt Hệ Thống & Tích Hợp AI</h1>
+      <p class="page-subtitle">Cấu hình API Keys, giao thức ACP Server và các thông số mô hình AI phục vụ soạn thảo bài viết tự động.</p>
+    </div>
+
+    <div class="header-actions">
+      @if (isSavedSuccess()) {
+        <span class="save-toast-success">
+          <yin-icon name="check" [size]="16"></yin-icon>
+          <span>Đã lưu thành công!</span>
+        </span>
+      }
+
+      <button type="button" class="btn btn-secondary" (click)="resetDefaults()">
+        Khôi phục mặc định
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="saveSettings()">
+        <yin-icon name="check" [size]="16"></yin-icon>
+        <span>Lưu Cài Đặt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-content-grid">
+    <!-- Main Card: Cấu hình AI & ACP Server -->
+    <div class="settings-card main-ai-card">
+      <div class="card-head">
+        <div class="head-icon-box">
+          <yin-icon name="sparkles" [size]="20"></yin-icon>
+        </div>
+        <div>
+          <h2 class="card-title">Cấu Hình ACP Server & Mô Hình AI</h2>
+          <p class="card-desc">Thiết lập giao thức kết nối ACP (Agent Client Protocol) hoặc API Key để AI hỗ trợ soạn bài.</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Nhà cung cấp / Giao thức -->
+        <div class="form-group">
+          <label class="form-label" for="provider-select">
+            <span>Giao Thức / Nhà Cung Cấp</span>
+            <span class="label-hint">(Chọn phương thức AI kết nối)</span>
+          </label>
+          <div class="provider-radio-cards">
+            <label class="provider-card" [class.selected]="provider() === 'acp'">
+              <input type="radio" name="aiProvider" value="acp" [ngModel]="provider()" (ngModelChange)="provider.set($event)" />
+              <div class="provider-info">
+                <span class="provider-title">ACP Server</span>
+                <span class="provider-sub">Agent Client Protocol (Tùy chỉnh máy chủ riêng)</span>
+              </div>
+            </label>
+
+            <label class="provider-card" [class.selected]="provider() === 'gemini'">
+              <input type="radio" name="aiProvider" value="gemini" [ngModel]="provider()" (ngModelChange)="provider.set($event)" />
+              <div class="provider-info">
+                <span class="provider-title">Google Gemini</span>
+                <span class="provider-sub">Gemini 2.0 Flash / Pro (Google AI Studio)</span>
+              </div>
+            </label>
+
+            <label class="provider-card" [class.selected]="provider() === 'openai'">
+              <input type="radio" name="aiProvider" value="openai" [ngModel]="provider()" (ngModelChange)="provider.set($event)" />
+              <div class="provider-info">
+                <span class="provider-title">OpenAI API</span>
+                <span class="provider-sub">GPT-4o / GPT-4o-mini (OpenAI Developer)</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- ACP Server URL (Khi chọn ACP) -->
+        @if (provider() === 'acp') {
+          <div class="form-group">
+            <label class="form-label" for="acpUrl">
+              <span>Địa Chỉ ACP Server URL</span>
+              <span class="label-hint">(URL máy chủ Agent Protocol đang chạy)</span>
+            </label>
+            <div class="input-with-hint">
+              <input 
+                id="acpUrl" 
+                type="text" 
+                class="form-control" 
+                placeholder="http://localhost:8000" 
+                [ngModel]="acpServerUrl()" 
+                (ngModelChange)="acpServerUrl.set($event)" />
+            </div>
+            <p class="input-help-text">
+              Máy chủ ACP có thể chạy cục bộ trên máy của bạn (vd: FastMCP/ACP, LangChain Agent hoặc backend AI riêng) để phân tích tài liệu và viết bài.
+            </p>
+          </div>
+        }
+
+        <!-- API Key -->
+        <div class="form-group">
+          <label class="form-label" for="apiKeyInput">
+            <span>{{ provider() === 'acp' ? 'ACP Token / Bearer Key (Tùy chọn)' : 'API Key' }}</span>
+            <span class="label-hint">({{ provider() === 'acp' ? 'Nếu server ACP yêu cầu xác thực' : 'Khóa truy cập dịch vụ' }})</span>
+          </label>
+          <div class="password-input-wrap">
+            <input 
+              id="apiKeyInput" 
+              [type]="showApiKey() ? 'text' : 'password'" 
+              class="form-control" 
+              placeholder="Nhập API Key hoặc Token bí mật…" 
+              [ngModel]="apiKey()" 
+              (ngModelChange)="apiKey.set($event)" />
+            <button type="button" class="visibility-toggle" (click)="toggleShowApiKey()" title="Ẩn/Hiện API Key">
+              <yin-icon [name]="showApiKey() ? 'eye-off' : 'eye'" [size]="16"></yin-icon>
+            </button>
+          </div>
+          <p class="input-help-text">
+            Khóa bí mật được lưu an toàn cục bộ trên trình duyệt quản trị viên của bạn, không lộ ra bên ngoài.
+          </p>
+        </div>
+
+        <!-- Tên Model -->
+        <div class="form-group">
+          <label class="form-label" for="modelNameInput">
+            <span>Tên Mô Hình (Model Name)</span>
+            <span class="label-hint">(Model dùng để sinh nội dung)</span>
+          </label>
+          <input 
+            id="modelNameInput" 
+            type="text" 
+            class="form-control" 
+            placeholder="vd: gemini-2.0-flash, gpt-4o, acp-agent-v1" 
+            [ngModel]="modelName()" 
+            (ngModelChange)="modelName.set($event)" />
+        </div>
+
+        <!-- System Prompt -->
+        <div class="form-group">
+          <label class="form-label" for="systemPromptArea">
+            <span>Chỉ Dẫn Hệ Thống (System Prompt / Persona)</span>
+            <span class="label-hint">(Định hình phong cách và văn phong của AI)</span>
+          </label>
+          <textarea 
+            id="systemPromptArea" 
+            rows="4" 
+            class="form-control font-mono" 
+            placeholder="Chỉ thị định hình văn phong..."
+            [ngModel]="systemPrompt()" 
+            (ngModelChange)="systemPrompt.set($event)"></textarea>
+        </div>
+
+        <!-- Test Connection Banner -->
+        @if (testResult()) {
+          <div 
+            class="test-status-banner" 
+            [class.success]="testResult()?.success" 
+            [class.error]="!testResult()?.success">
+            <yin-icon [name]="testResult()?.success ? 'check-circle' : 'alert-circle'" [size]="18"></yin-icon>
+            <span>{{ testResult()?.message }}</span>
+          </div>
+        }
+
+        <!-- Connection Test Button -->
+        <div class="action-footer-row">
+          <button 
+            type="button" 
+            class="btn btn-outline" 
+            (click)="testConnection()" 
+            [disabled]="isTesting()">
+            @if (isTesting()) {
+              <yin-icon name="clock" [size]="16" className="spinning"></yin-icon>
+              <span>Đang kiểm tra kết nối…</span>
+            } @else {
+              <yin-icon name="sparkles" [size]="16"></yin-icon>
+              <span>Kiểm Tra Kết Nối AI</span>
+            }
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Secondary Card: Hướng dẫn tích hợp ACP -->
+    <div class="settings-card side-info-card">
+      <div class="card-head">
+        <div class="head-icon-box">
+          <yin-icon name="help-circle" [size]="20"></yin-icon>
+        </div>
+        <div>
+          <h2 class="card-title">Về Giao Thức ACP Server</h2>
+          <p class="card-desc">Cách thức hoạt động của tính năng AI Soạn bài</p>
+        </div>
+      </div>
+
+      <div class="card-body acp-guide-content">
+        <div class="guide-step">
+          <span class="step-badge">1</span>
+          <div>
+            <strong>Giao thức ACP (Agent Client Protocol):</strong>
+            <p>Cho phép trình soạn thảo Tiptap kết nối trực tiếp đến agent AI chạy trên máy trạm hoặc máy chủ nội bộ thông qua chuẩn REST / SSE.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <span class="step-badge">2</span>
+          <div>
+            <strong>Đầu ra chuẩn Tiptap HTML:</strong>
+            <p>AI sẽ phân tích đề tài, tự động tạo tiêu đề, slug, tóm tắt và sinh nội dung bài viết định dạng phong phú (tiêu đề, khối code, trích dẫn, bảng so sánh).</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <span class="step-badge">3</span>
+          <div>
+            <strong>Thử nghiệm ngay cả khi chưa có Server:</strong>
+            <p>Hệ thống tích hợp sẵn bộ sinh mô phỏng chuyên sâu kỹ thuật để bạn có thể soạn và xem trước bài viết bất kỳ lúc nào.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

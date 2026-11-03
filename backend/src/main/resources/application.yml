@@ -1,0 +1,51 @@
+server:
+  port: ${BACKEND_PORT:8080}
+  forward-headers-strategy: framework
+  tomcat:
+    max-http-form-post-size: 50MB
+    max-swallow-size: 50MB
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  sql:
+    init:
+      mode: always
+  datasource:
+    hikari:
+      maximum-pool-size: ${MSSQL_POOL_SIZE:10}
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+  jackson:
+    default-property-inclusion: non_null
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+app:
+  seed:
+    enabled: ${APP_SEED_ENABLED:true}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://127.0.0.1:4200}
+  db:
+    host: ${MSSQL_HOST:localhost}
+    port: ${MSSQL_PORT:1433}
+    name: ${MSSQL_DB_NAME:yin_tech_db}
+    username: ${MSSQL_USER:sa}
+    password: ${MSSQL_SA_PASSWORD:}
+    encrypt: ${MSSQL_ENCRYPT:true}
+    trust-server-certificate: ${MSSQL_TRUST_SERVER_CERTIFICATE:true}
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:}
+  jwt:
+    secret: ${JWT_SECRET:}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+  media:
+    storage-dir: ${MEDIA_STORAGE_DIR:./media}

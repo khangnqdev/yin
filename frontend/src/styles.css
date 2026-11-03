@@ -1,0 +1,475 @@
+/* ==============================================================================
+   YIN TECHNOLOGY PLATFORM - BRAND COLOR SYSTEM (WORKDAY ENTERPRISE ARCHITECTURE)
+   Palette:
+     --yin-main:    #0B1849 (Main Royal Navy - Headings, Brand, Footer, Sidebar)
+     --yin-green:   #124D1C (Deep Tech Forest Green - SLA, Metrics, Security)
+     --yin-gold:    #E4B028 (Warm Golden Amber - Primary Action, Badges, Highlights)
+     --yin-cream:   #EBEDE3 (Soft Warm Cream / Bone White - Section Backdrop, Tags)
+   ============================================================================== */
+
+:root, [data-theme="light"] {
+  --yin-header-height: 72px;
+
+  /* User-Defined Brand Colors */
+  --yin-main: #0B1849;          /* Deep Royal Navy (Main) */
+  --yin-main-dark: #060E2C;
+  --yin-main-light: #162B75;
+  --yin-main-subtle: rgba(11, 24, 73, 0.06);
+
+  --yin-green: #124D1C;         /* Deep Tech Forest Green */
+  --yin-green-light: #1B6E29;
+  --yin-green-subtle: rgba(18, 77, 28, 0.08);
+
+  --yin-gold: #E4B028;          /* Warm Golden Amber */
+  --yin-gold-hover: #C9961A;
+  --yin-gold-subtle: rgba(228, 176, 40, 0.12);
+
+  --yin-cream: #EBEDE3;         /* Warm Soft Cream / Bone White */
+  --yin-cream-subtle: #F5F6F0;
+  --yin-cream-border: #D6DAD0;
+
+  /* Aliases & Fallbacks to guarantee consistency */
+  --yin-navy: var(--yin-main);
+  --yin-navy-dark: var(--yin-main-dark);
+  --yin-orange: var(--yin-gold);
+  --yin-orange-hover: var(--yin-gold-hover);
+  --yin-blue: var(--yin-main);
+  --yin-blue-subtle: var(--yin-main-subtle);
+
+  /* Neutrals & Surfaces (Light) */
+  --yin-bg: #FFFFFF;
+  --yin-bg-alt: var(--yin-cream-subtle);
+  --yin-surface: #FFFFFF;
+  --yin-surface-elevated: #FAFBF9;
+  
+  --yin-border: #E1E5DC;
+  --yin-border-subtle: rgba(11, 24, 73, 0.08);
+  --yin-border-focus: var(--yin-main);
+
+  --yin-text: #27272A;
+  --yin-text-main: var(--yin-main);
+  --yin-text-muted: #52525B;
+  --yin-text-dim: #71717A;
+
+  --yin-success: var(--yin-green);
+  --yin-warning: var(--yin-gold);
+  --yin-danger: #DC2626;
+
+  /* Vertical Floating Sidebar Tokens (Light - matches reference design) */
+  --yin-shell-bg: #F4F5F7;
+  --yin-sidebar-bg: #FFFFFF;
+  --yin-sidebar-border: rgba(0, 0, 0, 0.07);
+  --yin-sidebar-text: #27272A;
+  --yin-sidebar-muted: #71717A;
+  --yin-sidebar-active-bg: #F4F4F5;
+  --yin-sidebar-hover-bg: #F8F9FA;
+  --yin-sidebar-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+
+  /* Slide Drawer Tokens */
+  --yin-drawer-backdrop-bg: rgba(15, 23, 42, 0.5);
+  --yin-drawer-backdrop-blur: 6px;
+
+  /* Radii */
+  --yin-radius-sm: 8px;
+  --yin-radius-md: 12px;
+  --yin-radius-lg: 18px;
+  --yin-radius-xl: 24px;
+  --yin-radius-pill: 9999px;
+
+  /* Shadows */
+  --yin-shadow-sm: 0 2px 6px rgba(11, 24, 73, 0.04);
+  --yin-shadow-card: 0 8px 24px rgba(11, 24, 73, 0.06);
+  --yin-shadow-hover: 0 16px 36px rgba(11, 24, 73, 0.12);
+  --yin-shadow-gold: 0 4px 18px rgba(228, 176, 40, 0.35);
+
+  --yin-font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --yin-font-mono: 'JetBrains Mono', Consolas, monospace;
+}
+
+/* ==============================================================================
+   DARK THEME SYSTEM (Sleek Pitch Black / Charcoal - matches reference dark design)
+   ============================================================================== */
+[data-theme="dark"] {
+  --yin-main: #E4E4E7;
+  --yin-main-dark: #FFFFFF;
+  --yin-main-light: #A1A1AA;
+  --yin-main-subtle: rgba(228, 176, 40, 0.12);
+
+  --yin-bg: #0E0E11;
+  --yin-bg-alt: #141418;
+  --yin-surface: #18181C;
+  --yin-surface-elevated: #222228;
+  
+  --yin-border: #282832;
+  --yin-border-subtle: rgba(255, 255, 255, 0.08);
+  --yin-border-focus: var(--yin-gold);
+
+  --yin-text: #E4E4E7;
+  --yin-text-main: #FFFFFF;
+  --yin-text-muted: #CBD5E1;
+  --yin-text-dim: #94A3B8;
+
+  --yin-cream: #1C1C22;
+  --yin-cream-subtle: #121216;
+  --yin-cream-border: #2E2E38;
+
+  /* Vertical Floating Sidebar Tokens (Dark - matches reference design) */
+  --yin-shell-bg: #0C0C0E;
+  --yin-sidebar-bg: #161618;
+  --yin-sidebar-border: rgba(255, 255, 255, 0.08);
+  --yin-sidebar-text: #F4F4F5;
+  --yin-sidebar-muted: #9CA3AF;
+  --yin-sidebar-active-bg: #262629;
+  --yin-sidebar-hover-bg: #1F1F23;
+  --yin-sidebar-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+
+  /* Slide Drawer Tokens (Dark Mode: 90% opacity background as requested) */
+  --yin-drawer-backdrop-bg: rgba(0, 0, 0, 0.90);
+  --yin-drawer-backdrop-blur: 8px;
+
+  --yin-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --yin-shadow-card: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --yin-shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--yin-bg);
+  color: var(--yin-text, #333333);
+  font-family: var(--yin-font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+/* ==============================================================================
+   UTILITY CLASSES (WORKDAY ENTERPRISE)
+   ============================================================================== */
+
+.yin-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Brand Badges */
+.yin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--yin-gold-subtle);
+  border: 1px solid rgba(228, 176, 40, 0.4);
+  border-radius: var(--yin-radius-pill);
+  color: #8C6A0A;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.yin-badge-navy {
+  background: var(--yin-main-subtle);
+  border: 1px solid rgba(11, 24, 73, 0.15);
+  color: var(--yin-main);
+}
+
+.yin-badge-green {
+  background: var(--yin-green-subtle);
+  border: 1px solid rgba(18, 77, 28, 0.2);
+  color: var(--yin-green);
+}
+
+/* Dark theme badge contrast */
+[data-theme="dark"] .yin-badge {
+  background: rgba(228, 176, 40, 0.16);
+  border-color: rgba(228, 176, 40, 0.45);
+  color: #FDE047;
+}
+
+[data-theme="dark"] .yin-badge-navy {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .yin-badge-green {
+  background: rgba(18, 77, 28, 0.3);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #4ADE80;
+}
+
+/* Brand Buttons (Workday Pill Shape) */
+.yin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border-radius: var(--yin-radius-pill);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  border: none;
+  outline: none;
+  white-space: nowrap;
+}
+
+/* Primary Action: Gold with Deep Navy text (High Contrast & Luxury Tech) */
+.yin-btn-primary {
+  background-color: var(--yin-gold);
+  color: var(--yin-main);
+  box-shadow: var(--yin-shadow-gold);
+}
+
+.yin-btn-primary:hover {
+  background-color: var(--yin-gold-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(228, 176, 40, 0.45);
+}
+
+/* Navy Button: Deep Royal Navy with White text */
+.yin-btn-navy {
+  background-color: var(--yin-main);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(11, 24, 73, 0.25);
+}
+
+.yin-btn-navy:hover {
+  background-color: var(--yin-main-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(11, 24, 73, 0.35);
+}
+
+/* Secondary Button: Clean Outline */
+.yin-btn-secondary {
+  background: var(--yin-surface);
+  color: var(--yin-text-main);
+  border: 1.5px solid var(--yin-border);
+}
+
+.yin-btn-secondary:hover {
+  background: var(--yin-surface-elevated);
+  border-color: var(--yin-gold);
+  color: var(--yin-gold);
+  transform: translateY(-2px);
+}
+
+/* Clean Enterprise Card */
+.yin-card {
+  background: var(--yin-surface);
+  border: 1px solid var(--yin-border);
+  border-radius: var(--yin-radius-lg);
+  padding: 32px;
+  box-shadow: var(--yin-shadow-card);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--yin-text);
+}
+
+.yin-card:hover {
+  box-shadow: var(--yin-shadow-hover);
+  border-color: rgba(228, 176, 40, 0.4);
+  transform: translateY(-3px);
+}
+
+/* Inputs */
+.yin-input, .yin-textarea, .yin-select {
+  width: 100%;
+  background: var(--yin-surface);
+  border: 1px solid var(--yin-border);
+  border-radius: var(--yin-radius-sm);
+  padding: 12px 16px;
+  color: var(--yin-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.yin-input::placeholder,
+.yin-textarea::placeholder {
+  color: var(--yin-text-dim);
+  opacity: 0.85;
+}
+
+[data-theme="dark"] .yin-input,
+[data-theme="dark"] .yin-textarea,
+[data-theme="dark"] .yin-select {
+  background: #1C1C22;
+  border-color: #2E2E38;
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .yin-input::placeholder,
+[data-theme="dark"] .yin-textarea::placeholder {
+  color: #94A3B8;
+  opacity: 0.75;
+}
+
+.yin-input:focus, .yin-textarea:focus, .yin-select:focus {
+  border-color: var(--yin-gold);
+  box-shadow: 0 0 0 3px rgba(228, 176, 40, 0.25);
+}
+
+/* ==============================================================================
+   TIPTAP PROSE & DOCUMENT STYLING
+   ============================================================================== */
+
+.tiptap-content {
+  line-height: 1.8;
+  color: var(--yin-text, #27272A);
+  font-size: 1.05rem;
+}
+
+.tiptap-content h1, .tiptap-content h2, .tiptap-content h3 {
+  color: var(--yin-text-main, #0B1849);
+  margin: 1.8em 0 0.8em 0;
+  font-weight: 800;
+  line-height: 1.35;
+  scroll-margin-top: 150px; /* Khớp chuẩn xác với 72px Navbar + 54px Toolbar + 24px khoảng thở */
+}
+
+.tiptap-content h1 { font-size: 2.2rem; }
+.tiptap-content h2 { font-size: 1.65rem; border-bottom: 2px solid var(--yin-border); padding-bottom: 8px; }
+.tiptap-content h3 { font-size: 1.3rem; }
+
+.tiptap-content p {
+  color: var(--yin-text, #27272A);
+  margin-bottom: 1.3em;
+}
+
+.tiptap-content blockquote {
+  border-left: 4px solid var(--yin-gold);
+  padding: 16px 24px;
+  margin: 1.6em 0;
+  background: var(--yin-cream-subtle);
+  border-radius: 0 var(--yin-radius-md) var(--yin-radius-md) 0;
+  font-style: italic;
+  color: #5A4705;
+  font-size: 1.05rem;
+}
+
+[data-theme="dark"] .tiptap-content blockquote {
+  color: #FDE047;
+  background: rgba(228, 176, 40, 0.1);
+  border-left-color: var(--yin-gold);
+}
+
+.tiptap-content ul, .tiptap-content ol {
+  padding-left: 28px;
+  margin-bottom: 1.3em;
+  color: var(--yin-text, #27272A);
+}
+
+.tiptap-content li {
+  margin-bottom: 0.5em;
+}
+
+.tiptap-content pre {
+  background: #09090B;
+  border: 1px solid #27272A;
+  border-radius: var(--yin-radius-md);
+  padding: 18px;
+  overflow-x: auto;
+  font-family: var(--yin-font-mono);
+  font-size: 0.9rem;
+  margin: 1.6em 0;
+  color: #A7F3D0;
+}
+
+.tiptap-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.6em 0;
+  border: 1px solid var(--yin-border);
+}
+
+.tiptap-content th, .tiptap-content td {
+  border: 1px solid var(--yin-border);
+  padding: 12px 16px;
+  text-align: left;
+  color: var(--yin-text);
+}
+
+.tiptap-content th {
+  background: var(--yin-surface-elevated);
+  color: var(--yin-text-main);
+  font-weight: 700;
+}
+
+.tiptap-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--yin-radius-md);
+  margin: 1.6em 0;
+  border: 1px solid var(--yin-border);
+  box-shadow: var(--yin-shadow-sm);
+}
+
+.ProseMirror {
+  outline: none;
+  min-height: 480px;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--yin-text, #27272A);
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--yin-text-dim);
+  pointer-events: none;
+  height: 0;
+}
+
+/* ==============================================================================
+   MOBILE RESPONSIVENESS & PWA IN-APP ENHANCEMENTS
+   ============================================================================== */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Safe areas for modern mobile phones (iPhone notch, dynamic island, navigation bar) */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+@media (max-width: 768px) {
+  .yin-container {
+    padding: 0 16px;
+  }
+  .yin-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  .yin-card {
+    padding: 20px;
+  }
+}
+
+/* PWA Standalone (In-App) specific styles */
+@media all and (display-mode: standalone) {
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+

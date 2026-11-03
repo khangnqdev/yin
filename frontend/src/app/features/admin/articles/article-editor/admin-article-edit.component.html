@@ -1,0 +1,719 @@
+<div class="article-edit-canvas" [class.fullscreen-mode]="isFullscreen()">
+  
+  <!-- Outer Card Frame (White Window matching reference photo) -->
+  <div class="article-edit-window">
+
+    <!-- Top Window Header Bar -->
+    <header class="window-header">
+      
+      <!-- Left: Close & Page Title -->
+      <div class="header-left">
+        <button type="button" class="close-article-btn" (click)="cancel()" title="Đóng và quay lại danh sách">
+          <yin-icon name="close" [size]="15"></yin-icon>
+          <span class="page-title-text">Soạn Thảo Bài Viết</span>
+        </button>
+      </div>
+
+      <!-- Right: Action Buttons (Hủy bài, Lưu bài viết, Xuất bản & AI Soạn Bài) -->
+      <div class="header-right">
+        
+        <!-- AI Writer Assistant Trigger Button -->
+        <button 
+          type="button" 
+          class="btn-ai-assistant" 
+          (click)="openAiModal()" 
+          title="Sử dụng AI kết nối qua ACP Server để tự động soạn thảo bài viết">
+          <yin-icon name="sparkles" [size]="15"></yin-icon>
+          <span>AI Soạn Bài</span>
+        </button>
+
+        <!-- Hủy bài Button -->
+        <button type="button" class="btn-cancel" (click)="cancel()" title="Hủy bỏ thao tác">
+          Hủy bài
+        </button>
+
+        <!-- Lưu bài viết Button -->
+        <button 
+          type="button" 
+          class="btn-save-draft" 
+          (click)="saveDraft()" 
+          [disabled]="isSaving()"
+          title="Lưu nội dung bài viết">
+          <yin-icon name="file-text" [size]="14"></yin-icon>
+          <span>{{ isSaving() ? 'Đang lưu…' : 'Lưu bài viết' }}</span>
+        </button>
+
+        <!-- Xuất bản Button -->
+        <button 
+          type="button" 
+          class="btn-publish" 
+          (click)="publishArticle()" 
+          [disabled]="isSaving()"
+          title="Xuất bản công khai bài viết">
+          <yin-icon name="check" [size]="15"></yin-icon>
+          @if (isSaving()) {
+            <span>Đang xử lý…</span>
+          } @else {
+            <span>{{ status() === 'PUBLISHED' ? 'Cập nhật' : 'Xuất bản' }}</span>
+          }
+        </button>
+
+      </div>
+
+    </header>
+
+    <!-- Save Notification Toast -->
+    @if (isSavedSuccess()) {
+      <div class="save-toast-banner" role="status">
+        <yin-icon name="check" [size]="16"></yin-icon>
+        <span>Lưu bài viết thành công!</span>
+      </div>
+    }
+
+    <!-- Error Banner -->
+    @if (errorMessage()) {
+      <div class="error-toast-banner" role="alert">
+        <yin-icon name="alert-circle" [size]="16"></yin-icon>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <!-- Main 2-Column Editor Workspace -->
+    <div class="editor-two-columns">
+      
+      <!-- LEFT COLUMN: Title & Tiptap Rich Content -->
+      <div class="left-main-column">
+        
+        <!-- Field 1: Title -->
+        <div class="field-block">
+          <label class="field-label" for="articleTitleInput">
+            <span class="label-primary">Tiêu đề</span>
+            <span class="label-muted">(Tên bài viết của bạn)</span>
+          </label>
+          <input 
+            id="articleTitleInput"
+            type="text" 
+            class="input-title" 
+            placeholder="Nhập tiêu đề bài viết của bạn tại đây..." 
+            [ngModel]="title()" 
+            (ngModelChange)="title.set($event)" />
+        </div>
+
+        <!-- Field 2: Content (Tiptap Rich Text Editor) -->
+        <div class="field-block content-field-block">
+          <label class="field-label">
+            <span class="label-primary">Nội dung</span>
+            <span class="label-muted">(Soạn thảo nội dung bài viết)</span>
+          </label>
+
+          <!-- Hidden File Input for Tiptap Content Image Upload -->
+          <input 
+            type="file" 
+            #editorImageFileInput 
+            accept="image/*" 
+            (change)="onEditorImageFileSelected($event)" 
+            style="display: none" />
+
+          <!-- Tiptap Editor Box Frame -->
+          <div class="tiptap-editor-card">
+            
+            <!-- Tiptap Toolbar (Matching screenshot toolbar buttons) -->
+            <div class="tiptap-toolbar">
+              
+              <!-- Style / Format Dropdown -->
+              <div class="toolbar-dropdown-wrap">
+                <select 
+                  class="toolbar-select" 
+                  [ngModel]="selectedBlockType()" 
+                  (ngModelChange)="setBlockType($event)">
+                  <option value="paragraph">Văn bản thường</option>
+                  <option value="h1">Tiêu đề lớn (H1)</option>
+                  <option value="h2">Tiêu đề mục (H2)</option>
+                  <option value="h3">Tiêu đề phụ (H3)</option>
+                  <option value="quote">Trích dẫn (Quote)</option>
+                  <option value="code">Khối mã code</option>
+                </select>
+                <span class="select-chevron">
+                  <yin-icon name="chevron-down" [size]="12"></yin-icon>
+                </span>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Inline Style Buttons: B, I, U -->
+              <button 
+                type="button" 
+                class="tb-btn font-bold-btn" 
+                [class.active]="isBoldActive()" 
+                (click)="toggleBold()" 
+                title="In đậm (Ctrl+B)">
+                <span>B</span>
+              </button>
+
+              <button 
+                type="button" 
+                class="tb-btn font-italic-btn" 
+                [class.active]="isItalicActive()" 
+                (click)="toggleItalic()" 
+                title="In nghiêng (Ctrl+I)">
+                <span>I</span>
+              </button>
+
+              <button 
+                type="button" 
+                class="tb-btn font-underline-btn" 
+                [class.active]="isUnderlineActive()" 
+                (click)="toggleUnderline()" 
+                title="Gạch chân (Ctrl+U)">
+                <span>U</span>
+              </button>
+
+              <!-- Link Button -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                [class.active]="isLinkActive()" 
+                (click)="setLink()" 
+                title="Chèn liên kết (Link)">
+                <yin-icon name="link" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Blockquote (66) -->
+              <button 
+                type="button" 
+                class="tb-btn tb-quote-btn" 
+                [class.active]="isQuoteActive()" 
+                (click)="toggleBlockquote()" 
+                title="Trích dẫn (Quote)">
+                <span>66</span>
+              </button>
+
+              <!-- Code </> -->
+              <button 
+                type="button" 
+                class="tb-btn tb-code-btn" 
+                [class.active]="isCodeActive()" 
+                (click)="toggleCodeBlock()" 
+                title="Mã nguồn (Code Block)">
+                <span>&lt;/&gt;</span>
+              </button>
+
+              <!-- Image -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                (click)="addImage()" 
+                title="Chèn hình ảnh với chú thích">
+                <yin-icon name="image" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Bullet List -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                [class.active]="isBulletListActive()" 
+                (click)="toggleBulletList()" 
+                title="Danh sách gạch đầu dòng">
+                <yin-icon name="list" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Numbered List -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                [class.active]="isOrderedListActive()" 
+                (click)="toggleOrderedList()" 
+                title="Danh sách số thứ tự">
+                <yin-icon name="list-ordered" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Strike / Checklist -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                [class.active]="isStrikeActive()" 
+                (click)="toggleStrike()" 
+                title="Gạch ngang văn bản">
+                <yin-icon name="check-square" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Table -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                (click)="insertTable()" 
+                title="Chèn bảng biểu">
+                <yin-icon name="table" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Highlighter / Pen -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                [class.active]="isHighlightActive()" 
+                (click)="toggleHighlight()" 
+                title="Bút dạ quang đánh dấu (Highlight)">
+                <yin-icon name="highlighter" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Align / Divider -->
+              <button 
+                type="button" 
+                class="tb-btn" 
+                (click)="cycleAlign()" 
+                title="Căn chỉnh văn bản">
+                <yin-icon name="align-left" [size]="15"></yin-icon>
+              </button>
+
+              <!-- Embed Dropdown -->
+              <div class="embed-menu-wrap">
+                <button 
+                  type="button" 
+                  class="tb-btn tb-embed-btn" 
+                  (click)="toggleEmbedDropdown()" 
+                  title="Nhúng nội dung ngoài">
+                  <span>Nhúng</span>
+                  <yin-icon name="chevron-down" [size]="12"></yin-icon>
+                </button>
+
+                @if (isEmbedOpen()) {
+                  <div class="embed-popover" (mouseleave)="isEmbedOpen.set(false)">
+                    <button type="button" class="embed-item" (click)="insertEmbed('youtube')">
+                      <yin-icon name="film" [size]="14"></yin-icon>
+                      <span>YouTube / Video</span>
+                    </button>
+                    <button type="button" class="embed-item" (click)="insertEmbed('divider')">
+                      <yin-icon name="align-center" [size]="14"></yin-icon>
+                      <span>Đường kẻ phân cách</span>
+                    </button>
+                    <button type="button" class="embed-item" (click)="insertEmbed('code')">
+                      <yin-icon name="code" [size]="14"></yin-icon>
+                      <span>Khối mã code</span>
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <!-- Fullscreen / Expand -->
+              <div class="toolbar-spacer"></div>
+
+              <button 
+                type="button" 
+                class="tb-btn fullscreen-btn" 
+                (click)="toggleFullscreen()" 
+                [title]="isFullscreen() ? 'Thu nhỏ' : 'Toàn màn hình'">
+                <yin-icon [name]="isFullscreen() ? 'minimize' : 'maximize'" [size]="15"></yin-icon>
+              </button>
+
+            </div>
+
+            <!-- Tiptap Host Element where Tiptap mounts (with file drag & drop + paste support) -->
+            <div 
+              #tiptapEditorRef 
+              class="tiptap-content-viewport"
+              [class.editor-dragging]="isEditorDragging()"
+              (dragover)="onEditorDragOver($event)"
+              (dragleave)="onEditorDragLeave($event)"
+              (drop)="onEditorDrop($event)"
+              (paste)="onEditorPaste($event)"></div>
+
+            @if (isUploadingEditorImage()) {
+              <div class="editor-uploading-bar">
+                <yin-icon name="clock" [size]="14" className="spinning-icon"></yin-icon>
+                <span>Đang tải ảnh lên và chèn vào bài viết…</span>
+              </div>
+            }
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Metadata Sidebar -->
+      <div class="right-sidebar-column">
+        
+        <!-- Field: Thao tác nhanh (Thay thế dropdown trạng thái bằng các nút chọn nhanh) -->
+        <div class="sidebar-field-block">
+          <label class="field-label">
+            <span class="label-primary">Thao tác bài viết</span>
+          </label>
+          <div class="quick-actions-card">
+            <div class="current-status-badge" [class.published]="status() === 'PUBLISHED'">
+              <span class="status-dot"></span>
+              <span>Trạng thái: <strong>{{ status() === 'PUBLISHED' ? 'Đã xuất bản' : status() === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp' }}</strong></span>
+            </div>
+            <div class="quick-action-buttons">
+              <button 
+                type="button" 
+                class="btn-quick-save" 
+                (click)="saveDraft()" 
+                [disabled]="isSaving()"
+                title="Lưu lại nội dung bài viết hiện tại">
+                <yin-icon name="file-text" [size]="14"></yin-icon>
+                <span>{{ isSaving() ? 'Đang lưu…' : 'Lưu bài viết' }}</span>
+              </button>
+              
+              <button 
+                type="button" 
+                class="btn-quick-publish" 
+                (click)="publishArticle()" 
+                [disabled]="isSaving()"
+                title="Xuất bản công khai bài viết">
+                <yin-icon name="check" [size]="14"></yin-icon>
+                <span>{{ isSaving() ? 'Đang xử lý…' : (status() === 'PUBLISHED' ? 'Cập nhật xuất bản' : 'Xuất bản ngay') }}</span>
+              </button>
+
+              <button 
+                type="button" 
+                class="btn-quick-cancel" 
+                (click)="cancel()" 
+                title="Hủy thao tác và quay lại danh sách">
+                <yin-icon name="close" [size]="14"></yin-icon>
+                <span>Hủy bài</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Field: Slug -->
+        <div class="sidebar-field-block">
+          <label class="field-label" for="articleSlugInput">
+            <span class="label-primary">Đường dẫn (Slug)</span>
+            <span class="label-muted">(Đường dẫn URL thân thiện cho bài viết)</span>
+          </label>
+          <input 
+            id="articleSlugInput"
+            type="text" 
+            class="input-sidebar" 
+            placeholder="duong-dan-bai-viet-url" 
+            [ngModel]="slug()" 
+            (ngModelChange)="slug.set($event)" />
+        </div>
+
+        <!-- Field: Excerpt -->
+        <div class="sidebar-field-block">
+          <label class="field-label" for="articleExcerptInput">
+            <span class="label-primary">Đoạn trích tóm tắt</span>
+            <span class="label-muted">(Tóm tắt ngắn gọn nội dung bài viết)</span>
+          </label>
+          <textarea 
+            id="articleExcerptInput"
+            rows="4" 
+            class="textarea-sidebar" 
+            placeholder="Nhập đoạn tóm tắt ngắn gọn giúp độc giả và các công cụ tìm kiếm dễ dàng nắm bắt nội dung cốt lõi của bài viết trước khi xem chi tiết..." 
+            [ngModel]="excerpt()" 
+            (ngModelChange)="excerpt.set($event)"></textarea>
+        </div>
+
+        <!-- Field: Category Multi-Select Chips -->
+        <div class="sidebar-field-block">
+          <label class="field-label">
+            <span class="label-primary">Danh mục</span>
+            <span class="label-muted">(Phân loại chuyên mục cho bài viết)</span>
+          </label>
+
+          <div class="category-box" (click)="toggleCategoryDropdown()">
+            <div class="chips-wrap">
+              @for (cat of categories(); track cat; let idx = $index) {
+                <span class="tag-chip">
+                  <span class="chip-label">{{ cat }}</span>
+                  <button type="button" class="chip-remove" (click)="removeCategory(idx, $event)" title="Xóa thẻ">✕</button>
+                </span>
+              }
+              <input 
+                type="text" 
+                class="chip-inline-input" 
+                placeholder="Thêm danh mục…" 
+                [ngModel]="newCategoryInput()" 
+                (ngModelChange)="newCategoryInput.set($event)" 
+                (keydown)="onCategoryInputKeydown($event)" 
+                (click)="$event.stopPropagation()" />
+            </div>
+
+            <button type="button" class="category-dropdown-arrow" title="Chọn danh mục có sẵn">
+              <yin-icon name="chevron-down" [size]="14"></yin-icon>
+            </button>
+          </div>
+
+          <!-- Category Quick Selection Dropdown -->
+          @if (isCategoryDropdownOpen()) {
+            <div class="category-popover" (mouseleave)="isCategoryDropdownOpen.set(false)">
+              <div class="popover-title">Gợi ý danh mục:</div>
+              <div class="popover-tags-list">
+                @for (preset of availableCategories; track preset) {
+                  <button 
+                    type="button" 
+                    class="preset-tag-btn" 
+                    [class.selected]="categories().includes(preset)"
+                    (click)="addCategory(preset)">
+                    <span>{{ preset }}</span>
+                    @if (categories().includes(preset)) {
+                      <yin-icon name="check" [size]="12"></yin-icon>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Field: Date -->
+        <div class="sidebar-field-block">
+          <label class="field-label" for="articleDateInput">
+            <span class="label-primary">Ngày hiển thị</span>
+            <span class="label-muted">(Ngày hiển thị công khai trên bài viết)</span>
+          </label>
+          <div class="date-input-wrap">
+            <yin-icon name="calendar" [size]="16" className="calendar-icon"></yin-icon>
+            <input 
+              id="articleDateInput"
+              type="date" 
+              class="input-sidebar date-field" 
+              [ngModel]="date()" 
+              (ngModelChange)="date.set($event)" />
+          </div>
+        </div>
+
+        <!-- Field: Cover Image Upload -->
+        <div class="sidebar-field-block">
+          <label class="field-label">
+            <span class="label-primary">Ảnh bìa bài viết</span>
+          </label>
+
+          <!-- Hidden Native File Input for Cover Image -->
+          <input 
+            type="file" 
+            #coverFileInput 
+            accept="image/*" 
+            (change)="onCoverFileSelected($event)" 
+            style="display: none" />
+
+          @if (coverImage()) {
+            <div class="cover-image-preview-card">
+              <img [src]="coverImage()" alt="Ảnh bìa bài viết" class="preview-thumb" />
+              <div class="preview-overlay">
+                <button type="button" class="btn-change-img" (click)="triggerCoverImageUpload()">Thay đổi</button>
+                <button type="button" class="btn-remove-img" (click)="removeCoverImage($event)">Xóa</button>
+              </div>
+            </div>
+          } @else {
+            <div 
+              class="cover-upload-dashed" 
+              [class.dragging]="isCoverDragging()"
+              (click)="triggerCoverImageUpload()"
+              (dragover)="onCoverDragOver($event)"
+              (dragleave)="onCoverDragLeave($event)"
+              (drop)="onCoverDrop($event)">
+              @if (isUploadingCover()) {
+                <div class="uploading-state">
+                  <yin-icon name="clock" [size]="24" className="spinning-icon"></yin-icon>
+                  <span>Đang tải ảnh lên…</span>
+                </div>
+              } @else {
+                <div class="mountain-icon-box">
+                  <yin-icon name="image" [size]="24"></yin-icon>
+                </div>
+                <div class="upload-text-main">
+                  {{ isCoverDragging() ? 'Thả ảnh vào đây để tải lên' : 'Kéo & thả ảnh vào đây hoặc' }}
+                </div>
+                <div class="upload-link-text">
+                  <yin-icon name="image" [size]="14"></yin-icon>
+                  <span>Tải ảnh từ máy tính</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Field: Author Selector -->
+        <div class="sidebar-field-block">
+          <label class="field-label">
+            <span class="label-primary">Tác giả</span>
+            <span class="label-muted">(Người biên soạn bài viết)</span>
+          </label>
+
+          <div class="author-card-box" (click)="toggleAuthorDropdown()">
+            <img [src]="authorAvatar()" alt="Ảnh đại diện tác giả" class="author-img" />
+            <div class="author-details">
+              <div class="author-name-text">{{ authorName() }}</div>
+              <div class="author-role-text">{{ authorRole() }}</div>
+            </div>
+            <yin-icon name="chevron-down" [size]="14" className="author-chevron"></yin-icon>
+          </div>
+
+          <!-- Author Selection Popover -->
+          @if (isAuthorDropdownOpen()) {
+            <div class="author-popover" (mouseleave)="isAuthorDropdownOpen.set(false)">
+              <div class="popover-title">Chọn tác giả bài viết:</div>
+              @for (author of availableAuthors; track author.name) {
+                <div class="author-popover-item" (click)="selectAuthor(author)">
+                  <img [src]="author.avatar" alt="Ảnh đại diện tác giả" class="popover-avatar" />
+                  <div>
+                    <div class="popover-author-name">{{ author.name }}</div>
+                    <div class="popover-author-role">{{ author.role }}</div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- AI WRITER ASSISTANT MODAL (Integrated via ACP Protocol) -->
+  @if (isAiModalOpen()) {
+    <div class="ai-modal-backdrop" (click)="closeAiModal()">
+      <div class="ai-modal-card" (click)="$event.stopPropagation()">
+        
+        <!-- Modal Head -->
+        <div class="ai-modal-header">
+          <div class="ai-modal-title-wrap">
+            <div class="sparkle-circle">
+              <yin-icon name="sparkles" [size]="18"></yin-icon>
+            </div>
+            <div>
+              <h3 class="ai-modal-title">AI Soạn Thảo Bài Viết</h3>
+              <p class="ai-modal-subtitle">
+                Kết nối giao thức ACP Server: 
+                <span class="acp-badge">{{ aiConfigService.settings().provider.toUpperCase() }}</span>
+                <span class="acp-url">({{ aiConfigService.settings().acpServerUrl }})</span>
+              </p>
+            </div>
+          </div>
+          <button type="button" class="ai-close-btn" (click)="closeAiModal()" title="Đóng">
+            <yin-icon name="close" [size]="16"></yin-icon>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="ai-modal-body">
+          
+          <div class="ai-form-group">
+            <label class="ai-label" for="aiTopicInput">Chủ đề hoặc mô tả bài viết cần soạn:</label>
+            <textarea 
+              id="aiTopicInput"
+              rows="3" 
+              class="ai-input" 
+              placeholder="vd: Hướng dẫn xây dựng landing page tỷ lệ chuyển đổi cao với video marketing và Tiptap editor…" 
+              [ngModel]="aiTopic()" 
+              (ngModelChange)="aiTopic.set($event)"></textarea>
+          </div>
+
+          <div class="ai-row-2">
+            <div class="ai-form-group">
+              <label class="ai-label" for="aiKeywordsInput">Từ khóa SEO (ngăn cách bằng dấu phẩy):</label>
+              <input 
+                id="aiKeywordsInput"
+                type="text" 
+                class="ai-input" 
+                placeholder="vd: Video Marketing, Conversion Rate, Landing Page" 
+                [ngModel]="aiKeywords()" 
+                (ngModelChange)="aiKeywords.set($event)" />
+            </div>
+
+            <div class="ai-form-group">
+              <label class="ai-label" for="aiToneSelect">Văn phong bài viết:</label>
+              <select 
+                id="aiToneSelect"
+                class="ai-select" 
+                [ngModel]="aiTone()" 
+                (ngModelChange)="aiTone.set($event)">
+                <option value="Chuyên sâu kỹ thuật & Thực chiến">Chuyên sâu kỹ thuật & Thực chiến</option>
+                <option value="Tiếp thị công nghệ cao & Chuyển đổi">Tiếp thị công nghệ cao & Chuyển đổi</option>
+                <option value="Chia sẻ kinh nghiệm thực tế">Chia sẻ kinh nghiệm thực tế</option>
+                <option value="Phân tích kiến trúc giải pháp">Phân tích kiến trúc giải pháp</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Generate Action Button -->
+          <div class="ai-actions-bar">
+            <button 
+              type="button" 
+              class="btn-generate-ai" 
+              (click)="generateWithAi()" 
+              [disabled]="isAiGenerating()">
+              @if (isAiGenerating()) {
+                <yin-icon name="clock" [size]="16" className="spinning-icon"></yin-icon>
+                <span>Đang kết nối ACP Server & Viết bài…</span>
+              } @else {
+                <yin-icon name="sparkles" [size]="16"></yin-icon>
+                <span>Tạo Toàn Bộ Bài Viết Với AI</span>
+              }
+            </button>
+
+            <a routerLink="/admin/settings" class="ai-settings-link" (click)="closeAiModal()" title="Cài đặt API Keys">
+              <yin-icon name="settings" [size]="14"></yin-icon>
+              <span>Cấu hình API Keys trong Cài đặt</span>
+            </a>
+          </div>
+
+          <!-- Status Message -->
+          @if (aiStatusMessage()) {
+            <div class="ai-status-note">
+              {{ aiStatusMessage() }}
+            </div>
+          }
+
+          <!-- Generated Result Preview -->
+          @if (aiGeneratedResult()) {
+            <div class="ai-result-preview-box">
+              <div class="preview-tabs">
+                <button 
+                  type="button" 
+                  class="preview-tab" 
+                  [class.active]="aiActiveTab() === 'preview'" 
+                  (click)="aiActiveTab.set('preview')">
+                  Xem Trước
+                </button>
+                <button 
+                  type="button" 
+                  class="preview-tab" 
+                  [class.active]="aiActiveTab() === 'meta'" 
+                  (click)="aiActiveTab.set('meta')">
+                  Tiêu đề & Tóm tắt
+                </button>
+                <button 
+                  type="button" 
+                  class="preview-tab" 
+                  [class.active]="aiActiveTab() === 'html'" 
+                  (click)="aiActiveTab.set('html')">
+                  Mã HTML
+                </button>
+              </div>
+
+              <div class="preview-body">
+                @if (aiActiveTab() === 'preview') {
+                  <div class="preview-content-rendered" [innerHTML]="aiGeneratedResult()?.contentHtml"></div>
+                } @else if (aiActiveTab() === 'meta') {
+                  <div class="preview-meta-fields">
+                    <div><strong>Tiêu đề:</strong> {{ aiGeneratedResult()?.title }}</div>
+                    <div><strong>Slug:</strong> {{ aiGeneratedResult()?.slug }}</div>
+                    <div><strong>Tóm tắt:</strong> {{ aiGeneratedResult()?.excerpt }}</div>
+                    <div><strong>Danh mục:</strong> {{ aiGeneratedResult()?.categories?.join(', ') }}</div>
+                  </div>
+                } @else {
+                  <pre class="preview-raw-html"><code>{{ aiGeneratedResult()?.contentHtml }}</code></pre>
+                }
+              </div>
+
+              <div class="preview-action-row">
+                <button type="button" class="btn-apply-ai" (click)="applyAiResult()">
+                  <yin-icon name="check" [size]="16"></yin-icon>
+                  <span>Áp Dụng Vào Trình Soạn Thảo (Tiptap)</span>
+                </button>
+              </div>
+            </div>
+          }
+
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>

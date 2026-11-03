@@ -1,0 +1,17 @@
+<div class="yin-app-container" yinTranslateContent [class.admin-route-active]="isAdminRoute()">
+  @if (db.loadError()) { <div role="alert" class="api-error">{{ db.loadError() }}</div> }
+  @if (!isAdminRoute()) {
+    <yin-header />
+  }
+
+  <main class="app-main-viewport" [class.with-fixed-header]="!isAdminRoute()" [class.admin-viewport]="isAdminRoute()">
+    <router-outlet />
+  </main>
+
+  @if (!isAdminRoute()) {
+    <yin-footer />
+  }
+
+  <!-- Global Interactive Notification Toast Stack & Detail Popup -->
+  <yin-notification-toast />
+</div>

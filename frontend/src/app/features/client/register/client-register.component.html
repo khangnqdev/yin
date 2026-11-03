@@ -1,0 +1,195 @@
+<main class="auth-page-root">
+  <div class="yin-container auth-wrapper">
+    <div class="auth-card yin-card">
+      
+      <!-- Card Header -->
+      <div class="card-header">
+        <a routerLink="/" class="back-link" title="Quay lại trang chủ Yin">
+          <span>&larr; Trang chủ Yin</span>
+        </a>
+        <div class="brand-logo-wrap">
+          <img src="/assets/logo/yinkenna.svg" alt="Yin Technology" class="auth-logo" width="130" height="38" />
+        </div>
+        <div class="yin-badge">
+          <yin-icon name="user" [size]="14"></yin-icon>
+          <span>Cổng Khách Hàng Doanh Nghiệp</span>
+        </div>
+        <h1 class="auth-title">Đăng Ký Tài Khoản Client</h1>
+        <p class="auth-subtitle">
+          Tạo tài khoản đối tác để quản lý tiến độ thi công kiến trúc phần mềm, yêu cầu tư vấn kỹ thuật và nhận cập nhật công nghệ chuyên sâu.
+        </p>
+      </div>
+
+      <!-- Global Error Alert -->
+      @if (errorMessage()) {
+        <div class="alert-box alert-error" role="alert">
+          <yin-icon name="alert-circle" [size]="18"></yin-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <!-- Registration Form -->
+      <form class="auth-form" (ngSubmit)="submit()" novalidate>
+        
+        <!-- Field: Email -->
+        <div class="form-group" [class.has-error]="fieldErrors()['email']">
+          <label for="reg-email" class="form-label">
+            <span>Địa chỉ Email</span>
+            <span class="required-star">*</span>
+          </label>
+          <input 
+            id="reg-email" 
+            name="email" 
+            type="email" 
+            class="yin-input" 
+            placeholder="client@doanhnghiep.vn"
+            [ngModel]="email()" 
+            (ngModelChange)="email.set($event)"
+            autocomplete="email"
+            maxlength="255"
+            required />
+          @if (fieldErrors()['email']) {
+            <p class="field-error-msg" role="alert">{{ fieldErrors()['email'] }}</p>
+          }
+        </div>
+
+        <!-- Field: Username -->
+        <div class="form-group" [class.has-error]="fieldErrors()['username']">
+          <label for="reg-username" class="form-label">
+            <span>Tên đăng nhập</span>
+            <span class="required-star">*</span>
+          </label>
+          <input 
+            id="reg-username" 
+            name="username" 
+            type="text" 
+            class="yin-input" 
+            placeholder="client_name (3-50 ký tự ASCII)"
+            [ngModel]="username()" 
+            (ngModelChange)="username.set($event)"
+            autocomplete="username"
+            maxlength="50"
+            required />
+          @if (fieldErrors()['username']) {
+            <p class="field-error-msg" role="alert">{{ fieldErrors()['username'] }}</p>
+          } @else {
+            <span class="field-hint">Cho phép chữ cái, chữ số, dấu gạch dưới (_), chấm (.) và gạch ngang (-).</span>
+          }
+        </div>
+
+        <!-- Field: Password -->
+        <div class="form-group" [class.has-error]="fieldErrors()['password']">
+          <label for="reg-password" class="form-label">
+            <span>Mật khẩu bảo mật</span>
+            <span class="required-star">*</span>
+          </label>
+          <div class="password-input-wrap">
+            <input 
+              id="reg-password" 
+              name="password" 
+              [type]="showPassword() ? 'text' : 'password'" 
+              class="yin-input password-input" 
+              placeholder="Nhập từ 12 đến 72 ký tự"
+              [ngModel]="password()" 
+              (ngModelChange)="password.set($event)"
+              autocomplete="new-password"
+              maxlength="72"
+              required />
+            <button 
+              type="button" 
+              class="toggle-pwd-btn" 
+              (click)="togglePasswordVisibility()" 
+              [title]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
+              <yin-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="18"></yin-icon>
+            </button>
+          </div>
+          @if (fieldErrors()['password']) {
+            <p class="field-error-msg" role="alert">{{ fieldErrors()['password'] }}</p>
+          } @else {
+            <span class="field-hint">Tối thiểu 12 ký tự theo chuẩn Zero-Trust Security của Yin.</span>
+          }
+        </div>
+
+        <!-- Field: Phone Number -->
+        <div class="form-group" [class.has-error]="fieldErrors()['phone']">
+          <label for="reg-phone" class="form-label">
+            <span>Số điện thoại liên hệ</span>
+            <span class="required-star">*</span>
+          </label>
+          <input 
+            id="reg-phone" 
+            name="phone" 
+            type="tel" 
+            class="yin-input" 
+            placeholder="+84 901 234 567"
+            [ngModel]="phone()" 
+            (ngModelChange)="phone.set($event)"
+            autocomplete="tel"
+            maxlength="50"
+            required />
+          @if (fieldErrors()['phone']) {
+            <p class="field-error-msg" role="alert">{{ fieldErrors()['phone'] }}</p>
+          }
+        </div>
+
+        <!-- Field: Date of Birth -->
+        <div class="form-group" [class.has-error]="fieldErrors()['dateOfBirth']">
+          <label for="reg-dob" class="form-label">
+            <span>Ngày sinh</span>
+            <span class="required-star">*</span>
+          </label>
+          <input 
+            id="reg-dob" 
+            name="dateOfBirth" 
+            type="date" 
+            class="yin-input" 
+            [ngModel]="dateOfBirth()" 
+            (ngModelChange)="dateOfBirth.set($event)"
+            required />
+          @if (fieldErrors()['dateOfBirth']) {
+            <p class="field-error-msg" role="alert">{{ fieldErrors()['dateOfBirth'] }}</p>
+          }
+        </div>
+
+        <!-- Field: Receive Updates Checkbox -->
+        <div class="form-group checkbox-group">
+          <label class="custom-checkbox-label">
+            <input 
+              type="checkbox" 
+              name="receiveUpdates"
+              class="custom-checkbox-input"
+              [checked]="receiveUpdates()" 
+              (change)="receiveUpdates.set(!receiveUpdates())" />
+            <div class="checkbox-text-wrap">
+              <span class="checkbox-title">Nhận thông tin cập nhật công nghệ từ Yin</span>
+              <span class="checkbox-desc">
+                Nhận thông báo định kỳ về giải pháp kiến trúc mới, báo cáo hiệu năng và thông cáo bảo mật.
+              </span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="yin-btn yin-btn-primary submit-btn" 
+          [disabled]="submitting()">
+          @if (submitting()) {
+            <span>Đang khởi tạo tài khoản…</span>
+          } @else {
+            <span>Đăng Ký Tài Khoản Client</span>
+          }
+        </button>
+
+      </form>
+
+      <!-- Card Footer -->
+      <div class="card-footer-action">
+        <span>Đã có tài khoản đối tác?</span>
+        <a routerLink="/login" class="login-redirect-link">Đăng nhập tại đây &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+

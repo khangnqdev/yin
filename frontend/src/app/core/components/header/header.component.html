@@ -1,0 +1,105 @@
+<header class="yin-header-root">
+  <div class="yin-container header-container">
+    <div class="header-left">
+      <a routerLink="/" class="brand-link" (click)="closeMobileMenu()">
+        <img src="/assets/logo/yinkenna.svg" alt="Yin Tech Logo" class="brand-logo" width="120" height="36" />
+      </a>
+
+      <nav class="desktop-nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">Trang Chủ</a>
+        <a routerLink="/about" routerLinkActive="active" class="nav-item">Về Yin</a>
+        <a routerLink="/projects" routerLinkActive="active" class="nav-item">Giải Pháp & Dự Án</a>
+        <a routerLink="/blog" routerLinkActive="active" class="nav-item">Tri Thức & Báo Chí</a>
+        <yin-contact-link cssClass="nav-item" routerLinkActive="active">Liên Hệ</yin-contact-link>
+      </nav>
+    </div>
+
+    <div class="header-actions">
+      <div class="language-switch" role="group" [attr.aria-label]="languageService.language() === 'vi' ? 'Ngôn ngữ trang web' : 'Website language'">
+        <button type="button" [class.active]="languageService.language() === 'vi'" [attr.aria-pressed]="languageService.language() === 'vi'" (click)="languageService.setLanguage('vi')">VI</button>
+        <button type="button" [class.active]="languageService.language() === 'en'" [attr.aria-pressed]="languageService.language() === 'en'" (click)="languageService.setLanguage('en')">EN</button>
+      </div>
+      
+      <!-- Client Auth State -->
+      @if (clientAuth.isLoggedIn()) {
+        <a routerLink="/account" class="client-portal-pill" title="Hồ sơ tài khoản khách hàng">
+          <div class="client-avatar-badge">{{ clientAuth.currentUser()?.username?.charAt(0)?.toUpperCase() }}</div>
+          <span class="client-portal-name">{{ clientAuth.currentUser()?.username }}</span>
+        </a>
+        <button type="button" class="header-logout-btn" (click)="logoutClient()" title="Đăng xuất khỏi hệ thống">
+          <span>Đăng xuất</span>
+        </button>
+      } @else {
+        <a routerLink="/login" class="nav-login-btn">
+          <span>Đăng Nhập</span>
+        </a>
+        <a routerLink="/register" class="nav-register-btn">
+          <span>Đăng Ký</span>
+        </a>
+      }
+
+      <yin-contact-link class="header-contact-action" cssClass="yin-btn yin-btn-primary nav-cta-pill">
+        <span>Tư Vấn Dự Án</span>
+      </yin-contact-link>
+
+      <!-- Theme Switcher -->
+      <button 
+        type="button" 
+        class="theme-toggle-btn" 
+        (click)="themeService.toggleTheme()" 
+        [title]="themeService.isDark() ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối'">
+        <yin-icon [name]="themeService.isDark() ? 'sun' : 'moon'" [size]="18"></yin-icon>
+      </button>
+
+      <button class="mobile-toggle-btn" (click)="toggleMobileMenu()" [attr.aria-label]="languageService.language() === 'vi' ? 'Mở hoặc đóng menu' : 'Toggle menu'">
+        <yin-icon [name]="isMobileMenuOpen() ? 'close' : 'list'" [size]="24"></yin-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (isMobileMenuOpen()) {
+    <div class="mobile-menu-drawer">
+      <a routerLink="/" (click)="closeMobileMenu()" class="mobile-nav-item">Trang Chủ</a>
+      <a routerLink="/about" (click)="closeMobileMenu()" class="mobile-nav-item">Về Yin</a>
+      <a routerLink="/projects" (click)="closeMobileMenu()" class="mobile-nav-item">Giải Pháp & Dự Án</a>
+      <a routerLink="/blog" (click)="closeMobileMenu()" class="mobile-nav-item">Tri Thức & Báo Chí</a>
+      <yin-contact-link cssClass="mobile-nav-item" (clicked)="closeMobileMenu()">Liên Hệ</yin-contact-link>
+
+      <div class="mobile-actions">
+        @if (clientAuth.isLoggedIn()) {
+          <a routerLink="/account" (click)="closeMobileMenu()" class="yin-btn yin-btn-secondary" style="width: 100%;">
+            Tài Khoản ({{ clientAuth.currentUser()?.username }})
+          </a>
+          <a routerLink="/account/support" (click)="closeMobileMenu()" class="yin-btn yin-btn-secondary" style="width: 100%;">
+            Gửi Ticket Hỗ Trợ
+          </a>
+          <button type="button" class="yin-btn yin-btn-secondary" style="width: 100%;" (click)="logoutClient()">
+            Đăng Xuất
+          </button>
+        } @else {
+          <a routerLink="/login" (click)="closeMobileMenu()" class="yin-btn yin-btn-secondary" style="width: 100%;">
+            Đăng Nhập Khách Hàng
+          </a>
+          <a routerLink="/register" (click)="closeMobileMenu()" class="yin-btn yin-btn-secondary" style="width: 100%;">
+            Đăng Ký Tài Khoản
+          </a>
+        }
+        <yin-contact-link 
+          cssClass="yin-btn yin-btn-primary" 
+          style="width: 100%; display: block; text-align: center;" 
+          (clicked)="closeMobileMenu()">
+          Tư Vấn Dự Án
+        </yin-contact-link>
+
+        <button 
+          type="button" 
+          class="yin-btn yin-btn-secondary mobile-pwa-install-btn" 
+          (click)="installApp()" 
+          style="width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <yin-icon [name]="pwa.isStandalone() ? 'check-circle' : 'smartphone'" [size]="18"></yin-icon>
+          <span>{{ pwa.isStandalone() ? 'Đang Mở Dạng In-App' : 'Cài Đặt App (In-App)' }}</span>
+        </button>
+      </div>
+    </div>
+  }
+</header>

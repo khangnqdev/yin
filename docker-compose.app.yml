@@ -1,0 +1,57 @@
+# ==============================================================================
+# YIN TECHNOLOGY PLATFORM - DOCKER APPLICATION STACK
+# Angular/Nginx và Spring Boot API, sử dụng SQL Server trên yin-network
+# Cách chạy: docker compose -f docker-compose.app.yml up -d
+# ==============================================================================
+
+services:
+  yin-backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: yin-backend-api
+    restart: always
+    environment:
+      BACKEND_PORT: 8080
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200,http://127.0.0.1:4200}
+      MSSQL_HOST: yin-mssql-db
+      MSSQL_PORT: 1433
+      MSSQL_DB_NAME: ${MSSQL_DB_NAME:-yin_tech_db}
+      MSSQL_ENCRYPT: ${MSSQL_ENCRYPT:-true}
+      MSSQL_TRUST_SERVER_CERTIFICATE: ${MSSQL_TRUST_SERVER_CERTIFICATE:-true}
+      MSSQL_POOL_SIZE: ${MSSQL_POOL_SIZE:-10}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      APP_SEED_ENABLED: ${APP_SEED_ENABLED:-true}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+      MEDIA_STORAGE_DIR: /app/media
+    volumes:
+      - yin_media:/app/media
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
+    networks:
+      - yin-network
+
+  yin-frontend-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: yin-frontend-web
+    restart: always
+    ports:
+      - "${FRONTEND_BIND_ADDRESS:-127.0.0.1}:${FRONTEND_PORT:-4200}:80"
+    networks:
+      - yin-network
+    depends_on:
+      - yin-backend-api
+
+networks:
+  yin-network:
+    name: yin-network
+    driver: bridge
+
+volumes:
+  yin_media:
+

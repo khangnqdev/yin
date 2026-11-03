@@ -1,0 +1,208 @@
+<main class="support-page-root">
+  <div class="yin-container support-container">
+    
+    <!-- Top Nav Back -->
+    <div class="top-nav-row">
+      <a routerLink="/account" class="back-link">
+        <span>&larr; Quay lại Hồ Sơ Tài Khoản</span>
+      </a>
+      <div class="top-actions">
+        <button 
+          type="button" 
+          class="yin-btn yin-btn-primary create-ticket-btn"
+          (click)="toggleCreateForm()">
+          <yin-icon [name]="isCreatingNew() ? 'close' : 'plus'" [size]="16"></yin-icon>
+          <span>{{ isCreatingNew() ? 'Đóng Biểu Mẫu' : 'Gửi Yêu Cầu Hỗ Trợ Mới' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="support-header">
+      <div class="yin-badge">
+        <yin-icon name="help-circle" [size]="14"></yin-icon>
+        <span>Trung Tâm Tiếp Nhận & Tư Vấn</span>
+      </div>
+      <h1 class="page-title">Yêu Cầu Hỗ Trợ & Khảo Sát Kỹ Thuật</h1>
+      <p class="page-desc">
+        Kênh giao tiếp trực tiếp giữa doanh nghiệp của bạn và đội ngũ kỹ sư kiến trúc Yin. Chúng tôi cam kết phản hồi trong vòng 2–4 giờ làm việc.
+      </p>
+    </header>
+
+    <!-- Success Feedback Alert -->
+    @if (successAlert()) {
+      <div class="alert-box alert-success" role="status">
+        <yin-icon name="check-circle" [size]="18"></yin-icon>
+        <span>{{ successAlert() }}</span>
+      </div>
+    }
+
+    <!-- Create Support Ticket Card -->
+    @if (isCreatingNew()) {
+      <section class="ticket-form-card yin-card">
+        <div class="form-card-title-row">
+          <yin-icon name="edit-3" [size]="20"></yin-icon>
+          <h2>Tạo Yêu Cầu Kỹ Thuật Mới</h2>
+        </div>
+        <p class="form-card-desc">Vui lòng mô tả chi tiết bài toán, lỗi hệ thống hoặc giải pháp bạn mong muốn khảo sát.</p>
+
+        @if (formError()) {
+          <div class="alert-box alert-error" role="alert">
+            <yin-icon name="alert-circle" [size]="18"></yin-icon>
+            <span>{{ formError() }}</span>
+          </div>
+        }
+
+        <form class="ticket-form" (ngSubmit)="submitTicket()" novalidate>
+          
+          <!-- Subject -->
+          <div class="form-group">
+            <div class="label-with-count">
+              <label for="ticket-subject" class="form-label">
+                <span>Chủ đề yêu cầu</span>
+                <span class="required-star">*</span>
+              </label>
+              <span class="char-counter">{{ subject().length }}/200</span>
+            </div>
+            <input 
+              id="ticket-subject" 
+              name="subject" 
+              type="text" 
+              class="yin-input" 
+              placeholder="VD: Cần tư vấn thiết kế cụm phân tán High-Concurrency"
+              [ngModel]="subject()" 
+              (ngModelChange)="subject.set($event)"
+              maxlength="200"
+              required />
+            <span class="field-hint">Tối thiểu 3 ký tự, tối đa 200 ký tự.</span>
+          </div>
+
+          <!-- Message -->
+          <div class="form-group">
+            <div class="label-with-count">
+              <label for="ticket-message" class="form-label">
+                <span>Nội dung chi tiết</span>
+                <span class="required-star">*</span>
+              </label>
+              <span class="char-counter">{{ message().length }}/5000</span>
+            </div>
+            <textarea 
+              id="ticket-message" 
+              name="message" 
+              rows="6" 
+              class="yin-textarea" 
+              placeholder="Mô tả cụ thể hiện trạng kiến trúc, công nghệ đang áp dụng, hành vi mong muốn hoặc các thông số cần đo lường…"
+              [ngModel]="message()" 
+              (ngModelChange)="message.set($event)"
+              maxlength="5000"
+              required></textarea>
+            <span class="field-hint">Tối thiểu 10 ký tự, tối đa 5000 ký tự.</span>
+          </div>
+
+          <!-- Buttons -->
+          <div class="form-action-row">
+            <button 
+              type="button" 
+              class="yin-btn yin-btn-secondary cancel-btn"
+              (click)="toggleCreateForm()">
+              <span>Hủy Bỏ</span>
+            </button>
+            <button 
+              type="submit" 
+              class="yin-btn yin-btn-primary submit-ticket-btn"
+              [disabled]="submitting()">
+              @if (submitting()) {
+                <span>Đang gửi yêu cầu…</span>
+              } @else {
+                <span>Gửi Yêu Cầu Hỗ Trợ</span>
+              }
+            </button>
+          </div>
+
+        </form>
+      </section>
+    }
+
+    <!-- Tickets List Section -->
+    <section class="tickets-list-section">
+      <div class="list-header-row">
+        <div class="list-title-wrap">
+          <h2>Danh Sách Yêu Cầu Của Bạn</h2>
+          <span class="count-pill">{{ totalCount() }} yêu cầu</span>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="loading-state yin-card">
+          <p>Đang tải danh sách yêu cầu hỗ trợ…</p>
+        </div>
+      } @else if (requests().length === 0) {
+        <div class="empty-state yin-card">
+          <div class="empty-icon-wrap">
+            <yin-icon name="inbox" [size]="40"></yin-icon>
+          </div>
+          <h3>Chưa Có Yêu Cầu Hỗ Trợ Nào</h3>
+          <p>Khi bạn gửi yêu cầu kỹ thuật hoặc tư vấn kiến trúc, thông tin và tiến độ giải quyết sẽ hiển thị đầy đủ tại đây.</p>
+          <button type="button" class="yin-btn yin-btn-primary" (click)="toggleCreateForm()">
+            <span>Tạo Yêu Cầu Đầu Tiên</span>
+          </button>
+        </div>
+      } @else {
+        <div class="tickets-grid">
+          @for (ticket of requests(); track ticket.id) {
+            <article class="ticket-card yin-card" [class]="'status-border-' + ticket.status.toLowerCase()">
+              
+              <div class="ticket-card-top">
+                <span class="status-badge" [class]="'badge-' + ticket.status.toLowerCase()">
+                  {{ getStatusLabel(ticket.status) }}
+                </span>
+                <span class="ticket-date">
+                  Gửi lúc: {{ ticket.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+              </div>
+
+              <!-- Safe text binding for subject (XSS protection) -->
+              <h3 class="ticket-subject">{{ ticket.subject }}</h3>
+
+              <!-- Safe text binding for message (XSS protection) -->
+              <p class="ticket-message">{{ ticket.message }}</p>
+
+              <div class="ticket-card-footer">
+                <span class="ticket-id font-mono">Mã: {{ ticket.id.substring(0, 8) }}…</span>
+                @if (ticket.updatedAt && ticket.updatedAt !== ticket.createdAt) {
+                  <span class="ticket-updated">
+                    Cập nhật: {{ ticket.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+                  </span>
+                }
+              </div>
+
+            </article>
+          }
+        </div>
+
+        @if (totalPages() > 1) {
+          <div class="pagination-bar">
+            <button 
+              type="button" 
+              class="yin-btn yin-btn-secondary page-btn" 
+              [disabled]="currentPage() === 0"
+              (click)="changePage(currentPage() - 1)">
+              &larr; Trang trước
+            </button>
+            <span class="page-info">Trang {{ currentPage() + 1 }} / {{ totalPages() }}</span>
+            <button 
+              type="button" 
+              class="yin-btn yin-btn-secondary page-btn" 
+              [disabled]="currentPage() >= totalPages() - 1"
+              (click)="changePage(currentPage() + 1)">
+              Trang sau &rarr;
+            </button>
+          </div>
+        }
+      }
+
+    </section>
+
+  </div>
+</main>
+

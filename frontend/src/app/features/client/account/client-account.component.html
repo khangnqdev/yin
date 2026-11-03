@@ -1,0 +1,134 @@
+<main class="account-page-root">
+  <div class="yin-container account-container">
+
+    <!-- Toast Notification -->
+    @if (toastMessage()) {
+      <div class="toast-notification" [class.toast-error]="toastType() === 'error'" role="status">
+        <yin-icon [name]="toastType() === 'error' ? 'alert-circle' : 'check-circle'" [size]="18"></yin-icon>
+        <span>{{ toastMessage() }}</span>
+      </div>
+    }
+
+    <!-- Account Top Hero Banner -->
+    <header class="account-hero-banner yin-card">
+      <div class="hero-left">
+        <div class="user-avatar-large">
+          <span>{{ profile()?.username?.charAt(0)?.toUpperCase() || 'C' }}</span>
+        </div>
+        <div class="user-greeting">
+          <div class="badge-row">
+            <span class="yin-badge">Cổng Khách Hàng Doanh Nghiệp</span>
+            <span class="role-pill">Vai trò: {{ profile()?.role }}</span>
+          </div>
+          <h1 class="welcome-heading">Xin chào, {{ profile()?.username }}</h1>
+          <p class="account-subtext">
+            Quản trị tài khoản đối tác, thông số bảo mật và kênh tiếp nhận hỗ trợ kỹ thuật trực tiếp từ Founder Khang và đội ngũ kỹ sư Yin.
+          </p>
+        </div>
+      </div>
+
+      <div class="hero-right-actions">
+        <a routerLink="/account/support" class="yin-btn yin-btn-primary support-cta-btn">
+          <yin-icon name="message-square" [size]="16"></yin-icon>
+          <span>Yêu Cầu Hỗ Trợ Kỹ Thuật</span>
+        </a>
+        <button type="button" class="yin-btn yin-btn-secondary logout-btn" (click)="logout()">
+          <span>Đăng xuất</span>
+        </button>
+      </div>
+    </header>
+
+    @if (loading()) {
+      <div class="loading-state yin-card">
+        <p>Đang tải thông tin hồ sơ tài khoản…</p>
+      </div>
+    } @else if (profile(); as user) {
+      <div class="account-grid">
+        
+        <!-- Card 1: Profile Details -->
+        <section class="profile-card yin-card">
+          <div class="section-title-row">
+            <yin-icon name="user" [size]="20"></yin-icon>
+            <h2>Hồ Sơ Tài Khoản</h2>
+          </div>
+          <p class="section-desc">Thông tin định danh và số điện thoại liên lạc của doanh nghiệp bạn.</p>
+
+          <div class="info-list">
+            <div class="info-item">
+              <span class="info-label">Tên đăng nhập (Username)</span>
+              <span class="info-val strong-val">{{ user.username }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Địa chỉ Email</span>
+              <span class="info-val">{{ user.email }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Số điện thoại liên hệ</span>
+              <span class="info-val font-mono">{{ user.phone }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Ngày sinh</span>
+              <span class="info-val font-mono">{{ user.dateOfBirth }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Thời gian tạo tài khoản</span>
+              <span class="info-val font-mono">{{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 2: Subscription & Updates Settings -->
+        <section class="settings-card yin-card">
+          <div class="section-title-row">
+            <yin-icon name="bell" [size]="20"></yin-icon>
+            <h2>Bản Tin & Cập Nhật Công Nghệ</h2>
+          </div>
+          <p class="section-desc">Tùy chọn nhận thông báo về kiến trúc phần mềm, thông cáo bảo mật và giải pháp mới từ Yin.</p>
+
+          <div class="opt-in-box" [class.opted-in]="user.receiveUpdates">
+            <label class="opt-in-label">
+              <input 
+                type="checkbox" 
+                class="opt-in-checkbox"
+                [checked]="user.receiveUpdates" 
+                [disabled]="updatingOptIn()"
+                (change)="toggleUpdates()" />
+              <div class="opt-in-content">
+                <div class="opt-in-header">
+                  <span class="opt-in-title">Nhận thông tin cập nhật công nghệ từ Yin</span>
+                  <span class="status-indicator-pill" [class.active]="user.receiveUpdates">
+                    {{ user.receiveUpdates ? 'Đang nhận bản tin' : 'Đã tạm tắt' }}
+                  </span>
+                </div>
+                <p class="opt-in-explanation">
+                  Khi bật tùy chọn này, bạn sẽ nhận được thông tin chuyên sâu từ Founder Khang về các công nghệ Microservices, chuẩn mã hóa dữ liệu cao cấp và giải pháp tối ưu cơ sở dữ liệu quy mô lớn.
+                </p>
+              </div>
+            </label>
+            @if (updatingOptIn()) {
+              <div class="updating-spinner">Đang cập nhật tùy chọn…</div>
+            }
+          </div>
+
+          <!-- Support Quick Card -->
+          <div class="support-shortcut-box">
+            <div class="shortcut-text">
+              <h3>Bạn cần hỗ trợ khẩn cấp hoặc tư vấn giải pháp?</h3>
+              <p>Mở ticket yêu cầu kỹ thuật trực tiếp để được đội ngũ Yin phản hồi và xử lý nhanh chóng.</p>
+            </div>
+            <a routerLink="/account/support" class="yin-btn yin-btn-primary">
+              <span>Mở danh sách Ticket &rarr;</span>
+            </a>
+          </div>
+        </section>
+
+      </div>
+    }
+
+  </div>
+</main>
+

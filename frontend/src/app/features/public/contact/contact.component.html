@@ -1,0 +1,288 @@
+<div class="contact-page-root">
+  @if (headerBlocks().length > 0) {
+    <yin-dynamic-page-host [blocks]="headerBlocks()" />
+  }
+
+  <section class="form-wrapper-section" id="contact-form">
+    <div class="yin-container">
+      <div class="contact-card-grid">
+        
+        <!-- Left Column: Workday Navy Panel -->
+        <div class="company-info-panel">
+          <div class="yin-badge" style="background: rgba(250, 120, 20, 0.2); color: #FA7814; border-color: rgba(250, 120, 20, 0.4);">
+            <yin-icon name="sparkles" [size]="14"></yin-icon>
+            <span>Tư Vấn Kiến Trúc Trực Tiếp</span>
+          </div>
+
+          <h2 class="panel-title">Thi Công Giải Pháp Cùng Founder Khang</h2>
+          <p class="panel-desc">
+            Tại Yin, chúng tôi đồng hành trực tiếp cùng các nhà sáng lập và CTO để xây dựng nền tảng phần mềm quy mô lớn, tối ưu kiến trúc và kiểm soát ngân sách theo chuẩn doanh nghiệp.
+          </p>
+
+          <div class="info-items">
+            <div class="info-row">
+              <div class="icon-wrap"><yin-icon name="map-pin" [size]="18"></yin-icon></div>
+              <div>
+                <span class="info-label">Trụ Sở Làm Việc</span>
+                <span class="info-val">{{ officeAddress() }}</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="icon-wrap"><yin-icon name="mail" [size]="18"></yin-icon></div>
+              <div>
+                <span class="info-label">Email Tiếp Nhận Hồ Sơ</span>
+                <span class="info-val">contact&#64;yin.vn</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="icon-wrap"><yin-icon name="phone" [size]="18"></yin-icon></div>
+              <div>
+                <span class="info-label">Hotline Kỹ Thuật (Khang)</span>
+                <span class="info-val">+84 900 123 456</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="icon-wrap"><yin-icon name="clock" [size]="18"></yin-icon></div>
+              <div>
+                <span class="info-label">Cam Kết Phản Hồi SLA</span>
+                <span class="info-val">Trong vòng 24 giờ làm việc</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="guarantee-box">
+            <yin-icon name="check" [size]="18" className="guarantee-icon"></yin-icon>
+            <span>Cam kết ký thỏa thuận bảo mật NDA trước khi tiếp cận tài liệu kỹ thuật của quý doanh nghiệp.</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Clean White Form Panel -->
+        <div class="form-panel yin-card">
+          @if (isSuccess()) {
+            <div class="success-alert">
+              <div class="success-icon-wrap">
+                <yin-icon name="check" [size]="32"></yin-icon>
+              </div>
+              <h3 class="success-title">Đã Tiếp Nhận Thông Tin Thành Công!</h3>
+              <p class="success-desc">
+                Cảm ơn bạn đã liên hệ với Yin. Founder Khang và nhóm kỹ sư đã nhận được yêu cầu và sẽ liên hệ trao đổi phương án kỹ thuật sớm nhất.
+              </p>
+              <button type="button" class="yin-btn yin-btn-secondary" (click)="resetForm()">
+                Gửi Thêm Yêu Cầu Khác
+              </button>
+            </div>
+          } @else {
+            <form (ngSubmit)="submitContactForm()" class="contact-actual-form">
+              <h3 class="form-heading">Gửi Yêu Cầu Tư Vấn & Khảo Sát Dự Án</h3>
+
+              @if (errorMessage()) {
+                <div class="error-banner">
+                  <span>{{ errorMessage() }}</span>
+                </div>
+              }
+
+              <!-- Honeypot ẩn (Bảo mật chống bot) -->
+              <input 
+                type="text" 
+                name="user_website_url" 
+                class="sr-only" 
+                tabindex="-1" 
+                autocomplete="off"
+                [ngModel]="honeypot()" 
+                (ngModelChange)="honeypot.set($event)" />
+
+              <div class="form-row two-cols">
+                <div class="form-group">
+                  <label for="fullName">Họ và tên *</label>
+                  <input 
+                    id="fullName"
+                    type="text" 
+                    class="yin-input" 
+                    placeholder="Nguyễn Văn A" 
+                    [ngModel]="fullName()"
+                    (ngModelChange)="fullName.set($event)" 
+                    name="fullName"
+                    required />
+                </div>
+                <div class="form-group">
+                  <label for="email">Địa chỉ Email doanh nghiệp *</label>
+                  <input 
+                    id="email"
+                    type="email" 
+                    class="yin-input" 
+                    placeholder="email@congty.com" 
+                    [ngModel]="email()"
+                    (ngModelChange)="email.set($event)" 
+                    name="email"
+                    required />
+                </div>
+              </div>
+
+              <div class="form-row two-cols">
+                <div class="form-group">
+                  <label for="phone">Số điện thoại *</label>
+                  <input 
+                    id="phone"
+                    type="tel" 
+                    class="yin-input" 
+                    placeholder="0912 345 678" 
+                    [ngModel]="phone()"
+                    (ngModelChange)="phone.set($event)" 
+                    name="phone"
+                    required />
+                </div>
+                <div class="form-group">
+                  <label for="companyName">Tên doanh nghiệp / Đơn vị</label>
+                  <input 
+                    id="companyName"
+                    type="text" 
+                    class="yin-input" 
+                    placeholder="Công ty Cổ Phần..." 
+                    [ngModel]="companyName()"
+                    (ngModelChange)="companyName.set($event)" 
+                    name="companyName" />
+                </div>
+              </div>
+
+              <div class="form-row two-cols">
+                <div class="form-group">
+                  <label for="projectType">Loại hình phần mềm cần thi công</label>
+                  <select 
+                    id="projectType"
+                    class="yin-select" 
+                    [ngModel]="projectType()"
+                    (ngModelChange)="projectType.set($event)" 
+                    name="projectType">
+                    <option value="Hệ thống Web & Mobile Doanh nghiệp">Hệ thống Web & Mobile Doanh nghiệp</option>
+                    <option value="Kiến trúc Microservices & Cloud Backend">Kiến trúc Microservices & Cloud Backend</option>
+                    <option value="Nền tảng Fintech / Logistics Chịu Tải Cao">Nền tảng Fintech / Logistics Chịu Tải Cao</option>
+                    <option value="Tối ưu & Tái cấu trúc Hệ thống cũ (Legacy Modernization)">Tối ưu & Tái cấu trúc Hệ thống cũ</option>
+                    <option value="Tư vấn Kiến trúc & Đánh giá Bảo mật">Tư vấn Kiến trúc & Đánh giá Bảo mật</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="budgetRange">Ngân sách dự kiến</label>
+                  <select 
+                    id="budgetRange"
+                    class="yin-select" 
+                    [ngModel]="budgetRange()"
+                    (ngModelChange)="budgetRange.set($event)" 
+                    name="budgetRange">
+                    <option value="Dưới 200M VNĐ">Dưới 200M VNĐ</option>
+                    <option value="200M - 500M VNĐ">200M - 500M VNĐ</option>
+                    <option value="500M - 1 Tỷ VNĐ">500M - 1 Tỷ VNĐ</option>
+                    <option value="Trên 1 Tỷ VNĐ">Trên 1 Tỷ VNĐ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="message">Mô tả tóm tắt bài toán hoặc yêu cầu kỹ thuật *</label>
+                <textarea 
+                  id="message"
+                  class="yin-textarea" 
+                  rows="4" 
+                  placeholder="Chia sẻ về mục tiêu, quy mô người dùng hoặc các vấn đề kỹ thuật bạn đang cần giải quyết..."
+                  [ngModel]="message()"
+                  (ngModelChange)="message.set($event)" 
+                  name="message"
+                  required></textarea>
+              </div>
+
+              <button 
+                type="submit" 
+                class="yin-btn yin-btn-primary submit-btn"
+                [disabled]="isSubmitting()">
+                @if (isSubmitting()) {
+                  <span>Đang gửi thông tin...</span>
+                } @else {
+                  <span>Gửi Yêu Cầu Khảo Sát</span>
+                  <yin-icon name="arrow-right" [size]="18"></yin-icon>
+                }
+              </button>
+            </form>
+          }
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Bản Đồ Chỉ Đường Trực Quan (Google Maps Navigation) -->
+  <section class="office-map-section" id="office-location-map">
+    <div class="yin-container">
+      <div class="map-card-wrapper yin-card">
+        
+        <div class="map-header-bar">
+          <div class="map-title-wrap">
+            <span class="yin-badge">
+              <yin-icon name="map-pin" [size]="14"></yin-icon>
+              <span>Vị Trí & Chỉ Đường</span>
+            </span>
+            <h3 class="map-heading">Ghé Thăm Trụ Sở Công Nghệ Yin</h3>
+            <p class="map-desc">
+              Chỉ cần 1 chạm để mở trực tiếp ứng dụng Google Maps và nhận lộ trình dẫn đường nhanh nhất từ vị trí hiện tại của bạn đến văn phòng làm việc của chúng tôi.
+            </p>
+          </div>
+
+          <div class="map-actions-wrap">
+            <a 
+              [href]="googleMapsDirectionsUrl()" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="yin-btn yin-btn-primary map-directions-btn"
+              title="Mở Google Maps và bắt đầu dẫn đường">
+              <yin-icon name="navigation" [size]="18"></yin-icon>
+              <span>Mở Google Maps Chỉ Đường</span>
+              <yin-icon name="external-link" [size]="15"></yin-icon>
+            </a>
+
+            <button 
+              type="button" 
+              class="yin-btn yin-btn-secondary copy-address-btn"
+              (click)="copyAddress()"
+              title="Sao chép địa chỉ văn phòng">
+              <yin-icon [name]="isCopied() ? 'check' : 'copy'" [size]="16"></yin-icon>
+              <span>{{ isCopied() ? 'Đã sao chép địa chỉ!' : 'Sao chép địa chỉ' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="map-iframe-container">
+          <iframe 
+            [src]="safeEmbedUrl()" 
+            class="google-map-iframe"
+            loading="lazy" 
+            title="Bản đồ vị trí Công ty Công nghệ Yin"
+            allowfullscreen 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+
+          <div class="map-overlay-badge">
+            <div class="pin-icon-wrap">
+              <yin-icon name="map-pin" [size]="20"></yin-icon>
+            </div>
+            <div class="badge-text">
+              <strong class="company-badge-name">{{ officeLabel() }}</strong>
+              <span class="company-badge-addr">{{ officeAddress() }}</span>
+            </div>
+            <a 
+              [href]="googleMapsDirectionsUrl()" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="overlay-direct-btn"
+              title="Bắt đầu lộ trình">
+              <span>Chỉ đường</span>
+              <yin-icon name="arrow-right" [size]="14"></yin-icon>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>

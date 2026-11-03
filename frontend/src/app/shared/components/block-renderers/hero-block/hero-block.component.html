@@ -1,0 +1,57 @@
+<section class="yin-hero-section tracked-block" [attr.id]="block().id">
+  <div class="yin-container hero-container">
+    <div class="hero-content">
+      @if (block().badgeText) {
+        <div class="yin-badge hero-badge">
+          <yin-icon name="sparkles" [size]="14"></yin-icon>
+          <span>{{ block().badgeText }}</span>
+        </div>
+      }
+
+      <h1 class="hero-headline">
+        {{ block().headline }}
+        @if (block().highlightText) {
+          <span class="highlight-text">{{ block().highlightText }}</span>
+        }
+      </h1>
+
+      <p class="hero-description">{{ block().description }}</p>
+
+      <div class="hero-buttons">
+        @if (block().primaryCtaText) {
+          <a [routerLink]="block().primaryCtaLink" class="yin-btn yin-btn-primary hero-btn-main" (click)="onBtnClick(block().primaryCtaLink, $event)">
+            <span>{{ block().primaryCtaText }}</span>
+            <yin-icon name="arrow-right" [size]="18"></yin-icon>
+          </a>
+        }
+        @if (block().secondaryCtaText) {
+          <a [routerLink]="block().secondaryCtaLink" class="yin-btn yin-btn-secondary hero-btn-sub" (click)="onBtnClick(block().secondaryCtaLink, $event)">
+            <span>{{ block().secondaryCtaText }}</span>
+          </a>
+        }
+      </div>
+
+      <!-- Workday Enterprise Trust Bar -->
+      <div class="enterprise-trust-bar">
+        <span class="trust-title">Được tin cậy bởi các doanh nghiệp & đối tác công nghệ tiên phong</span>
+        <div class="trust-badges">
+          <span class="trust-chip">Enterprise Architecture</span>
+          <span class="trust-chip">Microservices High-TPS</span>
+          <span class="trust-chip">Zero-Debt Engineering</span>
+          <span class="trust-chip">SLA 99.99%</span>
+        </div>
+      </div>
+
+      @if (block().statsPreview && block().statsPreview.length > 0) {
+        <div class="hero-stats-preview">
+          @for (stat of block().statsPreview; track stat.label) {
+            <div class="stat-card-workday">
+              <span class="stat-val">{{ stat.value }}</span>
+              <span class="stat-lbl">{{ stat.label }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

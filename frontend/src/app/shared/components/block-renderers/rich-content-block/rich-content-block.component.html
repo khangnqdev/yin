@@ -1,0 +1,23 @@
+<section class="yin-rich-content-section tracked-block" [attr.id]="block().id">
+  <div class="yin-container">
+    <div class="rich-content-wrapper yin-card">
+      @if (block().title) {
+        <h2 class="block-title">{{ block().title }}</h2>
+      }
+      @if (block().items && block().items!.length > 0) {
+        <div class="rich-items-list">
+          @for (item of block().items; track $index) {
+            <div class="rich-item-card">
+              @if (item.heading) {
+                <h3 class="rich-item-heading">{{ item.heading }}</h3>
+              }
+              <p class="rich-item-body">{{ item.body }}</p>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="tiptap-content" [innerHTML]="block().contentHtml"></div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,437 @@
+{
+  "articles": [
+    {
+      "id": "art_1",
+      "title": "Tiêu Chuẩn Thi Công Phần Mềm Doanh Nghiệp 2026: Kiến Trúc Microservices & Event-Driven",
+      "slug": "tieu-chuan-thi-cong-phan-mem-doanh-nghiep-2026",
+      "summary": "Phân tích chi tiết quy trình thi công hệ thống phần mềm chịu tải cao tại Yin, từ phân rã domain đến giải pháp đảm bảo tính toàn vẹn dữ liệu.",
+      "category": "Kien-Truc-Phan-Mem",
+      "thumbnailUrl": "/assets/logo/yinkenna.svg",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Triết lý thi công phần mềm tại Yin\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Tại Yin, dưới sự dẫn dắt của Founder Khang, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Chiến lược kiểm soát hiệu năng & Bảo mật\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.\"}]}]}",
+      "contentHtml": "\n          <h2 id=\"heading-1\">1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?</h2>\n          <p>Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.</p>\n          <h2 id=\"heading-2\">2. Triết lý thi công phần mềm tại Yin</h2>\n          <p>Tại Yin, dưới sự dẫn dắt của Founder Khang, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.</p>\n          <h3 id=\"heading-3\">3. Chiến lược kiểm soát hiệu năng & Bảo mật</h3>\n          <p>Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.</p>\n        ",
+      "status": "PUBLISHED",
+      "focusKeyword": "thi công phần mềm",
+      "seoTitle": "Tiêu Chuẩn Thi Công Phần Mềm Doanh Nghiệp 2026 | Yin Tech",
+      "seoDescription": "Quy trình thi công phần mềm công nghệ cao cấp tại Yin. Tối ưu kiến trúc, chịu tải lớn và bảo mật chuẩn ngân hàng.",
+      "readingTimeMinutes": 3,
+      "wordCount": 380,
+      "viewCount": 412,
+      "authorName": "Khang (Founder)",
+      "publishedAt": "2026-10-15T08:00:00Z",
+      "createdAt": "2026-10-15T08:00:00Z",
+      "updatedAt": "2026-10-15T08:00:00Z"
+    },
+    {
+      "id": "art_2",
+      "title": "Tối Ưu Change Detection Trong Angular v22 Với Signals & Fine-Grained Reactivity",
+      "slug": "toi-uu-change-detection-angular-v22-signals",
+      "summary": "Khám phá cách mạng Signals trong Angular: Loại bỏ Zone.js, giảm tải re-render và xây dựng ứng dụng web với độ mượt tuyệt đối 60 FPS.",
+      "category": "Cong-Nghe",
+      "thumbnailUrl": "/assets/logo/yinkenna.svg",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"Kỷ nguyên Zoneless và Signals\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Angular đã bước sang trang mới với mô hình phản ứng vi hạt (fine-grained reactivity). Không còn việc quét toàn bộ cây component để tìm thay đổi, Signals kích hoạt chính xác DOM node cần cập nhật.\"}]}]}",
+      "contentHtml": "\n          <h2 id=\"heading-zone\">Kỷ nguyên Zoneless và Signals</h2>\n          <p>Angular đã bước sang trang mới với mô hình phản ứng vi hạt (fine-grained reactivity). Không còn việc quét toàn bộ cây component để tìm thay đổi, Signals kích hoạt chính xác DOM node cần cập nhật.</p>\n        ",
+      "status": "PUBLISHED",
+      "focusKeyword": "Angular Signals",
+      "seoTitle": "Tối Ưu Angular v22 Với Signals | Yin Engineering",
+      "seoDescription": "Hướng dẫn chuyên sâu ứng dụng Signals và Zoneless trong Angular v22 từ đội ngũ kỹ sư Yin.",
+      "readingTimeMinutes": 4,
+      "wordCount": 450,
+      "viewCount": 285,
+      "authorName": "Khang (Founder)",
+      "publishedAt": "2026-10-22T09:30:00Z",
+      "createdAt": "2026-10-22T09:30:00Z",
+      "updatedAt": "2026-10-22T09:30:00Z"
+    },
+    {
+      "id": "art_prj_smartport",
+      "title": "Hồ Sơ Năng Lực & Dự Án: Hệ Thống Điều Vận Hàng Hải SmartPort",
+      "slug": "ho-so-du-an-he-thong-dieu-van-hang-hai-smartport",
+      "summary": "Hồ sơ thi công nền tảng IoT điều phối container tự động cho Tập đoàn Cảng biển Quốc tế. Xử lý 2 triệu sự kiện/ngày, giảm 35% thời gian neo đậu tàu cảng.",
+      "category": "Ho-So-Du-An",
+      "thumbnailUrl": "/assets/logo/yinkenna.svg",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Đội ngũ kỹ sư Yin do Founder Khang chủ trì đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Kết quả đo lường thực tế (KPI & SLA)\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.\"}]}]}",
+      "contentHtml": "\n      <h2 id=\"heading-1\">1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế</h2>\n      <p>Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.</p>\n      <h2 id=\"heading-2\">2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin</h2>\n      <p>Đội ngũ kỹ sư Yin do Founder Khang chủ trì đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.</p>\n      <h3 id=\"heading-3\">3. Kết quả đo lường thực tế (KPI & SLA)</h3>\n      <p>Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.</p>\n    ",
+      "status": "PUBLISHED",
+      "focusKeyword": "SmartPort IoT logistics",
+      "seoTitle": "Hồ Sơ Năng Lực Dự Án SmartPort - Điều Vận Cảng Biển | Yin",
+      "seoDescription": "Hồ sơ kỹ thuật dự án SmartPort do Yin thi công. Nền tảng IoT điều phối container tự động xử lý 2 triệu sự kiện/ngày.",
+      "readingTimeMinutes": 4,
+      "wordCount": 520,
+      "viewCount": 625,
+      "authorName": "Khang (Founder & Architect)",
+      "publishedAt": "2026-10-18T08:00:00Z",
+      "createdAt": "2026-10-18T08:00:00Z",
+      "updatedAt": "2026-10-18T08:00:00Z"
+    },
+    {
+      "id": "art_prj_energyx",
+      "title": "Hồ Sơ Năng Lực & Dự Án: Sàn Giao Dịch Năng Lượng Tái Tạo EnergyX",
+      "slug": "ho-so-du-an-san-giao-dich-nang-luong-tai-tao-energyx",
+      "summary": "Hồ sơ thi công sàn giao dịch tín chỉ carbon thời gian thực cho EnergyX Global. Động cơ khớp lệnh đạt độ trễ dưới 15ms, xử lý 10,000 giao dịch/giây.",
+      "category": "Ho-So-Du-An",
+      "thumbnailUrl": "/assets/logo/yinkenna.svg",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Yêu cầu khắt khe của thị trường tín chỉ carbon\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Thị trường tín chỉ carbon và năng lượng tái tạo xuyên biên giới đòi hỏi tính toàn vẹn dữ liệu sổ cái, khả năng khớp lệnh tức thì với độ trễ tối thiểu (sub-15ms), và cơ chế chống double-spending tín chỉ khắt khe theo tiêu chuẩn quốc tế.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Động cơ khớp lệnh In-Memory & Angular Signals Frontend\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Yin đã xây dựng Order Matching Engine viết trên nền tảng Java Reactive Event-Driven với Redis In-Memory Cluster. Giao diện người dùng phát triển trên Angular v22 sử dụng Signals và WebSockets hai chiều, đảm bảo bảng giá và biểu đồ nến cập nhật theo thời gian thực 60 FPS không giật lag.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Chỉ số năng lực vận hành\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Hệ thống đáp ứng thông lượng 10,000 giao dịch/giây trong các phiên cao điểm; 100% lệnh giao dịch được đối soát và kiểm chứng tự động; cam kết thời gian hoạt động Uptime 99.99%.\"}]}]}",
+      "contentHtml": "\n      <h2 id=\"heading-1\">1. Yêu cầu khắt khe của thị trường tín chỉ carbon</h2>\n      <p>Thị trường tín chỉ carbon và năng lượng tái tạo xuyên biên giới đòi hỏi tính toàn vẹn dữ liệu sổ cái, khả năng khớp lệnh tức thì với độ trễ tối thiểu (sub-15ms), và cơ chế chống double-spending tín chỉ khắt khe theo tiêu chuẩn quốc tế.</p>\n      <h2 id=\"heading-2\">2. Động cơ khớp lệnh In-Memory & Angular Signals Frontend</h2>\n      <p>Yin đã xây dựng Order Matching Engine viết trên nền tảng Java Reactive Event-Driven với Redis In-Memory Cluster. Giao diện người dùng phát triển trên Angular v22 sử dụng Signals và WebSockets hai chiều, đảm bảo bảng giá và biểu đồ nến cập nhật theo thời gian thực 60 FPS không giật lag.</p>\n      <h3 id=\"heading-3\">3. Chỉ số năng lực vận hành</h3>\n      <p>Hệ thống đáp ứng thông lượng 10,000 giao dịch/giây trong các phiên cao điểm; 100% lệnh giao dịch được đối soát và kiểm chứng tự động; cam kết thời gian hoạt động Uptime 99.99%.</p>\n    ",
+      "status": "PUBLISHED",
+      "focusKeyword": "EnergyX tín chỉ carbon",
+      "seoTitle": "Hồ Sơ Năng Lực Dự Án EnergyX - Sàn Năng Lượng Tái Tạo | Yin",
+      "seoDescription": "Hồ sơ kiến trúc sàn giao dịch tín chỉ carbon EnergyX do Yin thi công với Java Event-Driven, Angular Signals và Redis.",
+      "readingTimeMinutes": 5,
+      "wordCount": 580,
+      "viewCount": 540,
+      "authorName": "Khang (Founder & Architect)",
+      "publishedAt": "2026-10-25T08:00:00Z",
+      "createdAt": "2026-10-25T08:00:00Z",
+      "updatedAt": "2026-10-25T08:00:00Z"
+    },
+    {
+      "id": "art_prj_medisync",
+      "title": "Hồ Sơ Năng Lực & Dự Án: Hệ Thống Y Tế Thông Minh MediSync",
+      "slug": "ho-so-du-an-he-thong-dieu-van-y-te-thong-minh-medisync",
+      "summary": "Hồ sơ số hóa bệnh án điện tử và điều phối bệnh nhân liên thông 12 bệnh viện vệ tinh, phục vụ 500,000 hồ sơ bệnh án theo chuẩn an toàn bảo mật HIPAA.",
+      "category": "Ho-So-Du-An",
+      "thumbnailUrl": "/assets/logo/yinkenna.svg",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Thách thức kết nối hồ sơ bệnh án phân tán\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Mỗi cơ sở y tế trong chuỗi 12 bệnh viện vệ tinh từng vận hành trên phần mềm riêng lẻ, dữ liệu bệnh án bị phân mảnh khiến việc hội chẩn từ xa và chuyển viện mất nhiều thời gian, tiềm ẩn rủi ro sai sót phác đồ điều trị.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Kiến trúc Microservices & Bảo mật dữ liệu y tế HIPAA\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Yin đã xây dựng hệ thống MediSync với kiến trúc Microservices phân tách độc lập, áp dụng HashiCorp Vault để quản lý mã hóa khóa đầu-cuối (End-to-End Encryption) cho toàn bộ dữ liệu định danh bệnh nhân (PII/PHI). CSDL kết hợp PostgreSQL và cơ chế kiểm soát truy cập dựa trên vai trò phân tầng RBAC nghiêm ngặt.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Tác động xã hội và hiệu quả vận hành\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Hệ thống số hóa thành công 500,000 hồ sơ bệnh nhân, thời gian tra cứu hồ sơ chuyển tuyến giảm từ 2 giờ xuống còn 3 giây, hỗ trợ hơn 3,500 ca hội chẩn từ xa đạt hiệu quả xuất sắc.\"}]}]}",
+      "contentHtml": "\n      <h2 id=\"heading-1\">1. Thách thức kết nối hồ sơ bệnh án phân tán</h2>\n      <p>Mỗi cơ sở y tế trong chuỗi 12 bệnh viện vệ tinh từng vận hành trên phần mềm riêng lẻ, dữ liệu bệnh án bị phân mảnh khiến việc hội chẩn từ xa và chuyển viện mất nhiều thời gian, tiềm ẩn rủi ro sai sót phác đồ điều trị.</p>\n      <h2 id=\"heading-2\">2. Kiến trúc Microservices & Bảo mật dữ liệu y tế HIPAA</h2>\n      <p>Yin đã xây dựng hệ thống MediSync với kiến trúc Microservices phân tách độc lập, áp dụng HashiCorp Vault để quản lý mã hóa khóa đầu-cuối (End-to-End Encryption) cho toàn bộ dữ liệu định danh bệnh nhân (PII/PHI). CSDL kết hợp PostgreSQL và cơ chế kiểm soát truy cập dựa trên vai trò phân tầng RBAC nghiêm ngặt.</p>\n      <h3 id=\"heading-3\">3. Tác động xã hội và hiệu quả vận hành</h3>\n      <p>Hệ thống số hóa thành công 500,000 hồ sơ bệnh nhân, thời gian tra cứu hồ sơ chuyển tuyến giảm từ 2 giờ xuống còn 3 giây, hỗ trợ hơn 3,500 ca hội chẩn từ xa đạt hiệu quả xuất sắc.</p>\n    ",
+      "status": "PUBLISHED",
+      "focusKeyword": "MediSync bệnh án điện tử",
+      "seoTitle": "Hồ Sơ Năng Lực Dự Án MediSync - Y Tế Thông Minh HIPAA | Yin",
+      "seoDescription": "Hồ sơ thi công hệ thống y tế điện tử MediSync kết nối 12 bệnh viện vệ tinh, bảo mật chuẩn HIPAA và mã hóa Vault.",
+      "readingTimeMinutes": 4,
+      "wordCount": 490,
+      "viewCount": 482,
+      "authorName": "Khang (Founder & Architect)",
+      "publishedAt": "2026-10-28T08:00:00Z",
+      "createdAt": "2026-10-28T08:00:00Z",
+      "updatedAt": "2026-10-28T08:00:00Z"
+    },
+    {
+      "id": "art_prj_yinedu",
+      "title": "Hồ Sơ Năng Lực & Dự Án: Nền Tảng Đào Tạo Trực Tuyến E-Learning YinEdu",
+      "slug": "ho-so-du-an-nen-tang-dao-tao-truc-tuyen-yinedu",
+      "summary": "Hồ sơ thi công nền tảng học trực tuyến tương tác cao cho Tổ chức Giáo dục Á Châu. Công nghệ WebRTC streaming phân tán chịu tải 120,000 học viên đồng thời.",
+      "category": "Ho-So-Du-An",
+      "thumbnailUrl": "/assets/logo/yinkenna.svg",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Thách thức quy mô hạ tầng giáo dục số\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Trong các kỳ thi và buổi học quy mô lớn, việc đồng thời phục vụ hơn 100,000 học sinh trực tuyến đòi hỏi băng thông video ổn định, kiểm soát độ trễ dưới 200ms và cơ chế giám sát thi trực tuyến chống gian lận hiệu quả.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Giải pháp Streaming WebRTC phân tán kết hợp Spring WebFlux\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Yin áp dụng công nghệ Selective Forwarding Unit (SFU) qua WebRTC, kết hợp hạ tầng Spring WebFlux phi đồng bộ và CSDL tài liệu MongoDB phân mảnh. Giao diện học viên sử dụng Angular Standalone tối ưu kích thước bundle dưới 180KB.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Kết quả triển khai\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Nền tảng phục vụ an toàn 120,000 học viên đồng thời trong đợt kiểm tra năng lực quốc gia; chi phí hạ tầng máy chủ tối ưu hóa tiết kiệm 42% so với giải pháp cũ.\"}]}]}",
+      "contentHtml": "\n      <h2 id=\"heading-1\">1. Thách thức quy mô hạ tầng giáo dục số</h2>\n      <p>Trong các kỳ thi và buổi học quy mô lớn, việc đồng thời phục vụ hơn 100,000 học sinh trực tuyến đòi hỏi băng thông video ổn định, kiểm soát độ trễ dưới 200ms và cơ chế giám sát thi trực tuyến chống gian lận hiệu quả.</p>\n      <h2 id=\"heading-2\">2. Giải pháp Streaming WebRTC phân tán kết hợp Spring WebFlux</h2>\n      <p>Yin áp dụng công nghệ Selective Forwarding Unit (SFU) qua WebRTC, kết hợp hạ tầng Spring WebFlux phi đồng bộ và CSDL tài liệu MongoDB phân mảnh. Giao diện học viên sử dụng Angular Standalone tối ưu kích thước bundle dưới 180KB.</p>\n      <h3 id=\"heading-3\">3. Kết quả triển khai</h3>\n      <p>Nền tảng phục vụ an toàn 120,000 học viên đồng thời trong đợt kiểm tra năng lực quốc gia; chi phí hạ tầng máy chủ tối ưu hóa tiết kiệm 42% so với giải pháp cũ.</p>\n    ",
+      "status": "PUBLISHED",
+      "focusKeyword": "YinEdu đào tạo trực tuyến",
+      "seoTitle": "Hồ Sơ Năng Lực Dự Án YinEdu - Nền Tảng E-Learning WebRTC | Yin",
+      "seoDescription": "Hồ sơ thi công nền tảng học trực tuyến YinEdu hỗ trợ 120,000 học viên đồng thời với WebRTC và Reactive Spring WebFlux.",
+      "readingTimeMinutes": 4,
+      "wordCount": 460,
+      "viewCount": 395,
+      "authorName": "Khang (Founder & Architect)",
+      "publishedAt": "2026-10-30T08:00:00Z",
+      "createdAt": "2026-10-30T08:00:00Z",
+      "updatedAt": "2026-10-30T08:00:00Z"
+    }
+  ],
+  "pages": {
+    "home": {
+      "pageKey": "home",
+      "pageTitle": "Yin - Công Ty Thi Công Xây Dựng Phần Mềm Công Nghệ",
+      "metaDescription": "Yin chuyên thiết kế và thi công hệ thống phần mềm công nghệ quy mô doanh nghiệp. Vững chắc, hiệu năng cao và bảo mật tuyệt đối.",
+      "updatedAt": "2026-11-02T07:40:50.928Z",
+      "blocks": [
+        {
+          "id": "blk_home_hero",
+          "type": "hero",
+          "badgeText": "Kiến Trúc Sư Phần Mềm Thế Hệ Mới",
+          "headline": "Thi Công Xây Dựng Phần Mềm",
+          "highlightText": "Chuẩn Mực Tương Lai",
+          "description": "Công ty Yin được sáng lập bởi Khang — Chuyên gia thi công các hệ sinh thái phần mềm công nghệ cao, biến những bài toán nghiệp vụ phức tạp thành nền tảng số tinh gọn, bảo mật và siêu tốc độ.",
+          "primaryCtaText": "Khởi Tạo Dự Án",
+          "primaryCtaLink": "/contact",
+          "secondaryCtaText": "Hồ Sơ Năng Lực & Dự Án",
+          "secondaryCtaLink": "/projects",
+          "statsPreview": [
+            {
+              "label": "Uptime Cam Kết",
+              "value": "99.99%"
+            },
+            {
+              "label": "Hiệu Năng Chịu Tải",
+              "value": "15,000+ TPS"
+            },
+            {
+              "label": "Dự Án Hoàn Thành",
+              "value": "35+"
+            }
+          ]
+        },
+        {
+          "id": "blk_home_stats",
+          "type": "stats",
+          "items": [
+            {
+              "number": "35+",
+              "label": "Dự án Enterprise",
+              "description": "Đã bàn giao và vận hành trơn tru"
+            },
+            {
+              "number": "99.99%",
+              "label": "Độ ổn định SLA",
+              "description": "Kiến trúc Multi-region chịu lỗi cao"
+            },
+            {
+              "number": "10x",
+              "label": "Tốc độ truy xuất",
+              "description": "Nhờ tối ưu tầng CSDL và Caching"
+            },
+            {
+              "number": "100%",
+              "label": "Bảo hành kiến trúc",
+              "description": "Bảo hành trọn đời mã nguồn đã thi công"
+            }
+          ]
+        },
+        {
+          "id": "blk_home_projects",
+          "type": "projects-grid",
+          "showFilter": true,
+          "projects": [
+            {
+              "id": "prj_1",
+              "title": "Hệ Thống Điều Vận Hàng Hải SmartPort",
+              "category": "Enterprise Logistics",
+              "summary": "Xây dựng nền tảng IoT điều phối container tự động cho cảng biển, xử lý 2 triệu sự kiện/ngày.",
+              "client": "Tập đoàn Cảng biển Quốc tế",
+              "technologies": [
+                "Spring Boot 3",
+                "Angular Signals",
+                "Kafka",
+                "SQL Server"
+              ],
+              "metrics": "Giảm 35% thời gian neo đậu tàu",
+              "link": "/blog/ho-so-du-an-he-thong-dieu-van-hang-hai-smartport"
+            },
+            {
+              "id": "prj_2",
+              "title": "Sàn Giao Dịch Năng Lượng Tái Tạo EnergyX",
+              "category": "Fintech & CleanTech",
+              "summary": "Nền tảng khớp lệnh giao dịch tín chỉ carbon thời gian thực với độ trễ dưới 15ms.",
+              "client": "EnergyX Global",
+              "technologies": [
+                "Java Event-Driven",
+                "Angular v22",
+                "Redis",
+                "Docker"
+              ],
+              "metrics": "Khớp lệnh 10,000 tx/giây",
+              "link": "/blog/ho-so-du-an-san-giao-dich-nang-luong-tai-tao-energyx"
+            },
+            {
+              "id": "prj_3",
+              "title": "Hệ Thống Y Tế Thông Minh MediSync",
+              "category": "Healthcare Cloud",
+              "summary": "Số hóa bệnh án điện tử liên thông 12 bệnh viện vệ tinh, bảo mật chuẩn HIPAA.",
+              "client": "Hệ Thống Bệnh Viện Đa Khoa",
+              "technologies": [
+                "Microservices",
+                "Angular Standalone",
+                "PostgreSQL",
+                "Vault"
+              ],
+              "metrics": "Phục vụ 500,000 bệnh nhân",
+              "link": "/blog/ho-so-du-an-he-thong-dieu-van-y-te-thong-minh-medisync"
+            }
+          ]
+        },
+        {
+          "id": "blk_home_cta",
+          "type": "cta",
+          "badge": "Sẵn Sàng Hợp Tác",
+          "headline": "Bạn có ý tưởng hoặc bài toán công nghệ thách thức?",
+          "description": "Hãy để Yin và Founder Khang đồng hành cùng bạn thiết kế kiến trúc và thi công phần mềm đạt chuẩn công nghiệp.",
+          "buttonText": "Liên Hệ Tư Vấn Trực Tiếp",
+          "buttonLink": "/contact"
+        }
+      ]
+    },
+    "about": {
+      "pageKey": "about",
+      "pageTitle": "Về Yin - Hành Trình Kiến Tạo Phần Mềm Đỉnh Cao",
+      "metaDescription": "Khám phá câu chuyện thương hiệu Yin, triết lý thi công phần mềm của Founder Khang và cam kết chất lượng của chúng tôi.",
+      "updatedAt": "2026-11-02T07:40:50.928Z",
+      "blocks": [
+        {
+          "id": "blk_about_hero",
+          "type": "hero",
+          "badgeText": "Giới Thiệu Doanh Nghiệp",
+          "headline": "Yin Không Chỉ Viết Code",
+          "highlightText": "Chúng Tôi Thi Công Kiến Trúc Bền Vững",
+          "description": "Được sáng lập bởi Khang, Yin định hình là một Engineering Studio cao cấp. Chúng tôi tin rằng phần mềm xuất sắc phải là sự giao thoa hoàn hảo giữa nghệ thuật kiến trúc, tính toán kỹ thuật chính xác và trải nghiệm người dùng chạm đến cảm xúc.",
+          "primaryCtaText": "Xem Dự Án Thực Tế",
+          "primaryCtaLink": "/projects",
+          "secondaryCtaText": "Đặt Lịch Gặp Khang",
+          "secondaryCtaLink": "/contact",
+          "statsPreview": [
+            {
+              "label": "Kinh nghiệm sáng lập",
+              "value": "8+ Năm"
+            },
+            {
+              "label": "Cam kết chất lượng",
+              "value": "Zero-Debt"
+            }
+          ]
+        },
+        {
+          "id": "blk_about_rich",
+          "type": "rich-content",
+          "title": "Triết lý cốt lõi: 3 Trụ Cột Vàng Tại Yin",
+          "contentHtml": "\n              <div style=\"line-height: 1.8; font-size: 1.05rem;\">\n                <p><strong>1. Kỹ nghệ vững chắc (Engineering Excellence):</strong> Mọi dòng mã tại Yin đều được xem xét kỹ lưỡng như từng viên gạch xây móng. Chúng tôi từ chối giải pháp chắp vá ngắn hạn.</p>\n                <p><strong>2. Trải nghiệm chạm cảm xúc (Impeccable UX):</strong> Hệ thống mạnh mẽ dưới backend nhưng giao diện phía trước phải trực quan, thanh thoát, tinh tế và dễ dùng đến mức người dùng không cần hướng dẫn.</p>\n                <p><strong>3. Minh bạch & Đồng hành (Radical Transparency):</strong> Khách hàng là đối tác chiến lược. Quá trình thi công phần mềm luôn được báo cáo đo lường theo từng tuần, từng milestone rõ ràng.</p>\n              </div>\n            "
+        },
+        {
+          "id": "blk_about_cta",
+          "type": "cta",
+          "badge": "Kết Nối",
+          "headline": "Trao đổi trực tiếp về dự án của bạn",
+          "description": "Founder Khang luôn sẵn sàng lắng nghe mọi đề bài công nghệ từ startup đến doanh nghiệp lớn.",
+          "buttonText": "Gặp Gỡ Đội Ngũ Yin",
+          "buttonLink": "/contact"
+        }
+      ]
+    },
+    "projects": {
+      "pageKey": "projects",
+      "pageTitle": "Dự Án Đã Thi Công | Yin Tech Portfolio",
+      "metaDescription": "Danh mục các dự án phần mềm công nghệ đã được Yin thi công và chuyển giao thành công.",
+      "updatedAt": "2026-11-02T07:40:50.928Z",
+      "blocks": [
+        {
+          "id": "blk_prj_hero",
+          "type": "hero",
+          "badgeText": "Portfolio & Case Studies",
+          "headline": "Những Công Trình Công Nghệ",
+          "highlightText": "Yin Đã Thi Công",
+          "description": "Khám phá các giải pháp phần mềm chuyên sâu mà Yin đã trực tiếp thiết kế kiến trúc, phát triển và tối ưu hiệu năng vận hành cho khách hàng.",
+          "primaryCtaText": "Bắt Đầu Dự Án Mới",
+          "primaryCtaLink": "/contact",
+          "secondaryCtaText": "Về Trang Chủ",
+          "secondaryCtaLink": "/",
+          "statsPreview": []
+        },
+        {
+          "id": "blk_prj_grid",
+          "type": "projects-grid",
+          "showFilter": true,
+          "projects": [
+            {
+              "id": "prj_1",
+              "title": "Hệ Thống Điều Vận Hàng Hải SmartPort",
+              "category": "Enterprise Logistics",
+              "summary": "Xây dựng nền tảng IoT điều phối container tự động cho cảng biển, xử lý 2 triệu sự kiện/ngày.",
+              "client": "Tập đoàn Cảng biển Quốc tế",
+              "technologies": [
+                "Spring Boot 3",
+                "Angular Signals",
+                "Kafka",
+                "SQL Server"
+              ],
+              "metrics": "Giảm 35% thời gian neo đậu tàu",
+              "link": "/blog/ho-so-du-an-he-thong-dieu-van-hang-hai-smartport"
+            },
+            {
+              "id": "prj_2",
+              "title": "Sàn Giao Dịch Năng Lượng Tái Tạo EnergyX",
+              "category": "Fintech & CleanTech",
+              "summary": "Nền tảng khớp lệnh giao dịch tín chỉ carbon thời gian thực với độ trễ dưới 15ms.",
+              "client": "EnergyX Global",
+              "technologies": [
+                "Java Event-Driven",
+                "Angular v22",
+                "Redis",
+                "Docker"
+              ],
+              "metrics": "Khớp lệnh 10,000 tx/giây",
+              "link": "/blog/ho-so-du-an-san-giao-dich-nang-luong-tai-tao-energyx"
+            },
+            {
+              "id": "prj_3",
+              "title": "Hệ Thống Y Tế Thông Minh MediSync",
+              "category": "Healthcare Cloud",
+              "summary": "Số hóa bệnh án điện tử liên thông 12 bệnh viện vệ tinh, bảo mật chuẩn HIPAA.",
+              "client": "Hệ Thống Bệnh Viện Đa Khoa",
+              "technologies": [
+                "Microservices",
+                "Angular Standalone",
+                "PostgreSQL",
+                "Vault"
+              ],
+              "metrics": "Phục vụ 500,000 bệnh nhân",
+              "link": "/blog/ho-so-du-an-he-thong-dieu-van-y-te-thong-minh-medisync"
+            },
+            {
+              "id": "prj_4",
+              "title": "Hệ Thống Quản Lý Đào Tạo E-Learning YinEdu",
+              "category": "EdTech Platform",
+              "summary": "Nền tảng học trực tuyến tương tác cao, hỗ trợ video streaming phân tán và chống gian lận thi cử.",
+              "client": "Tổ chức Giáo dục Á Châu",
+              "technologies": [
+                "WebRTC",
+                "Angular Signals",
+                "Spring WebFlux",
+                "MongoDB"
+              ],
+              "metrics": "120,000 học viên đồng thời",
+              "link": "/blog/ho-so-du-an-nen-tang-dao-tao-truc-tuyen-yinedu"
+            }
+          ]
+        }
+      ]
+    },
+    "blog": {
+      "pageKey": "blog",
+      "pageTitle": "Kho Tri Thức & Bài Báo Kỹ Thuật | Yin Tech Insights",
+      "metaDescription": "Các bài viết phân tích kiến trúc phần mềm, xu hướng công nghệ mới và kinh nghiệm thực chiến từ Yin.",
+      "updatedAt": "2026-11-02T07:40:50.928Z",
+      "blocks": [
+        {
+          "id": "blk_blog_hero",
+          "type": "hero",
+          "badgeText": "Yin Tech Insights",
+          "headline": "Góc Nhìn Kỹ Thuật &",
+          "highlightText": "Tri Thức Phần Mềm",
+          "description": "Nơi đội ngũ Yin và Founder Khang chia sẻ các bài học thực chiến, giải pháp kiến trúc hệ thống và xu hướng công nghệ hàng đầu.",
+          "primaryCtaText": "Liên Hệ Phỏng Vấn / Báo Chí",
+          "primaryCtaLink": "/contact",
+          "secondaryCtaText": "Đọc Bài Mới Nhất",
+          "secondaryCtaLink": "/blog",
+          "statsPreview": []
+        }
+      ]
+    },
+    "contact": {
+      "pageKey": "contact",
+      "pageTitle": "Liên Hệ Hợp Tác | Công Ty Công Nghệ Yin",
+      "metaDescription": "Kết nối với Khang và đội ngũ Yin để nhận tư vấn kỹ thuật và giải pháp thi công phần mềm tối ưu.",
+      "updatedAt": "2026-11-02T07:40:50.928Z",
+      "blocks": [
+        {
+          "id": "blk_contact_hero",
+          "type": "hero",
+          "badgeText": "Tư Vấn Chuyên Sâu",
+          "headline": "Khởi Đầu Công Trình Phần Mềm Của Bạn",
+          "highlightText": "Cùng Đội Ngũ Yin",
+          "description": "Để lại thông tin dự án bên dưới. Founder Khang và các kỹ sư Yin sẽ nghiên cứu bài toán và liên hệ lại trong vòng 24 giờ làm việc.",
+          "primaryCtaText": "Gửi Yêu Cầu Tư Vấn",
+          "primaryCtaLink": "#contact-form",
+          "secondaryCtaText": "Email Trực Tiếp",
+          "secondaryCtaLink": "mailto:contact@yin.vn",
+          "statsPreview": [
+            {
+              "label": "Phản Hồi Nhanh",
+              "value": "< 24 Giờ"
+            },
+            {
+              "label": "Tư Vấn Kiến Trúc",
+              "value": "Miễn Phí"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

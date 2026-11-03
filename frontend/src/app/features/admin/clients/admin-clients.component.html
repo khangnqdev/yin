@@ -1,0 +1,130 @@
+<div class="admin-page-container">
+  
+  <!-- Header -->
+  <header class="page-header-row">
+    <div>
+      <div class="breadcrumb-tag">
+        <yin-icon name="users" [size]="14"></yin-icon>
+        <span>Quản trị khách hàng</span>
+      </div>
+      <h1 class="page-title">Danh Sách Đối Tác & Nhận Bản Tin</h1>
+      <p class="page-subtitle">
+        Theo dõi hồ sơ các khách hàng doanh nghiệp đăng ký tài khoản và danh sách opt-in nhận bản tin công nghệ.
+      </p>
+    </div>
+
+    <div class="header-stat-box">
+      <span class="stat-num">{{ totalCount() }}</span>
+      <span class="stat-lbl">{{ updatesOnly() ? 'Khách bật nhận tin' : 'Tổng khách hàng' }}</span>
+    </div>
+  </header>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="filter-toolbar yin-card">
+    <div class="search-input-wrap">
+      <yin-icon name="search" [size]="16" class="search-icon"></yin-icon>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Tìm kiếm theo username, email hoặc số điện thoại…" 
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        (keyup.enter)="onSearch()" />
+      <button type="button" class="yin-btn yin-btn-secondary filter-btn" (click)="onSearch()">
+        <span>Tìm kiếm</span>
+      </button>
+    </div>
+
+    <div class="filter-actions">
+      <label class="toggle-switch-label">
+        <input 
+          type="checkbox" 
+          [checked]="updatesOnly()" 
+          (change)="toggleUpdatesOnly()" />
+        <span class="toggle-text">Chỉ hiện khách hàng đăng ký nhận tin</span>
+      </label>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert-box alert-error" role="alert">
+      <yin-icon name="alert-circle" [size]="18"></yin-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Data Table -->
+  <div class="table-card yin-card">
+    @if (loading()) {
+      <div class="table-loading">Đang tải danh sách khách hàng…</div>
+    } @else if (clients().length === 0) {
+      <div class="table-empty">
+        <yin-icon name="inbox" [size]="36"></yin-icon>
+        <p>Không tìm thấy khách hàng nào phù hợp với bộ lọc hiện tại.</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Số Điện Thoại</th>
+              <th>Ngày Sinh</th>
+              <th>Nhận Bản Tin</th>
+              <th>Ngày Đăng Ký</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (client of clients(); track client.id) {
+              <tr>
+                <td class="client-name-cell">
+                  <div class="client-avatar">{{ client.username.charAt(0).toUpperCase() }}</div>
+                  <span class="font-bold">{{ client.username }}</span>
+                </td>
+                <td>{{ client.email }}</td>
+                <td class="font-mono">{{ client.phone }}</td>
+                <td class="font-mono">{{ client.dateOfBirth }}</td>
+                <td>
+                  @if (client.receiveUpdates) {
+                    <span class="badge-optin active">Đang nhận tin</span>
+                  } @else {
+                    <span class="badge-optin inactive">Đã tắt</span>
+                  }
+                </td>
+                <td class="font-mono date-cell">
+                  {{ client.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Footer -->
+      <footer class="pagination-footer">
+        <span class="page-info">
+          Trang <strong>{{ currentPage() + 1 }}</strong> trên <strong>{{ totalPages() }}</strong> (Hiển thị tối đa 20 dòng/trang)
+        </span>
+        <div class="page-buttons">
+          <button 
+            type="button" 
+            class="yin-btn yin-btn-secondary" 
+            [disabled]="currentPage() === 0"
+            (click)="changePage(currentPage() - 1)">
+            &larr; Trang trước
+          </button>
+          <button 
+            type="button" 
+            class="yin-btn yin-btn-secondary" 
+            [disabled]="currentPage() + 1 >= totalPages()"
+            (click)="changePage(currentPage() + 1)">
+            Trang tiếp &rarr;
+          </button>
+        </div>
+      </footer>
+    }
+  </div>
+
+</div>
+

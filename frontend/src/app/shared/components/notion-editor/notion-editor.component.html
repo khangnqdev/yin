@@ -1,0 +1,554 @@
+<div class="notion-editor-shell">
+
+  <!-- 1. STICKY FORMATTING TOOLBAR (Sleek Figma / Notion toolbar) -->
+  <header class="editor-toolbar">
+    
+    <!-- History Group -->
+    <div class="toolbar-group">
+      <button type="button" class="tool-btn" (click)="undo()" title="Hoàn tác (Ctrl+Z)">
+        <yin-icon name="undo" [size]="15"></yin-icon>
+      </button>
+      <button type="button" class="tool-btn" (click)="redo()" title="Làm lại (Ctrl+Y)">
+        <yin-icon name="redo" [size]="15"></yin-icon>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Block Style Dropdown (Paragraph, H1, H2, H3, Quote, Code) -->
+    <div class="toolbar-group">
+      <select 
+        class="block-format-select" 
+        [ngModel]="selectedBlockFormat()" 
+        (ngModelChange)="onFormatDropdownChange($event)"
+        title="Định dạng khối văn bản">
+        <option value="paragraph">Đoạn văn (Paragraph)</option>
+        <option value="h1">Tiêu đề lớn (H1)</option>
+        <option value="h2">Tiêu đề vừa (H2)</option>
+        <option value="h3">Tiêu đề nhỏ (H3)</option>
+        <option value="quote">Trích dẫn (Quote)</option>
+        <option value="code">Mã nguồn (Code Block)</option>
+      </select>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Inline Formats: Bold, Italic, Strike, Code, Link -->
+    <div class="toolbar-group">
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive('bold')" 
+        (click)="toggleBold()" 
+        title="In đậm (Ctrl+B)">
+        <yin-icon name="bold" [size]="15"></yin-icon>
+      </button>
+      
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive('italic')" 
+        (click)="toggleItalic()" 
+        title="In nghiêng (Ctrl+I)">
+        <yin-icon name="italic" [size]="15"></yin-icon>
+      </button>
+
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive('strike')" 
+        (click)="toggleStrike()" 
+        title="Gạch ngang chữ">
+        <span class="btn-text-icon">S̶</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive('code')" 
+        (click)="toggleCode()" 
+        title="Đoạn mã nội dòng">
+        <yin-icon name="code" [size]="15"></yin-icon>
+      </button>
+
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive('link')" 
+        (click)="insertLinkPrompt()" 
+        title="Chèn liên kết URL">
+        <yin-icon name="link" [size]="15"></yin-icon>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Insert Elements: Table, Image -->
+    <div class="toolbar-group">
+      <button type="button" class="tool-btn" (click)="insertTable()" title="Chèn bảng 3x3">
+        <yin-icon name="table" [size]="15"></yin-icon>
+      </button>
+
+      <button type="button" class="tool-btn" (click)="insertImagePrompt()" title="Chèn hình ảnh từ URL">
+        <yin-icon name="image" [size]="15"></yin-icon>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Alignment & Lists -->
+    <div class="toolbar-group">
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive({ textAlign: 'left' })" 
+        (click)="setAlignment('left')" 
+        title="Căn trái">
+        <yin-icon name="align-left" [size]="15"></yin-icon>
+      </button>
+
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive({ textAlign: 'center' })" 
+        (click)="setAlignment('center')" 
+        title="Căn giữa">
+        <yin-icon name="align-center" [size]="15"></yin-icon>
+      </button>
+
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive('bulletList')" 
+        (click)="toggleBulletList()" 
+        title="Danh sách dấu chấm">
+        <yin-icon name="list" [size]="15"></yin-icon>
+      </button>
+
+      <button 
+        type="button" 
+        class="tool-btn" 
+        [class.active]="editor?.isActive('orderedList')" 
+        (click)="toggleOrderedList()" 
+        title="Danh sách số">
+        <yin-icon name="list-ordered" [size]="15"></yin-icon>
+      </button>
+    </div>
+
+    <!-- Spacer -->
+    <div class="toolbar-spacer"></div>
+
+    <!-- Right Side Utilities -->
+    <div class="toolbar-meta">
+      <span class="meta-pill" title="Thời gian đọc ước tính">
+        <yin-icon name="clock" [size]="13"></yin-icon>
+        <span>{{ seoResult().readingTimeMinutes }} phút đọc</span>
+      </span>
+
+      <span class="meta-pill" title="Tổng số từ trong nội dung">
+        <span>{{ seoResult().wordCount }} từ</span>
+      </span>
+
+      <!-- Toggle Score Panel Pill Button -->
+      <button 
+        type="button" 
+        class="score-toggle-btn" 
+        [class.active]="!isScoreHidden()" 
+        (click)="toggleScorePanel()"
+        [title]="isScoreHidden() ? 'Mở bảng phân tích SEO' : 'Ẩn bảng phân tích SEO'">
+        <yin-icon name="bar-chart" [size]="14"></yin-icon>
+        <span>{{ isScoreHidden() ? 'Hiện Điểm' : 'Bảng Điểm SEO' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. MAIN WORKSPACE (2 Columns: Document Canvas + Sticky Inspector Panel) -->
+  <div class="editor-workspace" [class.inspector-collapsed]="isScoreHidden()">
+    
+    <!-- LEFT: DOCUMENT CANVAS (Clean, spacious sheet) -->
+    <main class="document-canvas-card">
+      
+      <!-- Prominent Document Title (H1) -->
+      <div class="canvas-title-wrap">
+        <input 
+          type="text" 
+          class="canvas-h1-input" 
+          placeholder="Nhập tiêu đề bài viết công nghệ..." 
+          [ngModel]="articleTitle()" 
+          (ngModelChange)="articleTitle.set($event)"
+          aria-label="Tiêu đề bài viết" />
+      </div>
+
+      <!-- Canvas Sub-meta Row -->
+      <div class="canvas-meta-bar">
+        <div class="canvas-meta-left">
+          <span class="canvas-category-tag">
+            {{ getCategoryLabel(category()) }}
+          </span>
+
+          <span class="canvas-slug-preview">
+            /blog/{{ slug() || 'duong-dan-bai-viet' }}
+          </span>
+        </div>
+
+        <div class="canvas-meta-right">
+          <span 
+            class="canvas-status-pill" 
+            [class.published]="status() === 'PUBLISHED'" 
+            [class.draft]="status() === 'DRAFT'"
+            [class.archived]="status() === 'ARCHIVED'">
+            <span class="status-dot"></span>
+            <span>{{ status() === 'PUBLISHED' ? 'Đã xuất bản' : (status() === 'DRAFT' ? 'Bản nháp' : 'Lưu trữ') }}</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Canvas Divider -->
+      <div class="canvas-divider"></div>
+
+      <!-- Tiptap Content Prose Area -->
+      <div #editorElement class="canvas-prose-container tiptap-content"></div>
+
+      <!-- Floating Slash Command Popover -->
+      @if (isSlashMenuOpen()) {
+        <div 
+          class="slash-menu-popover" 
+          [style.top.px]="slashMenuPosition().top"
+          [style.left.px]="slashMenuPosition().left">
+          <div class="slash-menu-header">
+            <span>Khối nội dung nhanh</span>
+          </div>
+          <div class="slash-commands-list">
+            @for (cmd of slashCommands; track cmd.id) {
+              <button 
+                type="button" 
+                class="slash-item" 
+                (click)="executeSlashCommand(cmd.id)">
+                <div class="slash-item-icon">
+                  <yin-icon [name]="cmd.icon" [size]="16"></yin-icon>
+                </div>
+                <div class="slash-item-info">
+                  <div class="slash-item-title">{{ cmd.title }}</div>
+                  <div class="slash-item-desc">{{ cmd.description }}</div>
+                </div>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </main>
+
+    <!-- RIGHT: STICKY INSPECTOR SIDEBAR (Modeled after reference design in Image 3 & 4) -->
+    @if (!isScoreHidden()) {
+      <aside class="editor-inspector-panel">
+        
+        <!-- Inspector Navigation Tabs -->
+        <div class="inspector-tabs-nav">
+          <button 
+            type="button" 
+            class="inspector-tab-btn" 
+            [class.active]="activeInspectorTab() === 'seo'"
+            (click)="activeInspectorTab.set('seo')">
+            <yin-icon name="sparkles" [size]="14"></yin-icon>
+            <span>Điểm SEO</span>
+          </button>
+
+          <button 
+            type="button" 
+            class="inspector-tab-btn" 
+            [class.active]="activeInspectorTab() === 'settings'"
+            (click)="activeInspectorTab.set('settings')">
+            <yin-icon name="edit" [size]="14"></yin-icon>
+            <span>Cài Đặt</span>
+          </button>
+
+          <button 
+            type="button" 
+            class="inspector-tab-btn" 
+            [class.active]="activeInspectorTab() === 'toc'"
+            (click)="activeInspectorTab.set('toc')">
+            <yin-icon name="file-text" [size]="14"></yin-icon>
+            <span>Mục Lục ({{ outline().length }})</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: SEO SCORE & SUGGESTIONS -->
+        @if (activeInspectorTab() === 'seo') {
+          <div class="inspector-tab-content">
+            
+            <!-- Radial Score Ring Card (Modeled after Image 4) -->
+            <div class="inspector-card score-gauge-card">
+              <div class="card-header-row">
+                <span class="card-title">Chỉ Số Đánh Giá Nội Dung</span>
+                <span class="card-info-badge" title="Điểm dựa trên từ khóa, độ dài bài viết, cấu trúc Heading và mật độ">i</span>
+              </div>
+
+              <!-- Circular Progress Gauge -->
+              <div class="gauge-ring-wrap">
+                <svg class="gauge-svg" width="130" height="130" viewBox="0 0 120 120">
+                  <!-- Background Track Circle -->
+                  <circle 
+                    class="gauge-bg-circle" 
+                    cx="60" 
+                    cy="60" 
+                    r="46" 
+                    stroke-width="9" />
+                  <!-- Animated Progress Circle -->
+                  <circle 
+                    class="gauge-progress-circle" 
+                    cx="60" 
+                    cy="60" 
+                    r="46" 
+                    stroke-width="9" 
+                    [attr.stroke]="gaugeStrokeColor()"
+                    [attr.stroke-dasharray]="gaugeCircumference"
+                    [attr.stroke-dashoffset]="gaugeStrokeDashoffset()" />
+                </svg>
+
+                <div class="gauge-center-content">
+                  <span class="gauge-number" [style.color]="gaugeStrokeColor()">
+                    {{ seoResult().score }}
+                  </span>
+                  <span class="gauge-unit">Điểm SEO</span>
+                </div>
+              </div>
+
+              <!-- Score Status Pill & Note -->
+              <div class="gauge-footer">
+                <span 
+                  class="score-pill" 
+                  [class.good]="seoResult().score >= 75" 
+                  [class.medium]="seoResult().score >= 45 && seoResult().score < 75" 
+                  [class.poor]="seoResult().score < 45">
+                  {{ seoResult().score >= 75 ? 'SEO Chuẩn Mực' : (seoResult().score >= 45 ? 'Cần Tối Ưu Thêm' : 'Chưa Đạt Chuẩn') }}
+                </span>
+
+                <p class="gauge-summary-text">
+                  {{ seoResult().score >= 75 
+                    ? 'Nội dung đạt chuẩn kiến trúc phần mềm cao cấp Yin. Sẵn sàng phát hành đối tác.' 
+                    : 'Hoàn thiện thêm các mục kiểm tra bên dưới để tăng độ phủ tìm kiếm và bảo mật.' }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Quick Metrics Grid -->
+            <div class="inspector-card quick-metrics-card">
+              <div class="metrics-grid">
+                <div class="metric-tile">
+                  <span class="metric-tile-label">Số lượng từ</span>
+                  <span class="metric-tile-val" [class.success]="seoResult().contentLengthCheck">
+                    {{ seoResult().wordCount }} từ
+                  </span>
+                  <span class="metric-tile-sub">Mục tiêu: &ge; 300</span>
+                </div>
+
+                <div class="metric-tile">
+                  <span class="metric-tile-label">Thời gian đọc</span>
+                  <span class="metric-tile-val">{{ seoResult().readingTimeMinutes }} phút</span>
+                  <span class="metric-tile-sub">~200 từ/phút</span>
+                </div>
+
+                <div class="metric-tile">
+                  <span class="metric-tile-label">Mật độ từ khóa</span>
+                  <span class="metric-tile-val" [class.success]="seoResult().keywordDensity >= 0.8 && seoResult().keywordDensity <= 3.0">
+                    {{ seoResult().keywordDensity }}%
+                  </span>
+                  <span class="metric-tile-sub">Chuẩn: 0.8% - 3%</span>
+                </div>
+
+                <div class="metric-tile">
+                  <span class="metric-tile-label">Từ khóa tiêu đề</span>
+                  <span class="metric-tile-val" [class.success]="seoResult().hasTitleKeyword">
+                    {{ seoResult().hasTitleKeyword ? 'Đã có' : 'Chưa có' }}
+                  </span>
+                  <span class="metric-tile-sub">Trong H1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Suggestions Checklist Card -->
+            <div class="inspector-card suggestions-card">
+              <div class="card-header-row">
+                <span class="card-title">Gợi Ý Tối Ưu Tức Thì</span>
+              </div>
+
+              <div class="checklist-items">
+                <!-- 1. Content Length -->
+                <div class="check-row" [class.passed]="seoResult().contentLengthCheck">
+                  <div class="check-icon-circle">
+                    <yin-icon [name]="seoResult().contentLengthCheck ? 'check' : 'clock'" [size]="12"></yin-icon>
+                  </div>
+                  <div class="check-text-wrap">
+                    <span class="check-name">Độ dài nội dung (&ge; 300 từ)</span>
+                    <span class="check-desc">Hiện có {{ seoResult().wordCount }} từ trong văn bản.</span>
+                  </div>
+                </div>
+
+                <!-- 2. Focus Keyword in Title -->
+                <div class="check-row" [class.passed]="seoResult().hasTitleKeyword">
+                  <div class="check-icon-circle">
+                    <yin-icon [name]="seoResult().hasTitleKeyword ? 'check' : 'edit'" [size]="12"></yin-icon>
+                  </div>
+                  <div class="check-text-wrap">
+                    <span class="check-name">Từ khóa trong Tiêu đề bài viết</span>
+                    <span class="check-desc">
+                      {{ seoResult().hasTitleKeyword ? 'Đã xuất hiện từ khóa trong tiêu đề H1.' : 'Cần đưa từ khóa trọng tâm vào tiêu đề.' }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 3. Keyword in Subheadings -->
+                <div class="check-row" [class.passed]="seoResult().hasHeadingKeyword">
+                  <div class="check-icon-circle">
+                    <yin-icon [name]="seoResult().hasHeadingKeyword ? 'check' : 'file-text'" [size]="12"></yin-icon>
+                  </div>
+                  <div class="check-text-wrap">
+                    <span class="check-name">Từ khóa trong các đề mục H2/H3</span>
+                    <span class="check-desc">
+                      {{ seoResult().hasHeadingKeyword ? 'Tiêu đề phụ đã có từ khóa trọng tâm.' : 'Thêm từ khóa vào ít nhất một thẻ H2 hoặc H3.' }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 4. Keyword in Summary -->
+                <div class="check-row" [class.passed]="seoResult().hasDescriptionKeyword">
+                  <div class="check-icon-circle">
+                    <yin-icon [name]="seoResult().hasDescriptionKeyword ? 'check' : 'sparkles'" [size]="12"></yin-icon>
+                  </div>
+                  <div class="check-text-wrap">
+                    <span class="check-name">Từ khóa trong mô tả tóm tắt</span>
+                    <span class="check-desc">
+                      {{ seoResult().hasDescriptionKeyword ? 'Mô tả SEO tóm tắt đã có từ khóa.' : 'Đưa từ khóa vào phần tóm tắt bài viết.' }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 5. Keyword Density -->
+                <div class="check-row" [class.passed]="seoResult().keywordDensity >= 0.8 && seoResult().keywordDensity <= 3.0">
+                  <div class="check-icon-circle">
+                    <yin-icon [name]="seoResult().keywordDensity >= 0.8 && seoResult().keywordDensity <= 3.0 ? 'check' : 'bar-chart'" [size]="12"></yin-icon>
+                  </div>
+                  <div class="check-text-wrap">
+                    <span class="check-name">Mật độ từ khóa đạt 0.8% - 3%</span>
+                    <span class="check-desc">Mật độ hiện tại: {{ seoResult().keywordDensity }}%.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        }
+
+        <!-- TAB 2: ARTICLE SETTINGS & METADATA -->
+        @if (activeInspectorTab() === 'settings') {
+          <div class="inspector-tab-content">
+            <div class="inspector-card settings-form-card">
+              
+              <!-- Focus Keyword Field -->
+              <div class="form-field-item">
+                <label for="side-focus-keyword" class="field-label">Từ Khóa Trọng Tâm (Focus Keyword):</label>
+                <input 
+                  id="side-focus-keyword"
+                  type="text" 
+                  class="yin-input" 
+                  placeholder="Ví dụ: Angular Signals..." 
+                  [ngModel]="focusKeyword()" 
+                  (ngModelChange)="focusKeyword.set($event)" />
+                <span class="field-help">Từ khóa cốt lõi để máy chấm điểm SEO tự động đối soát.</span>
+              </div>
+
+              <!-- Category Field -->
+              <div class="form-field-item">
+                <label for="side-category" class="field-label">Chuyên Mục Bài Viết:</label>
+                <select 
+                  id="side-category"
+                  class="yin-select" 
+                  [ngModel]="category()" 
+                  (ngModelChange)="category.set($event)">
+                  <option value="Kien-Truc-Phan-Mem">Kiến Trúc Phần Mềm</option>
+                  <option value="Cong-Nghe">Công Nghệ Mới</option>
+                  <option value="Case-Study">Case Study Thực Chiến</option>
+                  <option value="Bao-Mat">Bảo Mật Hệ Thống</option>
+                </select>
+              </div>
+
+              <!-- Status Field -->
+              <div class="form-field-item">
+                <label for="side-status" class="field-label">Trạng Thái Bài Viết:</label>
+                <select 
+                  id="side-status"
+                  class="yin-select" 
+                  [ngModel]="status()" 
+                  (ngModelChange)="status.set($event)">
+                  <option value="DRAFT">Bản nháp (DRAFT)</option>
+                  <option value="PUBLISHED">Đã xuất bản (PUBLISHED)</option>
+                  <option value="ARCHIVED">Lưu trữ (ARCHIVED)</option>
+                </select>
+              </div>
+
+              <!-- Slug Field -->
+              <div class="form-field-item">
+                <label for="side-slug" class="field-label">Đường Dẫn Tĩnh (Slug URL):</label>
+                <input 
+                  id="side-slug"
+                  type="text" 
+                  class="yin-input font-mono" 
+                  placeholder="tu-dong-sinh-theo-tieu-de" 
+                  [ngModel]="slug()" 
+                  (ngModelChange)="slug.set($event)" />
+              </div>
+
+              <!-- Summary Field -->
+              <div class="form-field-item">
+                <label for="side-summary" class="field-label">Tóm Tắt Ngắn (SEO Description):</label>
+                <textarea 
+                  id="side-summary"
+                  class="yin-textarea" 
+                  rows="3" 
+                  placeholder="Mô tả súc tích cho bài viết hiển thị trên Google..." 
+                  [ngModel]="articleDescription()" 
+                  (ngModelChange)="articleDescription.set($event)"></textarea>
+              </div>
+
+            </div>
+          </div>
+        }
+
+        <!-- TAB 3: TABLE OF CONTENTS (OUTLINE) -->
+        @if (activeInspectorTab() === 'toc') {
+          <div class="inspector-tab-content">
+            <div class="inspector-card toc-card">
+              <div class="card-header-row">
+                <span class="card-title">Mục Lục Tự Động (TOC)</span>
+              </div>
+
+              @if (outline().length === 0) {
+                <div class="toc-empty-box">
+                  <yin-icon name="file-text" [size]="20"></yin-icon>
+                  <span>Chưa phát hiện thẻ tiêu đề H1, H2, H3. Hãy gõ "/" hoặc chọn Heading trên thanh công cụ để tạo cấu trúc.</span>
+                </div>
+              } @else {
+                <div class="toc-items-list">
+                  @for (item of outline(); track item.id) {
+                    <button 
+                      type="button" 
+                      class="toc-nav-item" 
+                      [class.level-1]="item.level === 1"
+                      [class.level-2]="item.level === 2"
+                      [class.level-3]="item.level === 3"
+                      (click)="scrollToHeading(item)">
+                      <span class="toc-indicator">&bull;</span>
+                      <span class="toc-text">{{ item.text }}</span>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      </aside>
+    }
+
+  </div>
+</div>

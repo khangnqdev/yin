@@ -1,0 +1,22 @@
+<div class="dynamic-page-stream">
+  @for (block of blocks(); track block.id) {
+    @switch (block.type) {
+      @case ('hero') {
+        <yin-hero-block [block]="$any(block)" />
+      }
+      @case ('stats') {
+        <yin-stats-block [block]="$any(block)" />
+      }
+      @case ('projects-grid') {
+        <yin-projects-grid-block [block]="$any(block)" />
+      }
+      @case ('rich-content') {
+        <yin-rich-content-block [block]="$any(block)" />
+      }
+      @case ('cta') {
+        <yin-cta-block [block]="$any(block)" />
+      }
+    }
+  }
+</div>
+

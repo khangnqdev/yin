@@ -1,0 +1,77 @@
+@if (isOpen()) {
+  <div class="drawer-backdrop" (click)="onBackdropClick($event)">
+    
+    <aside 
+      class="drawer-panel" 
+      role="dialog" 
+      aria-modal="true" 
+      [attr.aria-label]="title()">
+      
+      <!-- Drawer Header -->
+      <header class="drawer-header">
+        <div class="header-titles">
+          <h2 class="drawer-title">{{ title() }}</h2>
+          @if (subtitle()) {
+            <p class="drawer-subtitle">{{ subtitle() }}</p>
+          }
+        </div>
+
+        <button 
+          type="button" 
+          class="drawer-close-btn" 
+          (click)="close.emit()" 
+          title="Đóng">
+          <yin-icon name="close" [size]="20"></yin-icon>
+        </button>
+      </header>
+
+      <!-- Restored Draft Banner -->
+      @if (hasDraft()) {
+        <div class="draft-notice-banner">
+          <div class="draft-notice-left">
+            <yin-icon name="sparkles" [size]="15"></yin-icon>
+            <span>Đã tự động khôi phục bản nháp chưa lưu (Hết hạn sau 12 giờ).</span>
+          </div>
+          <button 
+            type="button" 
+            class="clear-draft-link" 
+            (click)="clearDraft.emit()" 
+            title="Xóa bản nháp và nhập lại từ đầu">
+            Xóa bản nháp
+          </button>
+        </div>
+      }
+
+      <!-- Drawer Scrollable Content -->
+      <div class="drawer-body">
+        <ng-content></ng-content>
+      </div>
+
+      <!-- Drawer Action Buttons Footer -->
+      <footer class="drawer-footer">
+        <button 
+          type="button" 
+          class="yin-btn yin-btn-secondary drawer-cancel-btn" 
+          (click)="cancel.emit()">
+          {{ cancelText() }}
+        </button>
+
+        <button 
+          type="button" 
+          class="yin-btn yin-btn-primary drawer-save-btn" 
+          [disabled]="saveDisabled() || isSaving()"
+          (click)="save.emit()">
+          @if (isSaving()) {
+            <span>Đang lưu…</span>
+          } @else {
+            <yin-icon name="check" [size]="16"></yin-icon>
+            <span>{{ saveText() }}</span>
+          }
+        </button>
+      </footer>
+
+    </aside>
+
+  </div>
+}
+

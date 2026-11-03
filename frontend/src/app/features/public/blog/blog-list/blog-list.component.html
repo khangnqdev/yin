@@ -1,0 +1,192 @@
+<div class="blog-list-page">
+  @if (headerBlocks().length > 0) {
+    <yin-dynamic-page-host [blocks]="headerBlocks()" />
+  } @else {
+    <!-- Hero Banner with Featured Article Thumbnail -->
+    <header class="blog-hero-banner">
+      <div class="yin-container hero-container">
+        
+        <div class="hero-header-text">
+          <div class="hero-badge">
+            <yin-icon name="sparkles" [size]="14"></yin-icon>
+            <span>TRI THỨC & BÁO CHÍ CÔNG NGHỆ</span>
+          </div>
+          <h1 class="hero-title">Kiến Trúc & Thi Công Phần Mềm Doanh Nghiệp</h1>
+          <p class="hero-subtitle">
+            Không gian chia sẻ các bài viết chuyên sâu về kiến trúc hệ thống, giải pháp High-Concurrency, bảo mật và những bài học thực chiến giá trị từ đội ngũ Yin Kenna.
+          </p>
+        </div>
+
+        @if (featuredArticle(); as feat) {
+          <div class="hero-featured-card yin-card">
+            <a [routerLink]="['/blog', feat.slug]" class="featured-thumb-wrap" [title]="feat.title">
+              <img 
+                [src]="feat.thumbnailUrl || '/assets/logo/yinkenna.svg'" 
+                [alt]="feat.title" 
+                class="featured-thumb-img" />
+              <div class="featured-badge-overlay">
+                <span class="featured-badge-pill">Tiêu Điểm</span>
+                <span class="featured-cat-pill">{{ feat.category }}</span>
+              </div>
+            </a>
+
+            <div class="featured-content-wrap">
+              <div class="featured-meta-row">
+                <span class="featured-author-name">
+                  <strong>Tác giả:</strong> {{ feat.authorName }}
+                </span>
+                <span class="featured-read-time">
+                  <yin-icon name="clock" [size]="13"></yin-icon>
+                  <span>{{ feat.readingTimeMinutes }} phút đọc &bull; {{ feat.wordCount }} từ</span>
+                </span>
+              </div>
+
+              <h2 class="featured-card-title">
+                <a [routerLink]="['/blog', feat.slug]" class="featured-title-link">
+                  {{ feat.title }}
+                </a>
+              </h2>
+
+              <p class="featured-card-summary">{{ feat.summary }}</p>
+
+              <div class="featured-action-bar">
+                <a [routerLink]="['/blog', feat.slug]" class="yin-btn yin-btn-primary featured-cta-btn">
+                  <span>Đọc bài viết tiêu điểm</span>
+                  <yin-icon name="arrow-right" [size]="15"></yin-icon>
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+
+      </div>
+    </header>
+  }
+
+  <section class="articles-container-section">
+    <div class="yin-container">
+      <!-- Search & Category Bar -->
+      <div class="search-filter-bar">
+        <div class="search-box">
+          <div class="search-icon-box">
+            <yin-icon name="search" [size]="18"></yin-icon>
+          </div>
+          <input 
+            type="text" 
+            class="yin-input search-input" 
+            placeholder="Tìm kiếm bài viết, tài liệu kiến trúc kỹ thuật..."
+            [ngModel]="searchQuery()"
+            (ngModelChange)="onSearchChange($event)" />
+          @if (searchQuery()) {
+            <button 
+              type="button" 
+              class="search-clear-btn" 
+              (click)="onSearchChange('')" 
+              title="Xóa tìm kiếm">
+              <yin-icon name="close" [size]="16"></yin-icon>
+            </button>
+          }
+        </div>
+
+        <div class="category-pills">
+          @for (cat of categories(); track cat) {
+            <button 
+              type="button" 
+              class="cat-pill" 
+              [class.active]="selectedCategory() === cat"
+              (click)="setCategory(cat)">
+              {{ cat === 'ALL' ? 'Tất Cả Chuyên Mục' : cat }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Articles Grid or Loading / Empty States -->
+      @if (loading()) {
+        <div class="articles-loading-state yin-card">
+          <yin-icon name="loader" [size]="28"></yin-icon>
+          <p>Đang tải danh sách bài viết từ máy chủ…</p>
+        </div>
+      } @else if (articles().length === 0) {
+        <div class="empty-state yin-card">
+          <yin-icon name="file-text" [size]="48"></yin-icon>
+          <h3>Không tìm thấy bài viết phù hợp</h3>
+          <p>Hãy thử tìm kiếm với từ khóa khác hoặc chuyển sang chuyên mục khác.</p>
+        </div>
+      } @else {
+        <div class="articles-grid">
+          @for (article of articles(); track article.id) {
+            <article class="article-card yin-card">
+              
+              <!-- Article Card Banner Thumbnail -->
+              <div class="article-card-thumb-wrap">
+                <a [routerLink]="['/blog', article.slug]" class="thumb-link" [title]="article.title">
+                  <img 
+                    [src]="article.thumbnailUrl || '/assets/logo/yinkenna.svg'" 
+                    [alt]="article.title" 
+                    class="article-card-thumb" 
+                    loading="lazy" />
+                </a>
+                <span class="category-pill-badge">{{ article.category }}</span>
+              </div>
+
+              <!-- Article Card Body -->
+              <div class="article-card-body">
+                <div class="article-card-meta">
+                  <span class="read-time">
+                    <yin-icon name="clock" [size]="13"></yin-icon>
+                    <span>{{ article.readingTimeMinutes }} phút đọc</span>
+                  </span>
+                  <span class="view-pill">
+                    <yin-icon name="eye" [size]="12"></yin-icon>
+                    <span>{{ article.viewCount }} lượt xem</span>
+                  </span>
+                </div>
+
+                <h3 class="article-card-title">
+                  <a [routerLink]="['/blog', article.slug]" class="title-link">
+                    {{ article.title }}
+                  </a>
+                </h3>
+
+                <p class="article-card-summary">{{ article.summary }}</p>
+
+                <div class="article-card-footer">
+                  <div class="author-info">
+                    <div class="author-avatar-sm">{{ article.authorName.charAt(0) }}</div>
+                    <span class="author-name">{{ article.authorName }}</span>
+                  </div>
+
+                  <a [routerLink]="['/blog', article.slug]" class="read-more-btn">
+                    <span>Khám phá bài viết</span>
+                    <yin-icon name="arrow-right" [size]="14"></yin-icon>
+                  </a>
+                </div>
+              </div>
+
+            </article>
+          }
+        </div>
+
+        <!-- Keyset Cursor Load More Button (Xem Thêm) -->
+        @if (hasMore()) {
+          <div class="load-more-wrap">
+            <button 
+              type="button" 
+              class="yin-btn yin-btn-secondary load-more-btn"
+              [disabled]="loadingMore()"
+              (click)="loadMore()">
+              @if (loadingMore()) {
+                <span>Đang tải thêm…</span>
+              } @else {
+                <span>Xem Thêm Bài Viết</span>
+                <yin-icon name="chevron-down" [size]="16"></yin-icon>
+              }
+            </button>
+          </div>
+        }
+      }
+
+    </div>
+  </section>
+</div>

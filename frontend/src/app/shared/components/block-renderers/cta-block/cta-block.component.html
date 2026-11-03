@@ -1,0 +1,20 @@
+<section class="yin-cta-section tracked-block" [attr.id]="block().id">
+  <div class="yin-container">
+    <div class="cta-banner-workday">
+      <div class="cta-inner">
+        @if (block().badge) {
+          <div class="cta-badge">
+            <yin-icon name="sparkles" [size]="14"></yin-icon>
+            <span>{{ block().badge }}</span>
+          </div>
+        }
+        <h2 class="cta-headline">{{ block().headline }}</h2>
+        <p class="cta-desc">{{ block().description }}</p>
+        <a [routerLink]="block().buttonLink" class="yin-btn yin-btn-primary cta-btn" (click)="onBtnClick(block().buttonLink, $event)">
+          <span>{{ block().buttonText }}</span>
+          <yin-icon name="arrow-right" [size]="18"></yin-icon>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

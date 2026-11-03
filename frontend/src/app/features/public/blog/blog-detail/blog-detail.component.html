@@ -1,0 +1,134 @@
+@if (article(); as art) {
+  <!-- Top Toolbar: hiển thị khi lướt xuống dưới (thay vì cố định ở đầu trang) -->
+  <aside class="article-top-toolbar" [class.visible]="isScrolledDown()" aria-label="Thanh công cụ đọc bài viết">
+    <div class="yin-container toolbar-container">
+      <div class="toolbar-left">
+        <a routerLink="/blog" class="toolbar-back-btn" title="Quay lại danh sách bài viết">
+          <span>&larr;</span>
+          <span class="back-text">Bài viết</span>
+        </a>
+        <div class="toolbar-divider"></div>
+        <span class="toolbar-badge">{{ art.category }}</span>
+        <h2 class="toolbar-article-title" [title]="art.title">{{ art.title }}</h2>
+      </div>
+
+      <div class="toolbar-right">
+        <div class="toolbar-progress-info">
+          <yin-icon name="clock" [size]="14"></yin-icon>
+          <span>{{ scrollProgress() }}% đã đọc</span>
+        </div>
+
+        <button type="button" class="scroll-top-btn" (click)="scrollToTop()" title="Cuộn lên đầu trang">
+          <yin-icon name="arrow-up" [size]="15"></yin-icon>
+          <span>Lên đầu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Thanh tiến trình đọc bài viết tích hợp ở mép dưới toolbar -->
+    <div class="reading-progress-track">
+      <div class="reading-progress-bar" [style.width.%]="scrollProgress()"></div>
+    </div>
+  </aside>
+
+  <article class="article-detail-page">
+    <!-- Header bài viết -->
+    <header class="article-header">
+      <div class="yin-container header-container">
+        <a routerLink="/blog" class="back-link">
+          <span>&larr; Quay lại danh sách bài viết</span>
+        </a>
+
+        <div class="article-badge-row">
+          <span class="yin-badge">{{ art.category }}</span>
+          <span class="read-info">
+            <yin-icon name="clock" [size]="14"></yin-icon>
+            <span>{{ art.readingTimeMinutes }} phút đọc &bull; {{ art.wordCount }} từ</span>
+          </span>
+        </div>
+
+        <h1 class="article-title">{{ art.title }}</h1>
+        <p class="article-summary-lead">{{ art.summary }}</p>
+
+        <div class="author-bar">
+          <div class="author-avatar">Y</div>
+          <div class="author-details">
+            <span class="author-name">{{ art.authorName }}</span>
+            <span class="pub-date">Đăng tải ngày: {{ formattedPublishedDate() }}</span>
+          </div>
+          <div class="view-counter">
+            <yin-icon name="eye" [size]="14"></yin-icon>
+            <span>{{ art.viewCount }} lượt xem</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Thân bài viết với Layout: TOC bên trái, Nội dung ở giữa (ẩn hoàn toàn TOC nếu không có thẻ H) -->
+    <div class="yin-container content-container">
+      <div class="article-layout" [class.no-toc]="toc().length === 0">
+        
+        <!-- Table of Contents Sticky Sidebar (Chỉ hiển thị khi bài viết có heading H1, H2, H3) -->
+        @if (toc().length > 0) {
+          <aside class="article-toc-sidebar" aria-label="Mục lục bài viết">
+            <div class="toc-sticky-box">
+              <div 
+                class="toc-title clickable" 
+                (click)="scrollToFirstSection()" 
+                title="Nhấn để cuộn tới đầu nội dung bài viết">
+                <yin-icon name="file-text" [size]="15"></yin-icon>
+                <span>Nội Dung Chính</span>
+              </div>
+
+              <nav class="toc-nav">
+                @for (item of toc(); track item.id; let idx = $index) {
+                  <button 
+                    type="button" 
+                    class="toc-link"
+                    [class.active]="activeSectionId() === item.id"
+                    [class.lvl-1]="item.level === 1"
+                    [class.lvl-2]="item.level === 2"
+                    [class.lvl-3]="item.level === 3"
+                    [class.lvl-4]="item.level >= 4"
+                    (click)="scrollToSection(item.id, idx)">
+                    <span class="toc-bullet">&bull;</span>
+                    <span class="toc-text">{{ item.text }}</span>
+                  </button>
+                }
+              </nav>
+            </div>
+          </aside>
+        }
+
+        <!-- Main Content Renderer -->
+        <main class="article-main-body" (click)="handleContentClick($event)">
+          <yin-article-content-renderer [contentHtml]="art.contentHtml" />
+        </main>
+
+      </div>
+    </div>
+  </article>
+
+  <!-- Lightbox Phóng To Ảnh (Zoom Modal) -->
+  @if (zoomedImage(); as zoom) {
+    <div class="lightbox-overlay" (click)="closeLightbox()" role="dialog" aria-modal="true" aria-label="Xem ảnh phóng to">
+      <div class="lightbox-dialog" (click)="$event.stopPropagation()">
+        <button type="button" class="lightbox-close-btn" (click)="closeLightbox()" title="Đóng (Esc)" aria-label="Đóng xem ảnh">
+          <yin-icon name="close" [size]="20"></yin-icon>
+        </button>
+        <div class="lightbox-image-wrap">
+          <img [src]="zoom.src" [alt]="zoom.caption" class="lightbox-img" />
+        </div>
+        @if (zoom.caption) {
+          <p class="lightbox-caption">{{ zoom.caption }}</p>
+        }
+      </div>
+    </div>
+  }
+} @else {
+  <div class="yin-container not-found-state">
+    <h2>Không tìm thấy bài viết</h2>
+    <p>Bài viết có thể đã bị xóa hoặc đường dẫn không chính xác.</p>
+    <a routerLink="/blog" class="yin-btn yin-btn-primary">Về Danh Sách Bài Báo</a>
+  </div>
+}

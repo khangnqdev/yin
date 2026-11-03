@@ -1,0 +1,39 @@
+.article-body-wrapper {
+  color: #333333;
+  font-size: 1.1rem;
+  line-height: 1.85;
+}
+
+.article-body-wrapper figure,
+.article-body-wrapper .article-figure {
+  margin: 28px auto;
+  text-align: center;
+  max-width: 100%;
+}
+
+.article-body-wrapper figure img,
+.article-body-wrapper .article-figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(11, 24, 73, 0.08);
+  display: block;
+  margin: 0 auto;
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.article-body-wrapper figure img:hover,
+.article-body-wrapper .article-figure img:hover {
+  box-shadow: 0 8px 24px rgba(11, 24, 73, 0.14);
+}
+
+.article-body-wrapper figcaption,
+.article-body-wrapper .article-figcaption {
+  margin-top: 10px;
+  font-size: 0.92rem;
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.5;
+}

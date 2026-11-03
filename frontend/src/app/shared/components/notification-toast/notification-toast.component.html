@@ -1,0 +1,312 @@
+<!-- ==============================================================================
+     1. STATUS TOAST STACK (PHÍA TRÊN BÊN PHẢI - TOP RIGHT)
+     Dành cho: Thông báo trạng thái, cập nhật dữ liệu, tiến trình (Dribbble style)
+     ============================================================================== -->
+@if (notificationService.statusNotifications().length > 0) {
+  <aside 
+    class="toast-stack-top" 
+    [class.is-expanded]="isTopHovered()"
+    (mouseenter)="isTopHovered.set(true)"
+    (mouseleave)="isTopHovered.set(false)"
+    aria-live="polite" 
+    aria-label="Thông báo trạng thái">
+
+    <!-- Stacking Count Pill when collapsed -->
+    @if (notificationService.statusNotifications().length > 1 && !isTopHovered()) {
+      <div class="stack-counter-indicator top-indicator">
+        <yin-icon name="layers" [size]="12"></yin-icon>
+        <span>{{ notificationService.statusNotifications().length }} thông báo &bull; Rê chuột để mở rộng</span>
+      </div>
+    }
+
+    @for (item of notificationService.statusNotifications(); track item.id; let idx = $index) {
+      <div 
+        class="dribbble-toast-card status-toast"
+        [class]="'type-' + item.type"
+        [class.is-stacked]="!isTopHovered() && idx > 0"
+        [class.is-dragging]="isToastDragging(item.id)"
+        [class.is-dismissing]="isToastDismissing(item.id)"
+        [style.transform]="getToastTransform('top', idx, item.id)"
+        [style.opacity]="getToastOpacity('top', idx, item.id)"
+        [style.z-index]="getToastZIndex('top', idx)"
+        (pointerdown)="onPointerDown($event, item)"
+        (pointermove)="onPointerMove($event, item)"
+        (pointerup)="onPointerUp($event, item)"
+        (pointercancel)="onPointerCancel($event, item)"
+        role="alert">
+
+        <!-- Dribbble Double-Ring Circle Icon -->
+        <div class="toast-dribbble-icon" [class]="'icon-' + item.type">
+          <div class="icon-ring-outer">
+            <yin-icon [name]="getNotificationIcon(item.type)" [size]="15"></yin-icon>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="toast-main-content">
+          <div class="toast-header-line">
+            <h4 class="toast-card-title">{{ item.title }}</h4>
+            @if (item.metaText) {
+              <span class="toast-meta-badge">{{ item.metaText }}</span>
+            }
+          </div>
+
+          <p class="toast-card-desc">{{ item.message }}</p>
+
+          <!-- Optional Progress Bar (Upload / Sync State) -->
+          @if (item.progressPercent !== undefined) {
+            <div class="toast-progress-wrap">
+              <div class="toast-progress-bar">
+                <div class="toast-progress-fill" [style.width.%]="item.progressPercent"></div>
+              </div>
+              <span class="progress-percent-text">{{ item.progressPercent }}%</span>
+            </div>
+          }
+
+          <!-- Bottom Action Text Links (Dribbble style: Dismiss, View profile) -->
+          <div class="toast-actions-text-row">
+            <button 
+              type="button" 
+              class="toast-link-btn dismiss-link" 
+              (click)="dismiss(item, $event)">
+              {{ item.dismissText || 'Dismiss' }}
+            </button>
+
+            @if (item.actions && item.actions.length > 0) {
+              @for (act of item.actions; track act.label) {
+                <button 
+                  type="button" 
+                  class="toast-link-btn action-link" 
+                  [class.primary-link]="act.isPrimary"
+                  (click)="act.onClick(); dismiss(item, $event)">
+                  {{ act.label }}
+                </button>
+              }
+            } @else {
+              <button 
+                type="button" 
+                class="toast-link-btn view-detail-link" 
+                (click)="openDetail(item)">
+                Xem chi tiết &rarr;
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Close X Button -->
+        <button 
+          type="button" 
+          class="toast-close-btn" 
+          (click)="dismiss(item, $event)" 
+          title="Đóng thông báo"
+          aria-label="Đóng thông báo">
+          &times;
+        </button>
+
+      </div>
+    }
+  </aside>
+}
+
+
+<!-- ==============================================================================
+     2. ACTION & CONFIRMATION TOAST STACK (PHÍA DƯỚI BÊN PHẢI - BOTTOM RIGHT)
+     Dành cho: Thông báo cần người dùng xác nhận, phê duyệt hoặc lựa chọn (Dribbble style)
+     ============================================================================== -->
+@if (notificationService.actionNotifications().length > 0) {
+  <aside 
+    class="toast-stack-bottom" 
+    [class.is-expanded]="isBottomHovered()"
+    (mouseenter)="isBottomHovered.set(true)"
+    (mouseleave)="isBottomHovered.set(false)"
+    aria-live="polite" 
+    aria-label="Thông báo xác nhận">
+
+    <!-- Stacking Count Pill when collapsed -->
+    @if (notificationService.actionNotifications().length > 1 && !isBottomHovered()) {
+      <div class="stack-counter-indicator bottom-indicator">
+        <yin-icon name="layers" [size]="12"></yin-icon>
+        <span>{{ notificationService.actionNotifications().length }} yêu cầu xác nhận &bull; Rê chuột để mở rộng</span>
+      </div>
+    }
+
+    @for (item of notificationService.actionNotifications(); track item.id; let idx = $index) {
+      <div 
+        class="dribbble-toast-card action-toast"
+        [class]="'type-' + item.type"
+        [class.is-stacked]="!isBottomHovered() && idx > 0"
+        [class.is-dragging]="isToastDragging(item.id)"
+        [class.is-dismissing]="isToastDismissing(item.id)"
+        [style.transform]="getToastTransform('bottom', idx, item.id)"
+        [style.opacity]="getToastOpacity('bottom', idx, item.id)"
+        [style.z-index]="getToastZIndex('bottom', idx)"
+        (pointerdown)="onPointerDown($event, item)"
+        (pointermove)="onPointerMove($event, item)"
+        (pointerup)="onPointerUp($event, item)"
+        (pointercancel)="onPointerCancel($event, item)"
+        role="alertdialog">
+
+        <!-- Left Visual: Avatar or Action Icon Container -->
+        <div class="action-visual-box">
+          @if (item.avatarUrl) {
+            <div class="avatar-wrap">
+              <img [src]="item.avatarUrl" [alt]="item.title" class="user-avatar-img" />
+              <span class="online-status-dot"></span>
+            </div>
+          } @else if (item.avatarInitials) {
+            <div class="avatar-initials-wrap">
+              <span>{{ item.avatarInitials }}</span>
+              <span class="online-status-dot"></span>
+            </div>
+          } @else {
+            <div class="action-icon-container" [class]="'icon-' + item.type">
+              <yin-icon [name]="getNotificationIcon(item.type)" [size]="18"></yin-icon>
+            </div>
+          }
+        </div>
+
+        <!-- Main Content -->
+        <div class="toast-main-content">
+          <div class="toast-header-line">
+            <h4 class="toast-card-title">{{ item.title }}</h4>
+            @if (item.metaText) {
+              <span class="toast-meta-sep">|</span>
+              <span class="toast-meta-time">{{ item.metaText }}</span>
+            } @else {
+              <span class="toast-meta-sep">|</span>
+              <span class="toast-meta-time">{{ item.timestamp | date:'HH:mm' }}</span>
+            }
+          </div>
+
+          <p class="toast-card-desc">{{ item.message }}</p>
+
+          <!-- Dribbble Button Pills Row: Secondary & Primary Buttons -->
+          <div class="toast-button-pills-row">
+            @if (item.actions && item.actions.length > 0) {
+              @for (act of item.actions; track act.label) {
+                <button 
+                  type="button" 
+                  class="toast-action-btn" 
+                  [class.primary-btn]="act.isPrimary && !act.isDanger"
+                  [class.danger-btn]="act.isDanger"
+                  [class.secondary-btn]="!act.isPrimary && !act.isDanger"
+                  (click)="act.onClick(); dismiss(item, $event)">
+                  {{ act.label }}
+                </button>
+              }
+            } @else {
+              <button 
+                type="button" 
+                class="toast-action-btn secondary-btn" 
+                (click)="dismiss(item, $event)">
+                {{ item.dismissText || 'Hủy bỏ' }}
+              </button>
+              <button 
+                type="button" 
+                class="toast-action-btn primary-btn" 
+                (click)="openDetail(item)">
+                Xem Chi Tiết
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Close X Button -->
+        <button 
+          type="button" 
+          class="toast-close-btn" 
+          (click)="dismiss(item, $event)" 
+          title="Đóng thông báo này"
+          aria-label="Đóng thông báo">
+          &times;
+        </button>
+
+      </div>
+    }
+  </aside>
+}
+
+
+<!-- ==============================================================================
+     3. DETAIL POPUP (MODAL WITH 90% DARK BLUR BACKDROP)
+     ============================================================================== -->
+@if (notificationService.activeDetail(); as detail) {
+  <div class="detail-popup-backdrop" (click)="onBackdropClick($event)">
+    <div 
+      class="detail-popup-panel" 
+      role="dialog" 
+      aria-modal="true" 
+      [attr.aria-label]="detail.title">
+
+      <!-- Header -->
+      <header class="popup-header" [class]="'header-' + detail.type">
+        <div class="popup-header-icon-box">
+          <yin-icon [name]="getNotificationIcon(detail.type)" [size]="24"></yin-icon>
+        </div>
+        
+        <div class="popup-title-group">
+          <div class="popup-meta-row">
+            <span class="popup-kind-badge">
+              {{ detail.kind === 'action' ? 'Xác Nhận Hành Động' : 'Thông Báo Hệ Thống' }}
+            </span>
+            <span class="popup-time">{{ detail.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+          </div>
+          <h3 class="popup-title">{{ detail.detailTitle || detail.title }}</h3>
+        </div>
+
+        <button 
+          type="button" 
+          class="popup-close-btn" 
+          (click)="closeDetail()" 
+          title="Đóng cửa sổ">
+          &times;
+        </button>
+      </header>
+
+      <!-- Body -->
+      <div class="popup-body">
+        <div class="popup-desc-box">
+          <p class="popup-desc-text">
+            {{ detail.detailContent || detail.message }}
+          </p>
+        </div>
+
+        @if (detail.detailItems && detail.detailItems.length > 0) {
+          <div class="popup-items-grid">
+            @for (prop of detail.detailItems; track prop.label) {
+              <div class="popup-item-card">
+                <span class="prop-label">{{ prop.label }}</span>
+                <span class="prop-value">{{ prop.value }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Footer Buttons -->
+      <footer class="popup-footer">
+        @if (detail.actions && detail.actions.length > 0) {
+          @for (act of detail.actions; track act.label) {
+            <button 
+              type="button" 
+              class="yin-btn" 
+              [class.yin-btn-primary]="act.isPrimary && !act.isDanger" 
+              [class.yin-btn-danger]="act.isDanger"
+              [class.yin-btn-secondary]="!act.isPrimary && !act.isDanger"
+              (click)="act.onClick(); closeDetail()">
+              {{ act.label }}
+            </button>
+          }
+        }
+        
+        <button 
+          type="button" 
+          class="yin-btn yin-btn-secondary popup-cancel-btn" 
+          (click)="closeDetail()">
+          Đóng
+        </button>
+      </footer>
+
+    </div>
+  </div>
+}

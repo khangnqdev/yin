@@ -1,0 +1,760 @@
+<div class="pages-cms-root">
+  
+  <!-- Header Bar -->
+  <header class="cms-topbar">
+    <div class="topbar-info">
+      <h1 class="cms-page-title">Quản Lý Nội Dung Trang</h1>
+      <p class="cms-page-subtitle">
+        Chỉnh sửa trực quan trên giao diện thực tế. Nội dung thay đổi ngay tại các vị trí hiển thị để dễ dàng hình dung.
+      </p>
+    </div>
+
+    <div class="topbar-actions">
+      <a 
+        [href]="isFooterActive() ? '/' : getPublicUrl(selectedPageKey())" 
+        target="_blank" 
+        class="yin-btn yin-btn-secondary preview-external-btn"
+        title="Mở tab mới xem giao diện thực tế của khách">
+        <yin-icon name="eye" [size]="16"></yin-icon>
+        <span>Xem Trên Website</span>
+      </a>
+
+      @if (isSaved()) {
+        <span class="save-toast">
+          <yin-icon name="check" [size]="16"></yin-icon>
+          <span>Đã lưu thành công!</span>
+        </span>
+      }
+
+      @if (saveError()) {
+        <span class="save-error" role="alert">{{ saveError() }}</span>
+      }
+
+      <button 
+        type="button" 
+        class="yin-btn yin-btn-primary save-btn" 
+        [disabled]="isSaving()"
+        (click)="saveBlocks()">
+        <yin-icon name="check" [size]="16"></yin-icon>
+        <span>{{ isSaving() ? 'Đang lưu…' : 'Lưu Thay Đổi' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Page Selector Tabs -->
+  <div class="page-tabs-bar yin-card">
+    <button 
+      type="button" 
+      class="tab-nav-btn" 
+      [class.active]="!isFooterActive() && selectedPageKey() === 'home'" 
+      (click)="selectPage('home')">
+      Trang chủ
+    </button>
+    <button 
+      type="button" 
+      class="tab-nav-btn" 
+      [class.active]="!isFooterActive() && selectedPageKey() === 'about'" 
+      (click)="selectPage('about')">
+      Về Yin & Khang
+    </button>
+    <button 
+      type="button" 
+      class="tab-nav-btn" 
+      [class.active]="!isFooterActive() && selectedPageKey() === 'projects'" 
+      (click)="selectPage('projects')">
+      Dự án thi công
+    </button>
+    <button 
+      type="button" 
+      class="tab-nav-btn" 
+      [class.active]="!isFooterActive() && selectedPageKey() === 'blog'" 
+      (click)="selectPage('blog')">
+      Bài viết & Báo chí
+    </button>
+    <button 
+      type="button" 
+      class="tab-nav-btn" 
+      [class.active]="!isFooterActive() && selectedPageKey() === 'contact'" 
+      (click)="selectPage('contact')">
+      Liên hệ
+    </button>
+    <button 
+      type="button" 
+      class="tab-nav-btn tab-footer-btn" 
+      [class.active]="isFooterActive()" 
+      (click)="selectFooter()">
+      <yin-icon name="layout" [size]="14"></yin-icon>
+      <span>Chân Trang (Footer)</span>
+    </button>
+  </div>
+
+  <!-- Live Visual Page Stage (Trang Landing Trực Quan Chỉnh Sửa Trực Tiếp) -->
+  <div class="live-landing-viewport">
+    
+    <div class="editor-indicator-banner">
+      <yin-icon name="sparkles" [size]="15"></yin-icon>
+      <span>{{ isFooterActive() ? 'Đang tùy chỉnh chân trang (Footer): Thay đổi nội dung trực tiếp trên các ô nhập và bấm Lưu Thay Đổi.' : 'Chế độ chỉnh sửa trực tiếp: Bấm vào bất kỳ dòng chữ hoặc thẻ nào để chỉnh sửa nội dung tức thì.' }}</span>
+    </div>
+
+    @if (isFooterActive()) {
+      <!-- LIVE FOOTER WYSIWYG EDITOR -->
+      <div class="live-block-container live-footer-editor-container">
+        <div class="block-floating-tag">
+          <span class="block-label">Cấu Hình Chân Trang Thực Tế (Footer)</span>
+        </div>
+
+        <section class="live-footer-section">
+          <div class="footer-editor-controls">
+            <span class="footer-hint">Mọi thông tin chân trang bên dưới có thể chỉnh sửa trực tiếp và tự động đồng bộ trên toàn website.</span>
+            <button 
+              type="button" 
+              class="yin-btn yin-btn-secondary reset-footer-btn" 
+              (click)="resetFooterToDefaults()">
+              <span>Khôi Phục Mặc Định</span>
+            </button>
+          </div>
+
+          <div class="footer-editor-grid">
+            
+            <!-- Cột 1: Thương hiệu & Người sáng lập -->
+            <div class="footer-edit-col col-brand">
+              <div class="col-header-tag">Thương Hiệu & Sáng Lập</div>
+              
+              <div class="edit-field-group">
+                <label class="field-label">Mô tả doanh nghiệp:</label>
+                <textarea 
+                  class="live-textarea footer-desc-input" 
+                  rows="4" 
+                  placeholder="Mô tả công ty..." 
+                  [(ngModel)]="footerEdit().brandDesc"></textarea>
+              </div>
+
+              <div class="edit-field-row">
+                <div class="edit-field-group">
+                  <label class="field-label">Danh xưng vai trò:</label>
+                  <input 
+                    type="text" 
+                    class="live-input" 
+                    placeholder="Người sáng lập" 
+                    [(ngModel)]="footerEdit().founderRole" />
+                </div>
+                <div class="edit-field-group">
+                  <label class="field-label">Tên người sáng lập:</label>
+                  <input 
+                    type="text" 
+                    class="live-input font-bold" 
+                    placeholder="Khang" 
+                    [(ngModel)]="footerEdit().founderName" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Cột 2: Cột Liên Kết (Nền Tảng & Giải Pháp) -->
+            <div class="footer-edit-col col-links">
+              <div class="col-header-tag">Cột Liên Kết 1</div>
+
+              <div class="edit-field-group">
+                <label class="field-label">Tiêu đề cột:</label>
+                <input 
+                  type="text" 
+                  class="live-input col-title-input" 
+                  placeholder="Nền Tảng & Giải Pháp" 
+                  [(ngModel)]="footerEdit().col1Title" />
+              </div>
+
+              <div class="footer-links-list">
+                @for (lnk of footerEdit().col1Links; track lnk.id; let lIdx = $index) {
+                  <div class="footer-link-edit-row">
+                    <input 
+                      type="text" 
+                      class="live-input lnk-label-input" 
+                      placeholder="Tên liên kết" 
+                      [(ngModel)]="lnk.label" />
+                    <input 
+                      type="text" 
+                      class="live-input lnk-url-input" 
+                      placeholder="/about" 
+                      [(ngModel)]="lnk.url" />
+                    <button 
+                      type="button" 
+                      class="row-delete-btn" 
+                      (click)="removeFooterLink(lIdx)" 
+                      title="Xóa liên kết này">
+                      &times;
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <button 
+                type="button" 
+                class="add-item-btn" 
+                (click)="addFooterLink()">
+                <yin-icon name="plus" [size]="14"></yin-icon>
+                <span>Thêm Liên Kết</span>
+              </button>
+            </div>
+
+            <!-- Cột 3: Năng Lực Kỹ Nghệ -->
+            <div class="footer-edit-col col-caps">
+              <div class="col-header-tag">Năng Lực Kỹ Thuật</div>
+
+              <div class="edit-field-group">
+                <label class="field-label">Tiêu đề cột:</label>
+                <input 
+                  type="text" 
+                  class="live-input col-title-input" 
+                  placeholder="Năng Lực Kỹ Nghệ" 
+                  [(ngModel)]="footerEdit().col2Title" />
+              </div>
+
+              <div class="footer-caps-list">
+                @for (cap of footerEdit().col2Items; track cap.id; let cIdx = $index) {
+                  <div class="footer-cap-edit-row">
+                    <input 
+                      type="text" 
+                      class="live-input cap-text-input" 
+                      placeholder="Mô tả công nghệ / tiêu chuẩn..." 
+                      [(ngModel)]="cap.text" />
+                    <button 
+                      type="button" 
+                      class="row-delete-btn" 
+                      (click)="removeFooterCap(cIdx)" 
+                      title="Xóa hạng mục này">
+                      &times;
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <button 
+                type="button" 
+                class="add-item-btn" 
+                (click)="addFooterCap()">
+                <yin-icon name="plus" [size]="14"></yin-icon>
+                <span>Thêm Năng Lực</span>
+              </button>
+            </div>
+
+            <!-- Cột 4: Kênh Liên Hệ Trực Tiếp -->
+            <div class="footer-edit-col col-contact">
+              <div class="col-header-tag">Kênh Liên Hệ Trực Tuyến</div>
+
+              <div class="edit-field-group">
+                <label class="field-label">Tiêu đề cột:</label>
+                <input 
+                  type="text" 
+                  class="live-input col-title-input" 
+                  placeholder="Liên Hệ & Trực Tuyến" 
+                  [(ngModel)]="footerEdit().col3Title" />
+              </div>
+
+              <div class="edit-field-group">
+                <label class="field-label">Email tiếp nhận:</label>
+                <input 
+                  type="text" 
+                  class="live-input" 
+                  placeholder="contact@yin.vn" 
+                  [(ngModel)]="footerEdit().contactEmail" />
+              </div>
+
+              <div class="edit-field-group">
+                <label class="field-label">Hotline kỹ thuật:</label>
+                <input 
+                  type="text" 
+                  class="live-input" 
+                  placeholder="+84 900 123 456" 
+                  [(ngModel)]="footerEdit().contactPhone" />
+              </div>
+
+              <div class="edit-field-group">
+                <label class="field-label">Địa chỉ trụ sở:</label>
+                <input 
+                  type="text" 
+                  class="live-input" 
+                  placeholder="Địa chỉ..." 
+                  [(ngModel)]="footerEdit().contactAddress" />
+              </div>
+
+              <div class="edit-field-group">
+                <label class="field-label">Đường dẫn Google Maps:</label>
+                <input 
+                  type="text" 
+                  class="live-input" 
+                  placeholder="https://maps.google.com/..." 
+                  [(ngModel)]="footerEdit().mapLink" />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Bar Editor -->
+          <div class="footer-editor-bottom-bar">
+            <div class="edit-field-group flex-grow">
+              <label class="field-label">Dòng bản quyền chân trang:</label>
+              <input 
+                type="text" 
+                class="live-input" 
+                placeholder="Công ty Công nghệ Yin. Toàn quyền bảo lưu..." 
+                [(ngModel)]="footerEdit().copyrightText" />
+            </div>
+
+            <div class="edit-field-group flex-grow">
+              <label class="field-label">Huy hiệu bảo mật / phong cách:</label>
+              <input 
+                type="text" 
+                class="live-input" 
+                placeholder="Bảo mật chuẩn Enterprise • Thiết kế Workday..." 
+                [(ngModel)]="footerEdit().securityBadge" />
+            </div>
+          </div>
+
+        </section>
+      </div>
+    } @else {
+
+    @for (block of pageBlocks(); track block.id; let idx = $index) {
+      
+      <!-- Block Container Wrapper with subtle tag -->
+      <div class="live-block-container" [attr.data-block-type]="block.type">
+        
+        <div class="block-floating-tag">
+          <span class="block-number">#{{ idx + 1 }}</span>
+          <span class="block-label">Khối {{ block.type }}</span>
+        </div>
+
+        @switch (block.type) {
+          
+          <!-- 1. HERO BLOCK -->
+          @case ('hero') {
+            <section class="yin-hero-section live-hero-section">
+              <div class="yin-container hero-container">
+                <div class="hero-content">
+                  
+                  <!-- Badge -->
+                  <div class="yin-badge hero-badge live-editable-badge">
+                    <yin-icon name="sparkles" [size]="14"></yin-icon>
+                    <input 
+                      type="text" 
+                      class="live-input hero-badge-input" 
+                      placeholder="Badge văn bản..."
+                      [(ngModel)]="asHero(block).badgeText" />
+                  </div>
+
+                  <!-- Headline & Highlight -->
+                  <div class="headline-editor-box">
+                    <textarea 
+                      class="live-textarea hero-headline-input" 
+                      rows="2" 
+                      placeholder="Tiêu đề chính của trang..."
+                      [(ngModel)]="asHero(block).headline"></textarea>
+                    
+                    <div class="highlight-input-row">
+                      <span class="highlight-prefix">Chữ điểm nhấn (Gradient):</span>
+                      <input 
+                        type="text" 
+                        class="live-input hero-highlight-input" 
+                        placeholder="Chữ vàng điểm nhấn..."
+                        [(ngModel)]="asHero(block).highlightText" />
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="description-editor-box">
+                    <textarea 
+                      class="live-textarea hero-desc-input" 
+                      rows="3" 
+                      placeholder="Mô tả định vị doanh nghiệp hoặc bài toán công nghệ..."
+                      [(ngModel)]="asHero(block).description"></textarea>
+                  </div>
+
+                  <!-- CTAs Row -->
+                  <div class="hero-buttons live-buttons-editor">
+                    <div class="cta-edit-group">
+                      <span class="cta-edit-label">Nút chính (Primary CTA):</span>
+                      <div class="cta-edit-fields">
+                        <input 
+                          type="text" 
+                          class="live-input cta-text-input primary-cta-btn" 
+                          placeholder="Chữ nút chính..."
+                          [(ngModel)]="asHero(block).primaryCtaText" />
+                        <input 
+                          type="text" 
+                          class="live-input cta-link-input" 
+                          placeholder="Link đích (/contact)..."
+                          [(ngModel)]="asHero(block).primaryCtaLink" />
+                      </div>
+                    </div>
+
+                    <div class="cta-edit-group">
+                      <span class="cta-edit-label">Nút phụ (Secondary CTA):</span>
+                      <div class="cta-edit-fields">
+                        <input 
+                          type="text" 
+                          class="live-input cta-text-input secondary-cta-btn" 
+                          placeholder="Chữ nút phụ..."
+                          [(ngModel)]="asHero(block).secondaryCtaText" />
+                        <input 
+                          type="text" 
+                          class="live-input cta-link-input" 
+                          placeholder="Link đích (/projects)..."
+                          [(ngModel)]="asHero(block).secondaryCtaLink" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Trust Bar -->
+                  <div class="enterprise-trust-bar">
+                    <span class="trust-title">Được tin cậy bởi các doanh nghiệp & đối tác công nghệ tiên phong</span>
+                    <div class="trust-badges">
+                      <span class="trust-chip">Enterprise Architecture</span>
+                      <span class="trust-chip">Microservices High-TPS</span>
+                      <span class="trust-chip">Zero-Debt Engineering</span>
+                      <span class="trust-chip">SLA 99.99%</span>
+                    </div>
+                  </div>
+
+                  <!-- Stats Preview -->
+                  <div class="hero-stats-preview live-stats-preview">
+                    @for (stat of asHero(block).statsPreview; track $index) {
+                      <div class="stat-card-workday live-stat-pill">
+                        <button 
+                          type="button" 
+                          class="pill-delete-btn" 
+                          (click)="removeHeroStat(asHero(block), $index)" 
+                          title="Xóa chỉ số này">
+                          &times;
+                        </button>
+                        <input 
+                          type="text" 
+                          class="live-input stat-val-input" 
+                          placeholder="Giá trị (VD: 99.99%)"
+                          [(ngModel)]="stat.value" />
+                        <input 
+                          type="text" 
+                          class="live-input stat-lbl-input" 
+                          placeholder="Nhãn (VD: Uptime)"
+                          [(ngModel)]="stat.label" />
+                      </div>
+                    }
+
+                    <button 
+                      type="button" 
+                      class="add-pill-btn" 
+                      (click)="addHeroStat(asHero(block))">
+                      <yin-icon name="plus" [size]="14"></yin-icon>
+                      <span>Thêm chỉ số</span>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- 2. STATS BLOCK -->
+          @case ('stats') {
+            <section class="yin-stats-section live-stats-section">
+              <div class="yin-container">
+                <div class="stats-grid live-stats-grid">
+                  @for (item of asStats(block).items; track $index) {
+                    <div class="stat-card yin-card live-card">
+                      <button 
+                        type="button" 
+                        class="card-delete-btn" 
+                        (click)="removeStatItem(asStats(block), $index)"
+                        title="Xóa chỉ số này">
+                        <yin-icon name="trash" [size]="14"></yin-icon>
+                      </button>
+
+                      <div class="stat-num-box">
+                        <input 
+                          type="text" 
+                          class="live-input stat-num-input" 
+                          placeholder="35+"
+                          [(ngModel)]="item.number" />
+                      </div>
+
+                      <div class="stat-name-box">
+                        <input 
+                          type="text" 
+                          class="live-input stat-name-input" 
+                          placeholder="Tiêu đề chỉ số..."
+                          [(ngModel)]="item.label" />
+                      </div>
+
+                      <div class="stat-desc-box">
+                        <textarea 
+                          class="live-textarea stat-desc-input" 
+                          rows="2" 
+                          placeholder="Mô tả tóm tắt..."
+                          [(ngModel)]="item.description"></textarea>
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Add Stat Card -->
+                  <button 
+                    type="button" 
+                    class="add-stat-card yin-card" 
+                    (click)="addStatItem(asStats(block))">
+                    <yin-icon name="plus" [size]="24"></yin-icon>
+                    <span>Thêm Chỉ Số Thống Kê</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- 3. PROJECTS GRID BLOCK -->
+          @case ('projects-grid') {
+            <section class="yin-projects-section live-projects-section">
+              <div class="yin-container">
+                
+                <!-- Section Header Editor -->
+                <div class="section-header live-section-header">
+                  <div class="yin-badge live-badge-wrap">
+                    <yin-icon name="layout" [size]="14"></yin-icon>
+                    <input 
+                      type="text" 
+                      class="live-input header-badge-input" 
+                      placeholder="Công Trình Tiêu Biểu"
+                      [(ngModel)]="asProjects(block).badge" />
+                  </div>
+
+                  <input 
+                    type="text" 
+                    class="live-input section-title-input" 
+                    placeholder="Hồ Sơ Năng Lực & Dự Án Thi Công Thực Tế"
+                    [(ngModel)]="asProjects(block).title" />
+
+                  <textarea 
+                    class="live-textarea section-subtitle-input" 
+                    rows="2" 
+                    placeholder="Mô tả tiêu đề danh mục công trình..."
+                    [(ngModel)]="asProjects(block).subtitle"></textarea>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="projects-grid live-projects-grid">
+                  @for (project of asProjects(block).projects; track project.id; let pIdx = $index) {
+                    <article class="project-card yin-card live-card">
+                      <button 
+                        type="button" 
+                        class="card-delete-btn" 
+                        (click)="removeProject(asProjects(block), pIdx)"
+                        title="Xóa công trình này">
+                        <yin-icon name="trash" [size]="14"></yin-icon>
+                      </button>
+
+                      <div class="card-top">
+                        <input 
+                          type="text" 
+                          class="live-input project-cat-input" 
+                          placeholder="Lĩnh vực / Phân loại"
+                          [(ngModel)]="project.category" />
+                        
+                        <input 
+                          type="text" 
+                          class="live-input project-client-input" 
+                          placeholder="Khách hàng đối tác"
+                          [(ngModel)]="project.client" />
+                      </div>
+
+                      <div class="project-title-box">
+                        <input 
+                          type="text" 
+                          class="live-input project-title-input" 
+                          placeholder="Tên công trình dự án..."
+                          [(ngModel)]="project.title" />
+                      </div>
+
+                      <div class="project-summary-box">
+                        <textarea 
+                          class="live-textarea project-summary-input" 
+                          rows="3" 
+                          placeholder="Tóm tắt giải pháp kỹ thuật và quy mô..."
+                          [(ngModel)]="project.summary"></textarea>
+                      </div>
+
+                      <!-- Metrics -->
+                      <div class="metrics-box live-metrics-box">
+                        <yin-icon name="bar-chart" [size]="16"></yin-icon>
+                        <input 
+                          type="text" 
+                          class="live-input project-metrics-input" 
+                          placeholder="Chỉ số KPI (VD: Giảm 35% thời gian neo đậu)"
+                          [(ngModel)]="project.metrics" />
+                      </div>
+
+                      <!-- Tech Stacks -->
+                      <div class="tech-stack-editor-box">
+                        <label class="field-micro-label">Công nghệ (phân cách bằng dấu phẩy):</label>
+                        <input 
+                          type="text" 
+                          class="live-input project-techs-input" 
+                          placeholder="Spring Boot, Angular Signals, Kafka..."
+                          [ngModel]="getProjectTechsString(project)"
+                          (ngModelChange)="updateProjectTechs(project, $event)" />
+                      </div>
+
+                      <!-- Link -->
+                      <div class="card-footer live-card-footer">
+                        <div class="project-link-group">
+                          <label class="field-micro-label">Đường dẫn chi tiết:</label>
+                          <input 
+                            type="text" 
+                            class="live-input project-link-input" 
+                            placeholder="/blog/ho-so-du-an-... hoặc /contact"
+                            [(ngModel)]="project.link" />
+                        </div>
+                      </div>
+                    </article>
+                  }
+
+                  <!-- Add Project Card -->
+                  <button 
+                    type="button" 
+                    class="add-project-card yin-card" 
+                    (click)="addProject(asProjects(block))">
+                    <yin-icon name="plus" [size]="28"></yin-icon>
+                    <span>Thêm Công Trình / Dự Án Mới</span>
+                  </button>
+                </div>
+
+              </div>
+            </section>
+          }
+
+          <!-- 4. RICH CONTENT BLOCK (No Raw HTML - Live Structured Sections) -->
+          @case ('rich-content') {
+            <section class="yin-rich-content-section live-rich-section">
+              <div class="yin-container">
+                <div class="rich-content-wrapper yin-card live-card">
+                  
+                  <!-- Title -->
+                  <div class="rich-title-box">
+                    <input 
+                      type="text" 
+                      class="live-input block-title-input" 
+                      placeholder="Tiêu đề phân đoạn lớn (VD: Triết lý cốt lõi)..."
+                      [(ngModel)]="asRich(block).title" />
+                  </div>
+
+                  <!-- Structured Items Stream -->
+                  <div class="rich-items-editor-list">
+                    @for (item of asRich(block).items; track $index) {
+                      <div class="rich-item-card live-card">
+                        <button 
+                          type="button" 
+                          class="card-delete-btn" 
+                          (click)="removeRichItem(asRich(block), $index)"
+                          title="Xóa mục nội dung này">
+                          <yin-icon name="trash" [size]="14"></yin-icon>
+                        </button>
+
+                        <div class="rich-heading-box">
+                          <input 
+                            type="text" 
+                            class="live-input rich-heading-input" 
+                            placeholder="Tiêu đề mục (VD: 1. Kỹ nghệ vững chắc)..."
+                            [(ngModel)]="item.heading" />
+                        </div>
+
+                        <div class="rich-body-box">
+                          <textarea 
+                            class="live-textarea rich-body-input" 
+                            rows="3" 
+                            placeholder="Nội dung phân tích chi tiết cho luận điểm này..."
+                            [(ngModel)]="item.body"></textarea>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Add Item Button -->
+                    <button 
+                      type="button" 
+                      class="yin-btn yin-btn-secondary add-rich-item-btn" 
+                      (click)="addRichItem(asRich(block))">
+                      <yin-icon name="plus" [size]="16"></yin-icon>
+                      <span>Thêm Mục Luận Điểm / Phân Đoạn Mới</span>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- 5. CTA BLOCK -->
+          @case ('cta') {
+            <section class="yin-cta-section live-cta-section">
+              <div class="yin-container">
+                <div class="cta-banner-workday live-cta-banner">
+                  <div class="cta-inner">
+                    
+                    <!-- Badge -->
+                    <div class="cta-badge live-editable-badge">
+                      <yin-icon name="sparkles" [size]="14"></yin-icon>
+                      <input 
+                        type="text" 
+                        class="live-input cta-badge-input" 
+                        placeholder="Badge kêu gọi (VD: Sẵn Sàng Hợp Tác)..."
+                        [(ngModel)]="asCta(block).badge" />
+                    </div>
+
+                    <!-- Headline -->
+                    <input 
+                      type="text" 
+                      class="live-input cta-headline-input" 
+                      placeholder="Tiêu đề kêu gọi hành động..."
+                      [(ngModel)]="asCta(block).headline" />
+
+                    <!-- Description -->
+                    <textarea 
+                      class="live-textarea cta-desc-input" 
+                      rows="2" 
+                      placeholder="Mô tả kêu gọi kết nối..."
+                      [(ngModel)]="asCta(block).description"></textarea>
+
+                    <!-- Button & Link -->
+                    <div class="cta-button-edit-row">
+                      <div class="btn-preview-box">
+                        <span class="preview-tag">Chữ nút:</span>
+                        <input 
+                          type="text" 
+                          class="live-input cta-btn-input" 
+                          placeholder="Chữ trên nút..."
+                          [(ngModel)]="asCta(block).buttonText" />
+                      </div>
+
+                      <div class="btn-preview-box">
+                        <span class="preview-tag">Liên kết đích:</span>
+                        <input 
+                          type="text" 
+                          class="live-input cta-link-input" 
+                          placeholder="/contact"
+                          [(ngModel)]="asCta(block).buttonLink" />
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </section>
+          }
+
+          @default {
+            <div class="default-block-info yin-card">
+              <span>Khối thành phần: {{ block.type }} (ID: {{ block.id }})</span>
+            </div>
+          }
+
+        }
+      </div>
+    }
+
+    }
+
+  </div>
+</div>

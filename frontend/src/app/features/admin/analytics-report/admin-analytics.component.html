@@ -1,0 +1,213 @@
+<div class="analytics-admin-root">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Phân Tích Hành Vi & Điểm Rời Bỏ</h1>
+      <p class="page-subtitle">Theo dõi độ sâu cuộn trang và xác định chính xác người dùng dừng lại ở phần nào thì thoát.</p>
+    </div>
+  </div>
+
+  <!-- Reading Depth Funnel -->
+  <div class="funnel-card yin-card">
+    <div class="card-header">
+      <div class="card-title-group">
+        <yin-icon name="bar-chart" [size]="18"></yin-icon>
+        <h3 class="card-title">Phễu Độ Sâu Đọc Bài Viết</h3>
+      </div>
+      <span class="total-readers-tag">Tổng số phiên đọc: {{ summary().funnel.totalReaders }}</span>
+    </div>
+
+    <div class="funnel-bars-container">
+      <div class="funnel-step">
+        <div class="step-meta">
+          <span class="step-label">Khởi đầu đọc (0%)</span>
+          <span class="step-count">{{ summary().funnel.totalReaders }} độc giả (100%)</span>
+        </div>
+        <div class="step-bar-track">
+          <div class="step-bar-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <div class="funnel-step">
+        <div class="step-meta">
+          <span class="step-label">Đọc đạt mốc 25% bài viết</span>
+          <span class="step-count">{{ summary().funnel.reached25 }} độc giả ({{ funnelPercentages().p25 }}%)</span>
+        </div>
+        <div class="step-bar-track">
+          <div class="step-bar-fill" [style.width.%]="funnelPercentages().p25"></div>
+        </div>
+      </div>
+
+      <div class="funnel-step">
+        <div class="step-meta">
+          <span class="step-label">Đọc đạt mốc 50% bài viết (Nửa bài)</span>
+          <span class="step-count">{{ summary().funnel.reached50 }} độc giả ({{ funnelPercentages().p50 }}%)</span>
+        </div>
+        <div class="step-bar-track">
+          <div class="step-bar-fill medium" [style.width.%]="funnelPercentages().p50"></div>
+        </div>
+      </div>
+
+      <div class="funnel-step">
+        <div class="step-meta">
+          <span class="step-label">Đọc đạt mốc 75% bài viết</span>
+          <span class="step-count">{{ summary().funnel.reached75 }} độc giả ({{ funnelPercentages().p75 }}%)</span>
+        </div>
+        <div class="step-bar-track">
+          <div class="step-bar-fill good" [style.width.%]="funnelPercentages().p75"></div>
+        </div>
+      </div>
+
+      <div class="funnel-step">
+        <div class="step-meta">
+          <span class="step-label">Đọc trọn vẹn 100% (Hoàn thành bài)</span>
+          <span class="step-count">{{ summary().funnel.completed100 }} độc giả ({{ funnelPercentages().p100 }}%)</span>
+        </div>
+        <div class="step-bar-track">
+          <div class="step-bar-fill complete" [style.width.%]="funnelPercentages().p100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exit Sections Table (Xem tới phần nào thì thoát) -->
+  <div class="exit-blocks-card yin-card">
+    <div class="card-header">
+      <div class="card-title-group">
+        <yin-icon name="sparkles" [size]="18"></yin-icon>
+        <h3 class="card-title">Các Phân Đoạn Người Dùng Rời Bỏ Nhiều Nhất</h3>
+      </div>
+      <span class="badge-hint">Tối ưu nội dung tại các phần này</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="exit-table">
+        <thead>
+          <tr>
+            <th>Xếp Hạng</th>
+            <th>Tên Phân Đoạn / Block ID</th>
+            <th>Số Lượng Thoát</th>
+            <th>Tỷ Lệ Thoát</th>
+            <th>Gợi Ý Cải Thiện Cho Tác Giả</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (summary().exitBlocks.length === 0) {
+            <tr>
+              <td colspan="5" class="empty-cell">Chưa có dữ liệu rời bỏ bài viết.</td>
+            </tr>
+          } @else {
+            @for (exit of summary().exitBlocks; track exit.blockId; let i = $index) {
+              <tr>
+                <td>
+                  <span class="rank-badge" [class.top]="i === 0">#{{ i + 1 }}</span>
+                </td>
+                <td>
+                  <div class="exit-block-label">{{ exit.blockLabel }}</div>
+                  <div class="exit-block-id">ID: {{ exit.blockId }}</div>
+                </td>
+                <td>
+                  <span class="count-pill">{{ exit.exitCount }} lượt</span>
+                </td>
+                <td>
+                  <div class="percentage-wrap">
+                    <span class="percent-val">{{ exit.exitPercentage }}%</span>
+                    <div class="percent-bar">
+                      <div class="percent-fill" [style.width.%]="exit.exitPercentage"></div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="recommendation-text">
+                    @if (exit.exitPercentage >= 30) {
+                      Đoạn văn có thể quá dài hoặc khô khan. Nên bổ sung sơ đồ hình ảnh hoặc khối trích dẫn callout.
+                    } @else {
+                      Tỷ lệ dừng hợp lý. Cân nhắc thêm nút CTA hoặc câu hỏi gợi mở sang phần tiếp theo.
+                    }
+                  </span>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Raw Reading Telemetry Logs -->
+  <div class="logs-card yin-card">
+    <div class="card-header">
+      <h3 class="card-title">Nhật Ký Phiên Đọc Thực Tế</h3>
+      <span class="card-desc">Dữ liệu ghi nhận thông qua IntersectionObserver và Beacon API</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="logs-table">
+        <thead>
+          <tr>
+            <th>Session ID</th>
+            <th>Mục Tiêu Đọc</th>
+            <th>Độ Sâu Cuộn Lớn Nhất</th>
+            <th>Phần Dừng Cuối Cùng</th>
+            <th>Thời Gian Đọc</th>
+            <th>Thời Điểm</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loadingSessions()) {
+            <tr>
+              <td colspan="6" class="loading-cell">Đang tải nhật ký phiên đọc…</td>
+            </tr>
+          } @else if (readingSessions().length === 0) {
+            <tr>
+              <td colspan="6" class="empty-cell">Chưa có phiên đọc telemetry nào được ghi nhận.</td>
+            </tr>
+          } @else {
+            @for (s of readingSessions(); track s.id) {
+              <tr>
+                <td>
+                  <span class="session-id">{{ s.sessionId }}</span>
+                </td>
+                <td>
+                  <span class="target-title">{{ s.targetTitle }}</span>
+                </td>
+                <td>
+                  <span class="depth-badge" [class]="'depth-' + s.maxScrollDepth">
+                    {{ s.maxScrollDepth }}%
+                  </span>
+                </td>
+                <td>
+                  <span class="last-block-name">{{ s.lastBlockLabel }}</span>
+                </td>
+                <td>
+                  <span class="time-spent">{{ s.timeSpentSeconds }} giây</span>
+                </td>
+                <td>
+                  <span class="timestamp-text">{{ s.timestamp ? (s.timestamp | date:'shortTime') : '' }}</span>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Keyset Cursor Load More Button (Xem Thêm) -->
+    @if (hasMore()) {
+      <div class="load-more-footer">
+        <button 
+          type="button" 
+          class="yin-btn yin-btn-secondary load-more-btn"
+          [disabled]="loadingMore()"
+          (click)="loadMore()">
+          @if (loadingMore()) {
+            <span>Đang tải thêm…</span>
+          } @else {
+            <span>Xem Thêm Phiên Đọc</span>
+            <yin-icon name="chevron-down" [size]="16"></yin-icon>
+          }
+        </button>
+      </div>
+    }
+  </div>
+</div>
+

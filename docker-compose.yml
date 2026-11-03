@@ -1,0 +1,9 @@
+# ==============================================================================
+# YIN TECHNOLOGY PLATFORM - MASTER DOCKER COMPOSE
+# Quản lý toàn bộ hệ thống với Profiles tách biệt (infra, app, full)
+# ==============================================================================
+
+include:
+  - path: docker-compose.infra.yml
+  - path: docker-compose.app.yml
+

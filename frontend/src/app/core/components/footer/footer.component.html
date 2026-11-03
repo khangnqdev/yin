@@ -1,0 +1,71 @@
+<footer class="yin-footer-root">
+  <div class="yin-container footer-container">
+    <div class="footer-grid">
+      <!-- Brand Column -->
+      <div class="footer-brand-col">
+        <img src="/assets/logo/yinkenna-w.svg" alt="Yin White Logo" class="footer-logo" width="130" height="38" />
+        <p class="brand-desc">
+          {{ config().brandDesc }}
+        </p>
+        <div class="owner-badge">
+          <span>{{ config().founderRole }}: <strong>{{ config().founderName }}</strong></span>
+        </div>
+      </div>
+
+      <!-- Column 1: Links -->
+      <div class="footer-nav-col">
+        <h4 class="col-title">{{ config().col1Title }}</h4>
+        <ul class="col-links">
+          @for (lnk of config().col1Links; track lnk.id) {
+            <li>
+              <a [routerLink]="lnk.url" (click)="onLinkClick(lnk.url, $event)">{{ lnk.label }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Column 2: Capabilities / Tech Items -->
+      <div class="footer-nav-col">
+        <h4 class="col-title">{{ config().col2Title }}</h4>
+        <ul class="col-links">
+          @for (item of config().col2Items; track item.id) {
+            <li><span>{{ item.text }}</span></li>
+          }
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact & Direct Channels -->
+      <div class="footer-nav-col">
+        <h4 class="col-title">{{ config().col3Title }}</h4>
+        <ul class="col-links">
+          <li><span>Email: {{ config().contactEmail }}</span></li>
+          <li><span>Hotline Kỹ Thuật: {{ config().contactPhone }}</span></li>
+          <li><span>Địa chỉ: {{ config().contactAddress }}</span></li>
+          @if (config().mapLink) {
+            <li>
+              <a 
+                [href]="config().mapLink" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="footer-map-link"
+                title="Mở Google Maps chỉ đường đến Yin">
+                <yin-icon name="navigation" [size]="14"></yin-icon>
+                <span>Chỉ Đường Google Maps &rarr;</span>
+              </a>
+            </li>
+          }
+          <li><a routerLink="/admin" class="admin-shortcut">Truy Cập CMS Quản Trị &rarr;</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {{ currentYear }} {{ config().copyrightText }}</p>
+      @if (config().securityBadge) {
+        <div class="security-tag">
+          <span>{{ config().securityBadge }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</footer>

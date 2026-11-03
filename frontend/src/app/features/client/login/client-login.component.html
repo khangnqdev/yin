@@ -1,0 +1,102 @@
+<main class="auth-page-root">
+  <div class="auth-wrapper">
+    <div class="auth-card yin-card">
+      
+      <!-- Card Header: Back link and Logo on the SAME HORIZONTAL ROW -->
+      <div class="card-header-top-row">
+        <a routerLink="/" class="back-link" title="Quay lại trang chủ Yin">
+          <yin-icon name="arrow-left" [size]="15"></yin-icon>
+          <span>Trang chủ Yin</span>
+        </a>
+        <div class="brand-logo-wrap">
+          <img src="/assets/logo/yinkenna.svg" alt="Yin Technology" class="auth-logo light-logo" width="115" height="32" />
+          <img src="/assets/logo/yinkenna-w.svg" alt="Yin Technology" class="auth-logo dark-logo" width="115" height="32" />
+        </div>
+      </div>
+
+      <!-- Compact Title Box: Just "Đăng Nhập" (bỏ chữ khách hàng, bỏ Cổng Doanh Nghiệp & mô tả) -->
+      <div class="card-title-box">
+        <h1 class="auth-title">Đăng Nhập</h1>
+      </div>
+
+      <!-- Success Registration Alert -->
+      @if (successMessage()) {
+        <div class="alert-box alert-success" role="status">
+          <yin-icon name="check-circle" [size]="16"></yin-icon>
+          <span>{{ successMessage() }}</span>
+        </div>
+      }
+
+      <!-- Global Error Alert -->
+      @if (errorMessage()) {
+        <div class="alert-box alert-error" role="alert">
+          <yin-icon name="alert-circle" [size]="16"></yin-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <!-- Login Form -->
+      <form class="auth-form" (ngSubmit)="submit()" novalidate>
+        
+        <!-- Field: Username -->
+        <div class="form-group">
+          <label for="login-username" class="form-label">Tên đăng nhập</label>
+          <input 
+            id="login-username" 
+            name="username" 
+            type="text" 
+            class="yin-input" 
+            placeholder="Nhập tên đăng nhập của bạn"
+            [ngModel]="username()" 
+            (ngModelChange)="username.set($event)"
+            autocomplete="username"
+            required />
+        </div>
+
+        <!-- Field: Password -->
+        <div class="form-group">
+          <label for="login-password" class="form-label">Mật khẩu</label>
+          <div class="password-input-wrap">
+            <input 
+              id="login-password" 
+              name="password" 
+              [type]="showPassword() ? 'text' : 'password'" 
+              class="yin-input password-input" 
+              placeholder="Nhập mật khẩu"
+              [ngModel]="password()" 
+              (ngModelChange)="password.set($event)"
+              autocomplete="current-password"
+              required />
+            <button 
+              type="button" 
+              class="toggle-pwd-btn" 
+              (click)="togglePasswordVisibility()" 
+              [title]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
+              <yin-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="18"></yin-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="yin-btn yin-btn-primary submit-btn" 
+          [disabled]="submitting()">
+          @if (submitting()) {
+            <span>Đang xác thực thông tin…</span>
+          } @else {
+            <span>Đăng Nhập Hệ Thống</span>
+          }
+        </button>
+
+      </form>
+
+      <!-- Card Footer -->
+      <div class="card-footer-action">
+        <span>Chưa có tài khoản đối tác?</span>
+        <a routerLink="/register" class="register-redirect-link">Đăng ký tài khoản ngay &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+</main>

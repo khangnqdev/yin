@@ -1,0 +1,169 @@
+<div class="dashboard-root">
+  <div class="dash-header">
+    <div>
+      <h1 class="dash-title">Bảng Điều Khiển Quản Trị Yin</h1>
+      <p class="dash-subtitle">Theo dõi tần suất truy cập, thông tin khách hàng liên hệ và hiệu suất bài viết.</p>
+    </div>
+    @if (canManageContent()) {
+    <div class="header-action">
+      <a routerLink="/admin/articles/create" class="yin-btn yin-btn-primary">
+        <yin-icon name="plus" [size]="16"></yin-icon>
+        <span>Soạn Thảo Bài Mới</span>
+      </a>
+    </div>
+    }
+  </div>
+
+  <!-- KPI Summary Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card yin-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Tổng Lượt Truy Cập</span>
+        <div class="kpi-icon"><yin-icon name="eye" [size]="18"></yin-icon></div>
+      </div>
+      <div class="kpi-value">{{ summary().totalPageViews }}</div>
+      <span class="kpi-sub">Lượt xem trên toàn hệ thống</span>
+    </div>
+
+    <div class="kpi-card yin-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Khách Truy Cập Riêng Biệt</span>
+        <div class="kpi-icon"><yin-icon name="users" [size]="18"></yin-icon></div>
+      </div>
+      <div class="kpi-value">{{ summary().uniqueVisitors }}</div>
+      <span class="kpi-sub">Khách truy cập thực tế</span>
+    </div>
+
+    <div class="kpi-card yin-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Khách Hàng Liên Hệ</span>
+        <div class="kpi-icon"><yin-icon name="mail" [size]="18"></yin-icon></div>
+      </div>
+      <div class="kpi-value highlight">{{ summary().totalContacts }}</div>
+      <span class="kpi-sub">Yêu cầu tư vấn nhận được</span>
+    </div>
+
+    <div class="kpi-card yin-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Bài Báo & Tri Thức</span>
+        <div class="kpi-icon"><yin-icon name="file-text" [size]="18"></yin-icon></div>
+      </div>
+      <div class="kpi-value">{{ summary().totalArticles }}</div>
+      <span class="kpi-sub">Đã xuất bản & bản nháp</span>
+    </div>
+  </div>
+
+  <!-- Traffic Frequency Bar Chart -->
+  <div class="chart-section yin-card">
+    <div class="card-header-flex">
+      <div>
+        <h3 class="card-title">Tần Suất Người Vào Website (7 Ngày Gần Nhất)</h3>
+        <p class="card-desc">Đo lường lượng pageviews hàng ngày để nhận biết xu hướng quan tâm.</p>
+      </div>
+      <a routerLink="/admin/analytics" class="detail-link">
+        <span>Xem Báo Cáo Điểm Rời Bỏ &rarr;</span>
+      </a>
+    </div>
+
+    <div class="bar-chart-container">
+      @for (d of summary().dailyViews; track d.date) {
+        <div class="chart-col">
+          <div class="col-bar-track">
+            <div 
+              class="col-bar-fill" 
+              [style.height.%]="(d.views / maxDailyView()) * 100"
+              [title]="d.views + ' lượt xem'">
+            </div>
+          </div>
+          <span class="col-count">{{ d.views }}</span>
+          <span class="col-date">{{ d.date }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Split Grid: Recent Contacts & Top Articles -->
+  <div class="dash-dual-grid">
+    
+    <!-- Recent Contacts Table -->
+    @if (canManageContent()) {
+    <div class="dash-table-card yin-card">
+      <div class="card-header-flex">
+        <h3 class="card-title">Liên Hệ Mới Nhất</h3>
+        <a routerLink="/admin/contacts" class="detail-link">Xem tất cả &rarr;</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Họ Tên</th>
+              <th>Loại Dự Án</th>
+              <th>Trạng Thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of recentContacts(); track c.id) {
+              <tr>
+                <td>
+                  <div class="cell-main">{{ c.fullName }}</div>
+                  <div class="cell-sub">{{ c.phone }}</div>
+                </td>
+                <td>
+                  <div class="cell-main">{{ c.projectType }}</div>
+                  <div class="cell-sub">{{ c.budgetRange }}</div>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="c.status.toLowerCase()">
+                    {{ c.status }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    }
+    <!-- Top Articles Table -->
+    <div class="dash-table-card yin-card">
+      <div class="card-header-flex">
+        <h3 class="card-title">Bài Báo Có Lượt Xem Cao</h3>
+        <a routerLink="/admin/articles" class="detail-link">Xem tất cả &rarr;</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Tiêu Đề Bài Viết</th>
+              <th>Trạng Thái</th>
+              <th>Lượt Xem</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of topArticles(); track a.id) {
+              <tr>
+                <td>
+                  <div class="cell-main truncate-title">{{ a.title }}</div>
+                  <div class="cell-sub">{{ a.readingTimeMinutes }} phút đọc &bull; {{ a.wordCount }} từ</div>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="a.status.toLowerCase()">
+                    {{ a.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="views-val">{{ a.viewCount }}</div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
