@@ -306,9 +306,11 @@ public class SiteService {
             if (!requestedPublication.isEmpty()) {
                 try {
                     Instant date = Instant.parse(requestedPublication);
+                    if (date.isAfter(Instant.now()))
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Publication date cannot be in the future");
                     publication = date.toString();
                 } catch (DateTimeParseException e) {
-                    publication = Instant.now().toString();
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid publication date", e);
                 }
             } else if (publication == null) publication = Instant.now().toString();
         }
