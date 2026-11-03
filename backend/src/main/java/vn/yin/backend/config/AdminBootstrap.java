@@ -17,7 +17,7 @@ public class AdminBootstrap {
             @Value("${app.admin.username}") String username,
             @Value("${app.admin.password}") String password) {
         return args -> {
-            Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM users WHERE role='ADMIN' AND is_active=1", Integer.class);
+            Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM users WHERE role='ADMIN' AND is_active=true", Integer.class);
             if (count != null && count > 0) return;
             String normalizedUsername = username.trim().toLowerCase(Locale.ROOT);
             if (!normalizedUsername.matches("[a-z0-9_.-]{3,50}") || password.length() < 12

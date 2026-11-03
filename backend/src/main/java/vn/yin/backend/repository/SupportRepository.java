@@ -42,8 +42,8 @@ public class SupportRepository {
     }
 
     public Map<String, Object> mine(String userId, int page, int size) {
-        Long total = jdbc.queryForObject("SELECT COUNT_BIG(*) FROM support_requests WHERE user_id=?", Long.class, userId);
-        var items = jdbc.queryForList(COLUMNS + " WHERE s.user_id=? ORDER BY s.created_at DESC,s.id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY",
+        Long total = jdbc.queryForObject("SELECT COUNT(*) FROM support_requests WHERE user_id=?", Long.class, userId);
+        var items = jdbc.queryForList(COLUMNS + " WHERE s.user_id=? ORDER BY s.created_at DESC,s.id DESC OFFSET ? LIMIT ?",
                 userId, page * size, size).stream().map(row -> request(row, false)).toList();
         return Map.of("items", items, "page", page, "size", size, "total", total == null ? 0L : total);
     }
@@ -52,15 +52,15 @@ public class SupportRepository {
         String where = status.isEmpty() ? "" : " WHERE s.status=?";
         var params = new ArrayList<Object>();
         if (!status.isEmpty()) params.add(status);
-        Long total = jdbc.queryForObject("SELECT COUNT_BIG(*) FROM support_requests s" + where, Long.class, params.toArray());
+        Long total = jdbc.queryForObject("SELECT COUNT(*) FROM support_requests s" + where, Long.class, params.toArray());
         params.add(page * size); params.add(size);
-        var items = jdbc.queryForList(COLUMNS + where + " ORDER BY s.created_at DESC,s.id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY", params.toArray())
+        var items = jdbc.queryForList(COLUMNS + where + " ORDER BY s.created_at DESC,s.id DESC OFFSET ? LIMIT ?", params.toArray())
                 .stream().map(row -> request(row, true)).toList();
         return Map.of("items", items, "page", page, "size", size, "total", total == null ? 0L : total);
     }
 
     public Map<String, Object> updateStatus(String id, String status) {
-        int changed = jdbc.update("UPDATE support_requests SET status=?,updated_at=SYSUTCDATETIME() WHERE id=?", status, id);
+        int changed = jdbc.update("UPDATE support_requests SET status=?,updated_at=(now() AT TIME ZONE 'UTC') WHERE id=?", status, id);
         return changed == 0 ? null : byId(id, true);
     }
 }

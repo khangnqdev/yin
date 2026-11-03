@@ -1,27 +1,27 @@
 # Yin website
 
-Angular frontend, Spring Boot 3 backend và SQL Server 2022. Nội dung công khai ban đầu được seed từ prototype Angular; liên hệ và analytics bắt đầu với dữ liệu thật, không dùng dữ liệu demo.
+Angular frontend, Spring Boot 3 backend và PostgreSQL 17. Nội dung công khai ban đầu được seed từ prototype Angular; liên hệ và analytics bắt đầu với dữ liệu thật, không dùng dữ liệu demo.
 
 ## Chạy bằng Docker
 
-1. Sao chép `.env.example` thành `.env`, đặt `MSSQL_SA_PASSWORD`, `JWT_SECRET` (ít nhất 32 byte UTF-8) và `ADMIN_PASSWORD` (ít nhất 12 ký tự). Không dùng giá trị mẫu khi triển khai.
+1. Sao chép `.env.example` thành `.env`, đặt `POSTGRES_PASSWORD`, `JWT_SECRET` (ít nhất 32 byte UTF-8) và `ADMIN_PASSWORD` (ít nhất 12 ký tự). Không dùng giá trị mẫu khi triển khai.
 2. Chạy `docker-compose -f docker-compose.yml up --build -d`.
 3. Mở `http://localhost:4200` và đăng nhập quản trị tại `http://localhost:4200/admin/login` bằng `ADMIN_USERNAME`/`ADMIN_PASSWORD`.
 
-Backend tự tạo database `MSSQL_DB_NAME` và các bảng khi khởi động. Lần khởi động đầu, nếu SQL Server chưa sẵn sàng, container backend sẽ tự khởi động lại. Nội dung mẫu chỉ được thêm khi bảng bài viết trống hoặc trang tương ứng chưa tồn tại. Tài khoản quản trị mặc định được tạo nếu chưa có `ADMIN` đang hoạt động; đổi biến `ADMIN_PASSWORD` sau đó không tự đổi mật khẩu đã lưu. API giới hạn số lần đăng nhập, đăng ký, gửi hỗ trợ, gửi liên hệ và ghi analytics; backend kiểm tra dữ liệu trước khi ghi. Mặc định cả ba cổng chỉ nghe trên localhost. Khi đưa website ra Internet, đặt reverse proxy HTTPS phía trước và chỉ công khai cổng frontend.
+Container PostgreSQL tự tạo database `POSTGRES_DB`; backend tạo các bảng khi khởi động. Lần khởi động đầu, nếu database chưa sẵn sàng, container backend sẽ tự khởi động lại. Nội dung mẫu chỉ được thêm khi bảng bài viết trống hoặc trang tương ứng chưa tồn tại. Tài khoản quản trị mặc định được tạo nếu chưa có `ADMIN` đang hoạt động; đổi biến `ADMIN_PASSWORD` sau đó không tự đổi mật khẩu đã lưu. API giới hạn số lần đăng nhập, đăng ký, gửi hỗ trợ, gửi liên hệ và ghi analytics; backend kiểm tra dữ liệu trước khi ghi. Mặc định cả ba cổng chỉ nghe trên localhost. Khi đưa website ra Internet, đặt reverse proxy HTTPS phía trước và chỉ công khai cổng frontend.
 Đặt `APP_SEED_ENABLED=false` để không thêm bài viết/trang mẫu khi khởi tạo một database rỗng. Nếu đã có dữ liệu, việc đổi cờ này không xóa dữ liệu.
 
-Kết nối SQL Server dùng `MSSQL_ENCRYPT=true`, `MSSQL_TRUST_SERVER_CERTIFICATE=true` và `MSSQL_POOL_SIZE=10` theo mặc định. Đặt `MSSQL_TRUST_SERVER_CERTIFICATE=false` khi máy chủ SQL có chứng chỉ được tin cậy để xác minh chứng chỉ; các giá trị này đi từ `.env` qua Docker Compose vào backend. `application.yml` giữ mặc định tương ứng khi chạy backend trực tiếp. Không đưa mật khẩu hoặc JWT secret vào source code. Ảnh CMS chỉ nhận PNG/JPEG/GIF tối đa 5 MB và 25 triệu pixel; Docker lưu ảnh vào volume `yin_media`, backend chạy trực tiếp dùng `MEDIA_STORAGE_DIR` (mặc định `./media`). Sao lưu volume ảnh cùng database.
+PostgreSQL chỉ nghe trên localhost của VPS và mạng Docker; backend dùng pool tối đa 5 kết nối theo mặc định. Không đưa mật khẩu hoặc JWT secret vào source code. Ảnh CMS chỉ nhận PNG/JPEG/GIF tối đa 5 MB và 25 triệu pixel; Docker lưu ảnh vào volume `yin_media`, backend chạy trực tiếp dùng `MEDIA_STORAGE_DIR` (mặc định `./media`). Sao lưu volume ảnh cùng database. Xem [hướng dẫn VPS](docs/deploy-vps.md).
 
 ## Phát triển cục bộ
 
-- Backend: cần Java 21, Maven và SQL Server. Tải biến từ `.env`, chạy `mvn spring-boot:run` trong `backend`.
+- Backend: cần Java 21, Maven và PostgreSQL. Tải biến từ `.env`, chạy `mvn spring-boot:run` trong `backend`.
 - Frontend: `npm install` rồi `npm start` trong `frontend`. Angular proxy `/api` tới `http://localhost:8080`.
 - Kiểm tra: `mvn test` trong `backend`; `npm test -- --watch=false` và `npm run build` trong `frontend`.
 
 ## API chính
 
-Xem [lộ trình học backend từ code hiện tại](docs/backend-learning-guide.md) và [mẫu kiến trúc, API contract liên hệ](docs/architecture-contact-example.md) để theo dõi luồng Angular Signal → HTTP → Spring Service/port → JPA/Hibernate → SQL Server. Chức năng liên hệ dùng JPA; các chức năng còn lại hiện vẫn dùng JDBC.
+Xem [lộ trình học backend từ code hiện tại](docs/backend-learning-guide.md) và [mẫu kiến trúc, API contract liên hệ](docs/architecture-contact-example.md) để theo dõi luồng Angular Signal → HTTP → Spring Service/port → JPA/Hibernate → PostgreSQL. Chức năng liên hệ dùng JPA; các chức năng còn lại hiện vẫn dùng JDBC.
 
 | Phương thức | Đường dẫn | Quyền |
 | --- | --- | --- |
@@ -48,7 +48,7 @@ Xem [lộ trình học backend từ code hiện tại](docs/backend-learning-gui
 | GET | `/api/media/{name}` | Công khai |
 | PUT | `/api/admin/pages/{key}`, `/api/admin/contacts/{id}` | ADMIN/MANAGER |
 
-API dùng JWT trong header `Authorization: Bearer …`. `ADMIN` quản lý tài khoản và toàn bộ CMS; `MANAGER` quản lý CMS, khách hàng và hỗ trợ; `FIXER` xem bài viết/CMS, xử lý hỗ trợ và xem analytics. Khóa tài khoản, đổi vai trò và đặt lại mật khẩu tăng `token_version` để vô hiệu hóa token cũ; các request dùng JWT kiểm tra lại trạng thái tài khoản trong database. Frontend quản trị giữ token trong `sessionStorage`, nên đóng tab hoặc đăng xuất sẽ xóa phiên đăng nhập. Giao diện client và các tab quản trị được mô tả tại [hợp đồng frontend](docs/auth-support-frontend-handoff.md). File `docker/mssql/init.sql` là schema thử nghiệm cũ và không được dùng bởi stack hiện tại; schema đang chạy nằm trong `backend/src/main/resources/schema.sql`.
+API dùng JWT trong header `Authorization: Bearer …`. `ADMIN` quản lý tài khoản và toàn bộ CMS; `MANAGER` quản lý CMS, khách hàng và hỗ trợ; `FIXER` xem bài viết/CMS, xử lý hỗ trợ và xem analytics. Khóa tài khoản, đổi vai trò và đặt lại mật khẩu tăng `token_version` để vô hiệu hóa token cũ; các request dùng JWT kiểm tra lại trạng thái tài khoản trong database. Frontend quản trị giữ token trong `sessionStorage`, nên đóng tab hoặc đăng xuất sẽ xóa phiên đăng nhập. Giao diện client và các tab quản trị được mô tả tại [hợp đồng frontend](docs/auth-support-frontend-handoff.md). File `docker/mssql/init.sql` là schema thử nghiệm cũ và không được dùng bởi stack hiện tại; schema PostgreSQL nằm trong `backend/src/main/resources/schema.sql`. Dữ liệu SQL Server cũ không tự chuyển sang PostgreSQL.
 
 Bài viết mới mặc định là `DRAFT`. Luồng hợp lệ: `DRAFT` → `PUBLISHED` → `ARCHIVED`; bài đã lưu trữ có thể xuất bản lại. `DELETE` đưa bài vào thùng rác, không xóa dữ liệu; API công khai và danh sách CMS thường không trả bài đã xóa. Khôi phục bài từng xuất bản chuyển về `ARCHIVED` để tránh tự công khai lại. Ngày xuất bản do CMS gửi được kiểm tra, không nhận ngày tương lai. Sau khi nâng cấp, `schema.sql` tự thêm `deleted_at` và `token_version` vào bảng cũ.
 

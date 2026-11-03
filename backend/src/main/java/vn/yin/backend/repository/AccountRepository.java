@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class AccountRepository {
@@ -22,12 +23,12 @@ public class AccountRepository {
     }
 
     public Map<String, Object> activePrincipal(String id) {
-        var rows = jdbc.queryForList("SELECT role,token_version FROM users WHERE id=? AND is_active=1", id);
+        var rows = jdbc.queryForList("SELECT role,token_version FROM users WHERE id=? AND is_active=true", id);
         return rows.isEmpty() ? null : rows.get(0);
     }
 
     public Map<String, Object> client(String id) {
-        var rows = jdbc.queryForList("SELECT id,username,email,phone,date_of_birth,receive_updates,role,created_at FROM users WHERE id=? AND role='CLIENT' AND is_active=1", id);
+        var rows = jdbc.queryForList("SELECT id,username,email,phone,date_of_birth,receive_updates,role,created_at FROM users WHERE id=? AND role='CLIENT' AND is_active=true", id);
         return rows.isEmpty() ? null : profile(rows.get(0));
     }
 
@@ -50,7 +51,7 @@ public class AccountRepository {
     }
 
     public Map<String, Object> updateOptIn(String id, boolean receiveUpdates) {
-        int changed = jdbc.update("UPDATE users SET receive_updates=? WHERE id=? AND role='CLIENT' AND is_active=1", receiveUpdates, id);
+        int changed = jdbc.update("UPDATE users SET receive_updates=? WHERE id=? AND role='CLIENT' AND is_active=true", receiveUpdates, id);
         return changed == 0 ? null : client(id);
     }
 
@@ -58,26 +59,26 @@ public class AccountRepository {
         var conditions = new ArrayList<String>();
         conditions.add("role='CLIENT'");
         var params = new ArrayList<Object>();
-        if (updatesOnly) conditions.add("receive_updates=1");
+        if (updatesOnly) conditions.add("receive_updates=true");
         if (!search.isEmpty()) {
             conditions.add("(LOWER(username) LIKE ? OR LOWER(email) LIKE ? OR phone LIKE ?)");
             String pattern = "%" + search.toLowerCase(java.util.Locale.ROOT)
-                    .replace("[", "[[]").replace("%", "[%]").replace("_", "[_]") + "%";
+                    .replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
             params.add(pattern); params.add(pattern); params.add(pattern);
         }
         String where = " WHERE " + String.join(" AND ", conditions);
-        Long total = jdbc.queryForObject("SELECT COUNT_BIG(*) FROM users" + where, Long.class, params.toArray());
+        Long total = jdbc.queryForObject("SELECT COUNT(*) FROM users" + where, Long.class, params.toArray());
         params.add(page * size); params.add(size);
         var items = jdbc.queryForList("SELECT id,username,email,phone,date_of_birth,receive_updates,role,created_at FROM users"
-                + where + " ORDER BY created_at DESC,id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY", params.toArray())
+                + where + " ORDER BY created_at DESC,id DESC OFFSET ? LIMIT ?", params.toArray())
                 .stream().map(this::profile).toList();
         return Map.of("items", items, "page", page, "size", size, "total", total == null ? 0L : total);
     }
 
     public Map<String, Object> admins(int page, int size) {
-        Long total = jdbc.queryForObject("SELECT COUNT_BIG(*) FROM users WHERE role IN ('MANAGER','ADMIN','FIXER')", Long.class);
+        Long total = jdbc.queryForObject("SELECT COUNT(*) FROM users WHERE role IN ('MANAGER','ADMIN','FIXER')", Long.class);
         var items = jdbc.queryForList("SELECT id,username,role,is_active,created_at FROM users WHERE role IN ('MANAGER','ADMIN','FIXER')"
-                + " ORDER BY created_at ASC,id ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY", page * size, size)
+                + " ORDER BY created_at ASC,id ASC OFFSET ? LIMIT ?", page * size, size)
                 .stream().map(row -> {
                     var r = new LinkedHashMap<String, Object>();
                     r.put("id", row.get("id")); r.put("username", row.get("username"));
@@ -103,19 +104,23 @@ public class AccountRepository {
                 "isActive", row.get("is_active"), "createdAt", time(row.get("created_at")));
     }
 
+    @Transactional
     public boolean updateAdminStatus(String id, boolean active) {
+        jdbc.execute("SELECT pg_advisory_xact_lock(20261103)");
         return jdbc.update("UPDATE users SET is_active=?,token_version=token_version+1 WHERE id=?"
                 + " AND role IN ('MANAGER','ADMIN','FIXER')"
-                + " AND (?=1 OR is_active=0 OR role<>'ADMIN' OR"
-                + " (SELECT COUNT_BIG(*) FROM users WITH (UPDLOCK, HOLDLOCK) WHERE role='ADMIN' AND is_active=1)>1)",
+                + " AND (?=true OR is_active=false OR role<>'ADMIN' OR"
+                + " (SELECT COUNT(*) FROM users WHERE role='ADMIN' AND is_active=true)>1)",
                 active, id, active) > 0;
     }
 
+    @Transactional
     public boolean updateAdminRole(String id, String role) {
+        jdbc.execute("SELECT pg_advisory_xact_lock(20261103)");
         return jdbc.update("UPDATE users SET role=?,token_version=token_version+1 WHERE id=?"
                 + " AND role IN ('MANAGER','ADMIN','FIXER')"
-                + " AND (?='ADMIN' OR is_active=0 OR role<>'ADMIN' OR"
-                + " (SELECT COUNT_BIG(*) FROM users WITH (UPDLOCK, HOLDLOCK) WHERE role='ADMIN' AND is_active=1)>1)",
+                + " AND (?='ADMIN' OR is_active=false OR role<>'ADMIN' OR"
+                + " (SELECT COUNT(*) FROM users WHERE role='ADMIN' AND is_active=true)>1)",
                 role, id, role) > 0;
     }
 

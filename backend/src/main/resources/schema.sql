@@ -1,33 +1,109 @@
-IF OBJECT_ID('dbo.users', 'U') IS NULL CREATE TABLE users (id NVARCHAR(64) PRIMARY KEY, username NVARCHAR(100) NOT NULL UNIQUE, password_hash NVARCHAR(255) NOT NULL, role NVARCHAR(30) NOT NULL, is_active BIT NOT NULL DEFAULT 1, created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME());
-IF COL_LENGTH('dbo.users', 'email') IS NULL ALTER TABLE users ADD email NVARCHAR(255) NULL;
-IF COL_LENGTH('dbo.users', 'phone') IS NULL ALTER TABLE users ADD phone NVARCHAR(50) NULL;
-IF COL_LENGTH('dbo.users', 'date_of_birth') IS NULL ALTER TABLE users ADD date_of_birth DATE NULL;
-IF COL_LENGTH('dbo.users', 'receive_updates') IS NULL ALTER TABLE users ADD receive_updates BIT NOT NULL CONSTRAINT DF_yin_users_receive_updates DEFAULT 0;
-IF COL_LENGTH('dbo.users', 'token_version') IS NULL ALTER TABLE users ADD token_version INT NOT NULL CONSTRAINT DF_yin_users_token_version DEFAULT 0;
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_users_email' AND object_id = OBJECT_ID('dbo.users')) CREATE UNIQUE INDEX IX_yin_users_email ON users(email) WHERE email IS NOT NULL;
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_users_role_created' AND object_id = OBJECT_ID('dbo.users')) CREATE INDEX IX_yin_users_role_created ON users(role, created_at DESC, id DESC) INCLUDE (username, email, phone, receive_updates);
-IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_yin_users_role') ALTER TABLE users ADD CONSTRAINT CK_yin_users_role CHECK (role IN ('CLIENT','MANAGER','ADMIN','FIXER'));
-IF OBJECT_ID('dbo.articles', 'U') IS NULL CREATE TABLE articles (id NVARCHAR(64) PRIMARY KEY, title NVARCHAR(400) NOT NULL, slug NVARCHAR(400) NOT NULL UNIQUE, summary NVARCHAR(MAX) NOT NULL DEFAULT '', category NVARCHAR(500) NOT NULL, thumbnail_url NVARCHAR(MAX) NOT NULL DEFAULT '', content_json NVARCHAR(MAX) NOT NULL, content_html NVARCHAR(MAX) NOT NULL DEFAULT '', status NVARCHAR(30) NOT NULL, focus_keyword NVARCHAR(200) NOT NULL DEFAULT '', seo_title NVARCHAR(300) NULL, seo_description NVARCHAR(500) NULL, reading_time_minutes INT NOT NULL DEFAULT 1, word_count INT NOT NULL DEFAULT 0, view_count BIGINT NOT NULL DEFAULT 0, author_name NVARCHAR(200) NOT NULL, published_at DATETIME2 NULL, created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), updated_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), CONSTRAINT CK_yin_articles_content_json CHECK (ISJSON(content_json) = 1), CONSTRAINT CK_yin_articles_status CHECK (status IN ('DRAFT','PUBLISHED','ARCHIVED')));
-IF COL_LENGTH('dbo.articles', 'thumbnail_url') IS NOT NULL AND (SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'articles' AND COLUMN_NAME = 'thumbnail_url') <> -1 ALTER TABLE articles ALTER COLUMN thumbnail_url NVARCHAR(MAX) NOT NULL;
-IF COL_LENGTH('dbo.articles', 'summary') IS NOT NULL AND (SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'articles' AND COLUMN_NAME = 'summary') <> -1 ALTER TABLE articles ALTER COLUMN summary NVARCHAR(MAX) NOT NULL;
-IF COL_LENGTH('dbo.articles', 'category') IS NOT NULL AND (SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'articles' AND COLUMN_NAME = 'category') < 500 ALTER TABLE articles ALTER COLUMN category NVARCHAR(500) NOT NULL;
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_articles_status_published' AND object_id = OBJECT_ID('dbo.articles')) CREATE INDEX IX_yin_articles_status_published ON articles(status, published_at DESC);
-IF COL_LENGTH('dbo.articles', 'sort_at') IS NULL ALTER TABLE articles ADD sort_at AS ISNULL(published_at, created_at) PERSISTED;
-IF COL_LENGTH('dbo.articles', 'deleted_at') IS NULL ALTER TABLE articles ADD deleted_at DATETIME2 NULL;
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_articles_sort' AND object_id = OBJECT_ID('dbo.articles')) CREATE INDEX IX_yin_articles_sort ON articles(sort_at DESC, id DESC);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_articles_status_sort' AND object_id = OBJECT_ID('dbo.articles')) CREATE INDEX IX_yin_articles_status_sort ON articles(status, sort_at DESC, id DESC);
-IF OBJECT_ID('dbo.pages', 'U') IS NULL CREATE TABLE pages (page_key NVARCHAR(100) PRIMARY KEY, title NVARCHAR(300) NOT NULL, meta_description NVARCHAR(500) NOT NULL DEFAULT '', content_json NVARCHAR(MAX) NOT NULL, updated_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), CONSTRAINT CK_yin_pages_json CHECK (ISJSON(content_json) = 1));
-IF OBJECT_ID('dbo.contacts', 'U') IS NULL CREATE TABLE contacts (id NVARCHAR(64) PRIMARY KEY, full_name NVARCHAR(200) NOT NULL, email NVARCHAR(255) NOT NULL, phone NVARCHAR(50) NOT NULL, company_name NVARCHAR(255) NULL, project_type NVARCHAR(100) NOT NULL, budget_range NVARCHAR(100) NOT NULL, message NVARCHAR(MAX) NOT NULL, status NVARCHAR(30) NOT NULL DEFAULT 'NEW', admin_notes NVARCHAR(MAX) NULL, created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), updated_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), CONSTRAINT CK_yin_contacts_status CHECK (status IN ('NEW','CONTACTED','IN_PROGRESS','CLOSED')));
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_contacts_status_date' AND object_id = OBJECT_ID('dbo.contacts')) CREATE INDEX IX_yin_contacts_status_date ON contacts(status, created_at DESC);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_contacts_created' AND object_id = OBJECT_ID('dbo.contacts')) CREATE INDEX IX_yin_contacts_created ON contacts(created_at DESC, id DESC);
-IF OBJECT_ID('dbo.support_requests', 'U') IS NULL CREATE TABLE support_requests (id NVARCHAR(64) PRIMARY KEY, user_id NVARCHAR(64) NOT NULL REFERENCES users(id), subject NVARCHAR(200) NOT NULL, message NVARCHAR(MAX) NOT NULL, status NVARCHAR(30) NOT NULL DEFAULT 'OPEN', created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), updated_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), CONSTRAINT CK_yin_support_status CHECK (status IN ('OPEN','IN_PROGRESS','RESOLVED','CLOSED')));
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_support_user_date' AND object_id = OBJECT_ID('dbo.support_requests')) CREATE INDEX IX_yin_support_user_date ON support_requests(user_id, created_at DESC);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_support_status_date' AND object_id = OBJECT_ID('dbo.support_requests')) CREATE INDEX IX_yin_support_status_date ON support_requests(status, created_at DESC);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_support_user_created_id' AND object_id = OBJECT_ID('dbo.support_requests')) CREATE INDEX IX_yin_support_user_created_id ON support_requests(user_id, created_at DESC, id DESC);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_support_status_created_id' AND object_id = OBJECT_ID('dbo.support_requests')) CREATE INDEX IX_yin_support_status_created_id ON support_requests(status, created_at DESC, id DESC);
-IF OBJECT_ID('dbo.page_views', 'U') IS NULL CREATE TABLE page_views (id NVARCHAR(64) PRIMARY KEY, session_id NVARCHAR(100) NOT NULL, path NVARCHAR(500) NOT NULL, referrer NVARCHAR(500) NOT NULL DEFAULT '', viewed_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME());
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_page_views_date' AND object_id = OBJECT_ID('dbo.page_views')) CREATE INDEX IX_yin_page_views_date ON page_views(viewed_at DESC);
-IF OBJECT_ID('dbo.reading_sessions', 'U') IS NULL CREATE TABLE reading_sessions (id NVARCHAR(64) PRIMARY KEY, session_id NVARCHAR(100) NOT NULL, target_id NVARCHAR(100) NOT NULL, target_title NVARCHAR(400) NOT NULL, max_scroll_depth INT NOT NULL, last_block_id NVARCHAR(150) NOT NULL DEFAULT '', last_block_label NVARCHAR(300) NOT NULL DEFAULT '', time_spent_seconds INT NOT NULL DEFAULT 0, updated_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), CONSTRAINT UQ_yin_reading_session UNIQUE(session_id, target_id), CONSTRAINT CK_yin_scroll_depth CHECK (max_scroll_depth IN (0,25,50,75,100)));
-IF COL_LENGTH('dbo.reading_sessions', 'created_at') IS NULL ALTER TABLE reading_sessions ADD created_at DATETIME2 NOT NULL CONSTRAINT DF_yin_reading_sessions_created_at DEFAULT SYSUTCDATETIME();
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_reading_sessions_target' AND object_id = OBJECT_ID('dbo.reading_sessions')) CREATE INDEX IX_yin_reading_sessions_target ON reading_sessions(target_id, max_scroll_depth);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_yin_reading_sessions_created' AND object_id = OBJECT_ID('dbo.reading_sessions')) CREATE INDEX IX_yin_reading_sessions_created ON reading_sessions(created_at DESC, id DESC);
+CREATE TABLE IF NOT EXISTS users (
+    id varchar(64) PRIMARY KEY,
+    username varchar(100) NOT NULL UNIQUE,
+    password_hash varchar(255) NOT NULL,
+    role varchar(30) NOT NULL CHECK (role IN ('CLIENT', 'MANAGER', 'ADMIN', 'FIXER')),
+    is_active boolean NOT NULL DEFAULT true,
+    created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
+    email varchar(255),
+    phone varchar(50),
+    date_of_birth date,
+    receive_updates boolean NOT NULL DEFAULT false,
+    token_version integer NOT NULL DEFAULT 0
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_yin_users_email ON users(email) WHERE email IS NOT NULL;
+CREATE INDEX IF NOT EXISTS ix_yin_users_role_created ON users(role, created_at DESC, id DESC)
+    INCLUDE (username, email, phone, receive_updates);
+
+CREATE TABLE IF NOT EXISTS articles (
+    id varchar(64) PRIMARY KEY,
+    title varchar(400) NOT NULL,
+    slug varchar(400) NOT NULL UNIQUE,
+    summary text NOT NULL DEFAULT '',
+    category varchar(500) NOT NULL,
+    thumbnail_url text NOT NULL DEFAULT '',
+    content_json text NOT NULL CHECK (content_json::jsonb IS NOT NULL),
+    content_html text NOT NULL DEFAULT '',
+    status varchar(30) NOT NULL CHECK (status IN ('DRAFT', 'PUBLISHED', 'ARCHIVED')),
+    focus_keyword varchar(200) NOT NULL DEFAULT '',
+    seo_title varchar(300),
+    seo_description varchar(500),
+    reading_time_minutes integer NOT NULL DEFAULT 1,
+    word_count integer NOT NULL DEFAULT 0,
+    view_count bigint NOT NULL DEFAULT 0,
+    author_name varchar(200) NOT NULL,
+    published_at timestamp,
+    created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
+    updated_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
+    sort_at timestamp GENERATED ALWAYS AS (coalesce(published_at, created_at)) STORED,
+    deleted_at timestamp
+);
+CREATE INDEX IF NOT EXISTS ix_yin_articles_status_published ON articles(status, published_at DESC);
+CREATE INDEX IF NOT EXISTS ix_yin_articles_sort ON articles(sort_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS ix_yin_articles_status_sort ON articles(status, sort_at DESC, id DESC);
+
+CREATE TABLE IF NOT EXISTS pages (
+    page_key varchar(100) PRIMARY KEY,
+    title varchar(300) NOT NULL,
+    meta_description varchar(500) NOT NULL DEFAULT '',
+    content_json text NOT NULL CHECK (content_json::jsonb IS NOT NULL),
+    updated_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC')
+);
+
+CREATE TABLE IF NOT EXISTS contacts (
+    id varchar(64) PRIMARY KEY,
+    full_name varchar(200) NOT NULL,
+    email varchar(255) NOT NULL,
+    phone varchar(50) NOT NULL,
+    company_name varchar(255),
+    project_type varchar(100) NOT NULL,
+    budget_range varchar(100) NOT NULL,
+    message text NOT NULL,
+    status varchar(30) NOT NULL DEFAULT 'NEW'
+        CHECK (status IN ('NEW', 'CONTACTED', 'IN_PROGRESS', 'CLOSED')),
+    admin_notes text,
+    created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
+    updated_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC')
+);
+CREATE INDEX IF NOT EXISTS ix_yin_contacts_status_date ON contacts(status, created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_yin_contacts_created ON contacts(created_at DESC, id DESC);
+
+CREATE TABLE IF NOT EXISTS support_requests (
+    id varchar(64) PRIMARY KEY,
+    user_id varchar(64) NOT NULL REFERENCES users(id),
+    subject varchar(200) NOT NULL,
+    message text NOT NULL,
+    status varchar(30) NOT NULL DEFAULT 'OPEN'
+        CHECK (status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED')),
+    created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
+    updated_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC')
+);
+CREATE INDEX IF NOT EXISTS ix_yin_support_user_date ON support_requests(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_yin_support_status_date ON support_requests(status, created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_yin_support_user_created_id ON support_requests(user_id, created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS ix_yin_support_status_created_id ON support_requests(status, created_at DESC, id DESC);
+
+CREATE TABLE IF NOT EXISTS page_views (
+    id varchar(64) PRIMARY KEY,
+    session_id varchar(100) NOT NULL,
+    path varchar(500) NOT NULL,
+    referrer varchar(500) NOT NULL DEFAULT '',
+    viewed_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC')
+);
+CREATE INDEX IF NOT EXISTS ix_yin_page_views_date ON page_views(viewed_at DESC);
+
+CREATE TABLE IF NOT EXISTS reading_sessions (
+    id varchar(64) PRIMARY KEY,
+    session_id varchar(100) NOT NULL,
+    target_id varchar(100) NOT NULL,
+    target_title varchar(400) NOT NULL,
+    max_scroll_depth integer NOT NULL CHECK (max_scroll_depth IN (0, 25, 50, 75, 100)),
+    last_block_id varchar(150) NOT NULL DEFAULT '',
+    last_block_label varchar(300) NOT NULL DEFAULT '',
+    time_spent_seconds integer NOT NULL DEFAULT 0,
+    created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
+    updated_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
+    CONSTRAINT uq_yin_reading_session UNIQUE(session_id, target_id)
+);
+CREATE INDEX IF NOT EXISTS ix_yin_reading_sessions_target ON reading_sessions(target_id, max_scroll_depth);
+CREATE INDEX IF NOT EXISTS ix_yin_reading_sessions_created ON reading_sessions(created_at DESC, id DESC);

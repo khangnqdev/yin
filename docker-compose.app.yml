@@ -1,6 +1,6 @@
 # ==============================================================================
 # YIN TECHNOLOGY PLATFORM - DOCKER APPLICATION STACK
-# Angular/Nginx và Spring Boot API, sử dụng SQL Server trên yin-network
+# Angular/Nginx và Spring Boot API, sử dụng PostgreSQL trên yin-network
 # Cách chạy: docker compose -f docker-compose.app.yml up -d
 # ==============================================================================
 
@@ -14,13 +14,13 @@ services:
     environment:
       BACKEND_PORT: 8080
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200,http://127.0.0.1:4200}
-      MSSQL_HOST: yin-mssql-db
-      MSSQL_PORT: 1433
-      MSSQL_DB_NAME: ${MSSQL_DB_NAME:-yin_tech_db}
-      MSSQL_ENCRYPT: ${MSSQL_ENCRYPT:-true}
-      MSSQL_TRUST_SERVER_CERTIFICATE: ${MSSQL_TRUST_SERVER_CERTIFICATE:-true}
-      MSSQL_POOL_SIZE: ${MSSQL_POOL_SIZE:-10}
-      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      POSTGRES_HOST: yin-postgres-db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-yin_db}
+      POSTGRES_USER: ${POSTGRES_USER:-yin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_POOL_SIZE: ${POSTGRES_POOL_SIZE:-5}
+      JAVA_TOOL_OPTIONS: -Duser.timezone=UTC -Xms128m -Xmx320m -XX:MaxMetaspaceSize=192m
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-true}
@@ -29,6 +29,7 @@ services:
       MEDIA_STORAGE_DIR: /app/media
     volumes:
       - yin_media:/app/media
+    mem_limit: 704m
     ports:
       - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
     networks:
@@ -46,6 +47,7 @@ services:
       - yin-network
     depends_on:
       - yin-backend-api
+    mem_limit: 96m
 
 networks:
   yin-network:

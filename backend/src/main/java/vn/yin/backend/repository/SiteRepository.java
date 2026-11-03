@@ -82,7 +82,7 @@ public class SiteRepository {
             where.add("(LOWER(title) LIKE ? OR LOWER(summary) LIKE ? OR LOWER(slug) LIKE ?"
                     + " OR LOWER(category) LIKE ? OR LOWER(focus_keyword) LIKE ?)");
             String pattern = "%" + search.toLowerCase(java.util.Locale.ROOT)
-                    .replace("[", "[[]").replace("%", "[%]").replace("_", "[_]") + "%";
+                    .replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
             for (int i = 0; i < 5; i++) params.add(pattern);
         }
         if (cursor != null) {
@@ -90,7 +90,7 @@ public class SiteRepository {
             params.add(Timestamp.from(cursor.time())); params.add(Timestamp.from(cursor.time())); params.add(cursor.id());
         }
         String sql = "SELECT * FROM articles" + (where.isEmpty() ? "" : " WHERE " + String.join(" AND ", where))
-                + " ORDER BY sort_at DESC, id DESC OFFSET 0 ROWS FETCH NEXT ? ROWS ONLY";
+                + " ORDER BY sort_at DESC, id DESC LIMIT ?";
         params.add(size + 1);
         var fetched = jdbc.queryForList(sql, params.toArray()).stream().map(this::article).toList();
         var last = fetched.size() > size ? fetched.get(size - 1) : null;
@@ -100,9 +100,9 @@ public class SiteRepository {
     }
 
     public Map<String, Object> articleCategories(int page, int size) {
-        Long total = jdbc.queryForObject("SELECT COUNT_BIG(DISTINCT category) FROM articles WHERE status='PUBLISHED' AND deleted_at IS NULL", Long.class);
+        Long total = jdbc.queryForObject("SELECT COUNT(DISTINCT category) FROM articles WHERE status='PUBLISHED' AND deleted_at IS NULL", Long.class);
         var items = jdbc.queryForList("SELECT DISTINCT category FROM articles WHERE status='PUBLISHED' AND deleted_at IS NULL"
-                + " ORDER BY category OFFSET ? ROWS FETCH NEXT ? ROWS ONLY", page * size, size)
+                + " ORDER BY category OFFSET ? LIMIT ?", page * size, size)
                 .stream().map(row -> str(row, "category")).toList();
         return Map.of("items", items, "page", page, "size", size, "total", total == null ? 0L : total);
     }
@@ -128,7 +128,7 @@ public class SiteRepository {
     }
 
     public void updateArticle(Map<String, Object> a) {
-        jdbc.update("UPDATE articles SET title=?,slug=?,summary=?,category=?,thumbnail_url=?,content_json=?,content_html=?,status=?,focus_keyword=?,seo_title=?,seo_description=?,reading_time_minutes=?,word_count=?,author_name=?,published_at=?,updated_at=SYSUTCDATETIME() WHERE id=? AND deleted_at IS NULL",
+        jdbc.update("UPDATE articles SET title=?,slug=?,summary=?,category=?,thumbnail_url=?,content_json=?,content_html=?,status=?,focus_keyword=?,seo_title=?,seo_description=?,reading_time_minutes=?,word_count=?,author_name=?,published_at=?,updated_at=(now() AT TIME ZONE 'UTC') WHERE id=? AND deleted_at IS NULL",
                 a.get("title"), a.get("slug"), a.get("summary"), a.get("category"), a.get("thumbnailUrl"),
                 a.get("contentJson"), a.get("contentHtml"), a.get("status"), a.get("focusKeyword"), a.get("seoTitle"),
                 a.get("seoDescription"), a.get("readingTimeMinutes"), a.get("wordCount"), a.get("authorName"),
@@ -136,11 +136,11 @@ public class SiteRepository {
     }
 
     public boolean deleteArticle(String id) {
-        return jdbc.update("UPDATE articles SET deleted_at=SYSUTCDATETIME(), updated_at=SYSUTCDATETIME() WHERE id=? AND deleted_at IS NULL", id) > 0;
+        return jdbc.update("UPDATE articles SET deleted_at=(now() AT TIME ZONE 'UTC'), updated_at=(now() AT TIME ZONE 'UTC') WHERE id=? AND deleted_at IS NULL", id) > 0;
     }
 
     public boolean restoreArticle(String id) {
-        return jdbc.update("UPDATE articles SET status=CASE WHEN status='PUBLISHED' THEN 'ARCHIVED' ELSE status END, deleted_at=NULL, updated_at=SYSUTCDATETIME() WHERE id=? AND deleted_at IS NOT NULL", id) > 0;
+        return jdbc.update("UPDATE articles SET status=CASE WHEN status='PUBLISHED' THEN 'ARCHIVED' ELSE status END, deleted_at=NULL, updated_at=(now() AT TIME ZONE 'UTC') WHERE id=? AND deleted_at IS NOT NULL", id) > 0;
     }
 
     public boolean incrementArticleViews(String slug) {
@@ -158,9 +158,9 @@ public class SiteRepository {
     }
 
     public Map<String, Object> pages(int page, int size) {
-        Long total = jdbc.queryForObject("SELECT COUNT_BIG(*) FROM pages", Long.class);
+        Long total = jdbc.queryForObject("SELECT COUNT(*) FROM pages", Long.class);
         var items = jdbc.queryForList("SELECT page_key, title, meta_description, content_json, updated_at FROM pages"
-                + " ORDER BY page_key OFFSET ? ROWS FETCH NEXT ? ROWS ONLY", page * size, size)
+                + " ORDER BY page_key OFFSET ? LIMIT ?", page * size, size)
                 .stream().map(r -> {
                     Map<String, Object> p = new LinkedHashMap<>();
                     p.put("pageKey", str(r, "page_key"));
@@ -188,7 +188,7 @@ public class SiteRepository {
 
     public void savePage(String key, String title, String meta, Object blocks) {
         String json = encode(blocks);
-        int updated = jdbc.update("UPDATE pages SET title=?, meta_description=?, content_json=?, updated_at=SYSUTCDATETIME() WHERE page_key=?",
+        int updated = jdbc.update("UPDATE pages SET title=?, meta_description=?, content_json=?, updated_at=(now() AT TIME ZONE 'UTC') WHERE page_key=?",
                 title, meta, json, key);
         if (updated == 0) {
             jdbc.update("INSERT INTO pages (page_key, title, meta_description, content_json) VALUES (?,?,?,?)",
@@ -212,13 +212,13 @@ public class SiteRepository {
     }
 
     public List<Map<String, Object>> dailyViews() {
-        return jdbc.queryForList("SELECT CONVERT(date, viewed_at) AS day, COUNT(*) AS views FROM page_views"
-                + " WHERE viewed_at >= DATEADD(day, -6, CONVERT(date, SYSUTCDATETIME()))"
-                + " GROUP BY CONVERT(date, viewed_at)");
+        return jdbc.queryForList("SELECT CAST(viewed_at AS date) AS day, COUNT(*) AS views FROM page_views"
+                + " WHERE viewed_at >= ((now() AT TIME ZONE 'UTC')::date - INTERVAL '6 days')"
+                + " GROUP BY CAST(viewed_at AS date)");
     }
 
     public void upsertReadingSession(Map<String, Object> s) {
-        int updated = jdbc.update("UPDATE reading_sessions SET target_title=?, max_scroll_depth=CASE WHEN ? > max_scroll_depth THEN ? ELSE max_scroll_depth END, last_block_id=CASE WHEN ? >= max_scroll_depth THEN ? ELSE last_block_id END, last_block_label=CASE WHEN ? >= max_scroll_depth THEN ? ELSE last_block_label END, time_spent_seconds=CASE WHEN ? > time_spent_seconds THEN ? ELSE time_spent_seconds END, updated_at=SYSUTCDATETIME() WHERE session_id=? AND target_id=?",
+        int updated = jdbc.update("UPDATE reading_sessions SET target_title=?, max_scroll_depth=CASE WHEN ? > max_scroll_depth THEN ? ELSE max_scroll_depth END, last_block_id=CASE WHEN ? >= max_scroll_depth THEN ? ELSE last_block_id END, last_block_label=CASE WHEN ? >= max_scroll_depth THEN ? ELSE last_block_label END, time_spent_seconds=CASE WHEN ? > time_spent_seconds THEN ? ELSE time_spent_seconds END, updated_at=(now() AT TIME ZONE 'UTC') WHERE session_id=? AND target_id=?",
                 s.get("targetTitle"), s.get("maxScrollDepth"), s.get("maxScrollDepth"),
                 s.get("maxScrollDepth"), s.get("lastBlockId"),
                 s.get("maxScrollDepth"), s.get("lastBlockLabel"),
@@ -235,7 +235,7 @@ public class SiteRepository {
         Object[] params = cursor == null ? new Object[] { size + 1 }
                 : new Object[] { Timestamp.from(cursor.time()), Timestamp.from(cursor.time()), cursor.id(), size + 1 };
         var fetched = jdbc.queryForList("SELECT * FROM reading_sessions" + where
-                + " ORDER BY created_at DESC, id DESC OFFSET 0 ROWS FETCH NEXT ? ROWS ONLY", params).stream().map(r -> {
+                + " ORDER BY created_at DESC, id DESC LIMIT ?", params).stream().map(r -> {
             Map<String, Object> s = new LinkedHashMap<>();
             s.put("id", str(r, "id")); s.put("createdAt", time(r, "created_at"));
             s.put("sessionId", str(r, "session_id")); s.put("targetId", str(r, "target_id"));
@@ -250,18 +250,18 @@ public class SiteRepository {
     }
 
     public Map<String, Object> readingFunnel() {
-        return jdbc.queryForMap("SELECT COUNT_BIG(*) AS totalReaders,"
-                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 25 THEN 1 ELSE 0 END),0) AS reached25,"
-                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 50 THEN 1 ELSE 0 END),0) AS reached50,"
-                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 75 THEN 1 ELSE 0 END),0) AS reached75,"
-                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 100 THEN 1 ELSE 0 END),0) AS completed100"
+        return jdbc.queryForMap("SELECT COUNT(*) AS \"totalReaders\","
+                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 25 THEN 1 ELSE 0 END),0) AS \"reached25\","
+                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 50 THEN 1 ELSE 0 END),0) AS \"reached50\","
+                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 75 THEN 1 ELSE 0 END),0) AS \"reached75\","
+                + " COALESCE(SUM(CASE WHEN max_scroll_depth >= 100 THEN 1 ELSE 0 END),0) AS \"completed100\""
                 + " FROM reading_sessions");
     }
 
     public List<Map<String, Object>> exitBlocks() {
-        return jdbc.queryForList("SELECT TOP 5 last_block_id AS blockId, MAX(last_block_label) AS blockLabel,"
-                + " COUNT_BIG(*) AS exitCount FROM reading_sessions WHERE last_block_id <> ''"
-                + " GROUP BY last_block_id ORDER BY exitCount DESC, last_block_id");
+        return jdbc.queryForList("SELECT last_block_id AS \"blockId\", MAX(last_block_label) AS \"blockLabel\","
+                + " COUNT(*) AS \"exitCount\" FROM reading_sessions WHERE last_block_id <> ''"
+                + " GROUP BY last_block_id ORDER BY \"exitCount\" DESC, last_block_id LIMIT 5");
     }
 }
 

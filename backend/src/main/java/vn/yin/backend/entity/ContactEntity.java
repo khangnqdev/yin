@@ -30,11 +30,11 @@ public class ContactEntity {
     private String projectType;
     @Column(name = "budget_range", length = 100, nullable = false)
     private String budgetRange;
-    @Column(columnDefinition = "nvarchar(max)", nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     private String message;
     @Column(length = 30, nullable = false)
     private String status;
-    @Column(name = "admin_notes", columnDefinition = "nvarchar(max)")
+    @Column(name = "admin_notes", columnDefinition = "text")
     private String adminNotes;
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
