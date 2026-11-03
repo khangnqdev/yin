@@ -17,7 +17,7 @@ Tên miền gắn với Nginx của VPS, không gắn với một container. Khi
 
 ## Cài và chạy
 
-VPS Debian 12 cần Docker Compose, Git, Nginx và Certbot. Tài nguyên hiện có 1 vCPU, 1,5 GB RAM và 25 GB SSD. Stack dùng PostgreSQL 17 thay SQL Server để phù hợp RAM; backend và database đã có giới hạn bộ nhớ. Tránh chạy lại hai bot song song với stack này trên cùng VPS.
+VPS Debian 12 cần Docker Compose, Git, Nginx và Certbot. Tài nguyên hiện có 1 vCPU, 1,5 GB RAM và 25 GB SSD. Stack dùng PostgreSQL 17 thay SQL Server để phù hợp RAM; backend và database đã có giới hạn bộ nhớ. Khi chạy cả hai bot cùng website, theo dõi RAM, swap và thời gian phản hồi; dừng bot test trước nếu máy chậm hoặc swap tăng nhiều.
 
 ```sh
 git clone https://github.com/khangnqdev/yin.git /opt/yin
@@ -37,6 +37,8 @@ curl -fsS http://127.0.0.1:8080/actuator/health
 Build lần lượt từng image để tránh dồn RAM trên 1 vCPU/1,5 GB. Lần build đầu có thể chậm. Nếu backend khởi động trước database, Docker sẽ khởi động lại backend cho tới khi database sẵn sàng. Không commit `.env`.
 
 ```sh
+cp /opt/yin/deploy/nginx-bot-origin.conf /etc/nginx/conf.d/yin-bot-origin.conf
+cp /opt/yin/deploy/nginx-bot-auto.conf /etc/nginx/snippets/yin-bot-auto.conf
 cp /opt/yin/deploy/nginx-yin.conf /etc/nginx/sites-available/yin.vn
 ln -s /etc/nginx/sites-available/yin.vn /etc/nginx/sites-enabled/yin.vn
 rm /etc/nginx/sites-enabled/default
@@ -51,6 +53,19 @@ certbot renew --dry-run
 ```
 
 Certbot sẽ hỏi email nhận thông báo chứng chỉ. Debian bật `certbot.timer` để tự gia hạn. Kiểm tra `https://yin.vn/`, `https://yin.vn/api/pages` và đăng nhập quản trị sau triển khai.
+
+## Bot game
+
+Bot chính `auto-bot-farm-minerua-bot-farm-1` phục vụ tại `https://yin.vn/bot-auto/` qua Nginx và vẫn yêu cầu HTTP Basic Auth của bot. Nginx bỏ tiền tố `/bot-auto/` khi gửi request tới cổng nội bộ `127.0.0.1:8766`; snippet cũng sửa các đường dẫn tuyệt đối của giao diện bot. Bot test `auto-bot-test-8769` chỉ nghe trên `127.0.0.1:8769`, không có route công khai.
+
+```sh
+docker start auto-bot-farm-minerua-bot-farm-1 auto-bot-test-8769
+docker stop auto-bot-test-8769 auto-bot-farm-minerua-bot-farm-1
+docker stats --no-stream
+free -h
+```
+
+Trên VPS đã có container, image và bind mount gốc của hai bot. Bản sao để khôi phục trên máy khác nằm ngoài Git tại `.local/backups/yin-bot-backup-20261103`. Cấu hình bot chứa tài khoản game và mật khẩu web, không đưa lên repo công khai.
 
 ## Cập nhật và sao lưu
 
