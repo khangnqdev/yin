@@ -23,6 +23,7 @@ export interface Article {
   wordCount: number;
   viewCount: number;
   authorName: string;
+  authorRole?: string;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;

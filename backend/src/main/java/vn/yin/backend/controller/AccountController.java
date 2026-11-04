@@ -81,25 +81,35 @@ public class AccountController {
         return accountService.admins(page, size);
     }
 
+    @GetMapping("/admin/me/profile")
+    public Map<String, Object> authorProfile(@AuthenticationPrincipal Jwt jwt) {
+        return accountService.authorProfile(jwt.getSubject());
+    }
+
+    @PatchMapping("/admin/me/profile")
+    public Map<String, Object> updateAuthorProfile(@AuthenticationPrincipal Jwt jwt, @RequestBody Map<String, Object> body) {
+        return accountService.updateAuthorProfile(jwt.getSubject(), body);
+    }
+
     @PostMapping("/admin/accounts")
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, Object> createAdmin(@RequestBody Map<String, Object> body) {
-        return accountService.createAdmin(body);
+    public Map<String, Object> createAdmin(@AuthenticationPrincipal Jwt jwt, @RequestBody Map<String, Object> body) {
+        return accountService.createAdmin(jwt.getSubject(), body);
     }
 
     @PatchMapping("/admin/accounts/{id}/status")
-    public Map<String, Object> updateAdminStatus(@PathVariable String id, @RequestBody Map<String, Object> body) {
-        return accountService.updateAdminStatus(id, body);
+    public Map<String, Object> updateAdminStatus(@AuthenticationPrincipal Jwt jwt, @PathVariable String id, @RequestBody Map<String, Object> body) {
+        return accountService.updateAdminStatus(jwt.getSubject(), id, body);
     }
 
     @PatchMapping("/admin/accounts/{id}/role")
-    public Map<String, Object> updateAdminRole(@PathVariable String id, @RequestBody Map<String, Object> body) {
-        return accountService.updateAdminRole(id, body);
+    public Map<String, Object> updateAdminRole(@AuthenticationPrincipal Jwt jwt, @PathVariable String id, @RequestBody Map<String, Object> body) {
+        return accountService.updateAdminRole(jwt.getSubject(), id, body);
     }
 
     @PostMapping("/admin/accounts/{id}/reset-password")
-    public Map<String, Object> resetAdminPassword(@PathVariable String id, @RequestBody Map<String, Object> body) {
-        return accountService.resetAdminPassword(id, body);
+    public Map<String, Object> resetAdminPassword(@AuthenticationPrincipal Jwt jwt, @PathVariable String id, @RequestBody Map<String, Object> body) {
+        return accountService.resetAdminPassword(jwt.getSubject(), id, body);
     }
 
     @PostMapping("/client/support-requests")

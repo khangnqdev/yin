@@ -17,7 +17,7 @@
 }
 
 .app-main-viewport.with-fixed-header {
-  padding-top: 72px;
+  padding-top: var(--yin-header-height, 88px);
 }
 
 .app-main-viewport.admin-viewport {

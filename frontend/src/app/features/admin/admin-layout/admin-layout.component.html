@@ -13,17 +13,15 @@
       <yin-icon [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'" [size]="14"></yin-icon>
     </button>
 
-    <!-- Top Brand Area (Cross Emblem) -->
+    <!-- Top Brand Area (Logo) -->
     <div class="sidebar-top">
-      <a routerLink="/admin" class="sidebar-brand" title="Về trang tổng quan">
-        <div class="brand-emblem-box">
-          <yin-icon name="brand-cross" [size]="24" className="brand-emblem"></yin-icon>
-        </div>
-        @if (!isCollapsed()) {
-          <div class="brand-text-wrap">
-            <span class="brand-name">Yin Tech</span>
-            <span class="brand-badge">Console</span>
-          </div>
+      <a routerLink="/admin" class="sidebar-brand" title="Về trang tổng quan" aria-label="Yin">
+        @if (isCollapsed()) {
+          <img src="/assets/logo/y.svg" alt="Yin" class="sidebar-logo-symbol light-logo" width="36" height="36" />
+          <img src="/assets/logo/y-w.svg" alt="Yin" class="sidebar-logo-symbol dark-logo" width="36" height="36" />
+        } @else {
+          <img src="/assets/logo/yin.svg" alt="Yin" class="sidebar-logo-full light-logo" width="110" height="36" />
+          <img src="/assets/logo/yin-w.svg" alt="Yin" class="sidebar-logo-full dark-logo" width="110" height="36" />
         }
       </a>
     </div>
@@ -185,7 +183,7 @@
       </a>
 
       <!-- Item: Tài khoản quản trị -->
-      @if (isAdmin()) {
+      @if (canManageContent()) {
       <a routerLink="/admin/accounts" routerLinkActive="active" class="nav-single-link" title="Tài khoản quản trị">
         <div class="item-icon-box">
           <yin-icon name="shield" [size]="18"></yin-icon>
@@ -196,14 +194,14 @@
       </a>
       }
 
-      <!-- Item: Cài đặt & AI -->
+      <!-- Item: Cài đặt hệ thống -->
       @if (canManageContent()) {
-      <a routerLink="/admin/settings" routerLinkActive="active" class="nav-single-link" title="Cài đặt & AI Config">
+      <a routerLink="/admin/settings" routerLinkActive="active" class="nav-single-link" title="Cài đặt hệ thống">
         <div class="item-icon-box">
           <yin-icon name="settings" [size]="18"></yin-icon>
         </div>
         @if (!isCollapsed()) {
-          <span class="item-label">Cài đặt & AI</span>
+          <span class="item-label">Cài đặt</span>
         }
       </a>
       }

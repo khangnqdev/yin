@@ -63,6 +63,24 @@
   object-fit: contain;
 }
 
+.dark-logo {
+  display: none;
+}
+
+.light-logo {
+  display: block;
+}
+
+:host-context([data-theme="dark"]) .dark-logo,
+[data-theme="dark"] .dark-logo {
+  display: block;
+}
+
+:host-context([data-theme="dark"]) .light-logo,
+[data-theme="dark"] .light-logo {
+  display: none;
+}
+
 .card-header .yin-badge {
   margin-bottom: 14px;
 }

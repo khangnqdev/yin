@@ -19,7 +19,7 @@
    ============================================================================== */
 .editor-toolbar {
   position: sticky;
-  top: 72px; /* Dưới header chính */
+  top: var(--yin-header-height, 88px); /* Dưới header chính */
   z-index: 40;
   display: flex;
   align-items: center;

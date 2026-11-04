@@ -208,6 +208,57 @@
   gap: 12px;
 }
 
+.client-email-link {
+  color: var(--yin-main, #0B1849);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.client-email-link:hover {
+  color: #2563EB;
+}
+
+.text-muted {
+  color: #64748B;
+  font-size: 0.85rem;
+}
+
+.status-pill-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status-pill-modern.active {
+  background: #ECFDF5;
+  color: #065F46;
+}
+
+.status-pill-modern.active .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+}
+
+.status-pill-modern.locked {
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.status-pill-modern.locked .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #94A3B8;
+}
+
 .client-avatar {
   width: 34px;
   height: 34px;

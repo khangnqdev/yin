@@ -11,7 +11,7 @@ import { YinIconComponent } from '../../../core/components/icon/icon.component';
   selector: 'yin-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
-  imports: [FormsModule, DynamicPageHostComponent, YinIconComponent]
+  imports: [FormsModule, DynamicPageHostComponent, YinIconComponent],
 })
 export class ContactComponent implements OnInit {
   private readonly db = inject(LocalDbService);
@@ -30,7 +30,7 @@ export class ContactComponent implements OnInit {
   protected readonly projectType = signal<string>('Hệ thống Web & Mobile Doanh nghiệp');
   protected readonly budgetRange = signal<string>('200M - 500M VNĐ');
   protected readonly message = signal<string>('');
-  
+
   // Security Honeypot (Chống bot spam)
   protected readonly honeypot = signal<string>('');
   private formOpenTimestamp: number = 0;
@@ -40,20 +40,24 @@ export class ContactComponent implements OnInit {
   protected readonly isSuccess = signal<boolean>(false);
   protected readonly errorMessage = signal<string>('');
 
-  // Thông Tin Địa Chỉ & Bản Đồ Google Maps
-  protected readonly officeAddress = signal<string>('Khu Công Nghệ Cao, Xa lộ Hà Nội, TP. Thủ Đức, TP. Hồ Chí Minh');
+  // Thông Tin Địa Chỉ & Bản Đồ
+  protected readonly officeAddress = signal<string>(
+    'Khu Công Nghệ Cao, Xa lộ Hà Nội, TP. Thủ Đức, TP. Hồ Chí Minh',
+  );
   protected readonly officeLabel = signal<string>('Văn Phòng Kỹ Nghệ Công Nghệ Yin');
+  protected readonly officeLatitude = 10.855018;
+  protected readonly officeLongitude = 106.785002;
   protected readonly isCopied = signal<boolean>(false);
 
   // Link chỉ đường mở trực tiếp ứng dụng Google Maps
   protected readonly googleMapsDirectionsUrl = computed(() => {
-    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(this.officeAddress())}`;
+    return `https://www.google.com/maps/dir/?api=1&destination=${this.officeLatitude},${this.officeLongitude}`;
   });
 
-  // URL nhúng bản đồ Google Maps (không cần API key, nhẹ và bảo mật)
+  // URL nhúng bản đồ Google Maps chính thức (chuẩn embed pb không bị chuyển hướng 301 SAMEORIGIN và không bị chặn bởi ISP)
   protected readonly safeEmbedUrl = computed<SafeResourceUrl>(() => {
-    const query = encodeURIComponent(`${this.officeLabel()} ${this.officeAddress()}`);
-    const url = `https://maps.google.com/maps?q=${query}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+    const url =
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.485472851167!2d106.78426037584166!3d10.85063238930263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175276398969f7b%3A0x23b61d7f308bc386!2zS2h1IEPDtG5nIE5naOG7hyBDYW8gVFAuSENN!5e0!3m2!1svi!2svn!4v1710000000000!5m2!1svi!2svn';
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
 
@@ -99,7 +103,9 @@ export class ContactComponent implements OnInit {
     const msg = this.message().trim();
 
     if (!name || !mail || !tel || !msg) {
-      this.errorMessage.set('Vui lòng điền đầy đủ họ tên, email, số điện thoại và nội dung lời nhắn.');
+      this.errorMessage.set(
+        'Vui lòng điền đầy đủ họ tên, email, số điện thoại và nội dung lời nhắn.',
+      );
       return;
     }
 
@@ -120,7 +126,7 @@ export class ContactComponent implements OnInit {
         companyName: this.companyName().trim(),
         projectType: this.projectType(),
         budgetRange: this.budgetRange(),
-        message: msg
+        message: msg,
       });
       this.isSuccess.set(true);
     } catch {

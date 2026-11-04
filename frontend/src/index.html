@@ -18,17 +18,17 @@
   <!-- Open Graph / Facebook / Zalo -->
   <meta property="og:locale" content="vi_VN">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Yin Kenna">
+  <meta property="og:site_name" content="Yin">
   <meta property="og:title" content="Yin | Thi Công Phần Mềm &amp; Giải Pháp Công Nghệ Cao Cấp">
   <meta property="og:description" content="Yin (Yin Kenna) - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và xây dựng kiến trúc công nghệ cao cấp.">
   <meta property="og:url" content="https://yin.vn/">
-  <meta property="og:image" content="/assets/logo/icon-512.png">
+  <meta property="og:image" content="https://yin.vn/assets/logo/icon-512.png">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Yin | Thi Công Phần Mềm &amp; Giải Pháp Công Nghệ Cao Cấp">
   <meta name="twitter:description" content="Yin (Yin Kenna) - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu, hệ thống vững chắc, hiệu năng cao.">
-  <meta name="twitter:image" content="/assets/logo/icon-512.png">
+  <meta name="twitter:image" content="https://yin.vn/assets/logo/icon-512.png">
 
   <!-- PWA & Mobile In-App Settings -->
   <link rel="manifest" href="/manifest.webmanifest">
@@ -38,13 +38,13 @@
   <!-- iOS Safari In-App Standalone Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Yin Kenna">
+  <meta name="apple-mobile-web-app-title" content="Yin">
   <link rel="apple-touch-icon" href="/assets/logo/icon-192.png">
   <link rel="apple-touch-icon" sizes="192x192" href="/assets/logo/icon-192.png">
   <link rel="apple-touch-icon" sizes="512x512" href="/assets/logo/icon-512.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/assets/logo/yinkenna.svg">
+  <link rel="icon" type="image/svg+xml" href="/assets/logo/y.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   
   <!-- Preconnect & Fonts -->
@@ -58,12 +58,31 @@
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "WebSite",
+        "@id": "https://yin.vn/#website",
+        "url": "https://yin.vn/",
+        "name": "Yin",
+        "alternateName": ["yin.vn", "Yin Kenna", "Công ty Phần mềm Yin", "Yin Tech"],
+        "description": "Yin (yin.vn) - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và phát triển kiến trúc công nghệ cao cấp.",
+        "publisher": {
+          "@id": "https://yin.vn/#organization"
+        },
+        "inLanguage": "vi-VN"
+      },
+      {
         "@type": "Organization",
         "@id": "https://yin.vn/#organization",
-        "name": "Yin Kenna",
-        "alternateName": ["Yin", "Công ty Thi công Phần mềm Yin", "Yin Tech"],
+        "name": "Yin",
+        "legalName": "Yin Kenna",
+        "alternateName": ["yin.vn", "Yin Tech", "Công ty Thi công Phần mềm Yin"],
         "url": "https://yin.vn",
-        "logo": "https://yin.vn/assets/logo/icon-512.png",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://yin.vn/assets/logo/icon-512.png",
+          "width": 512,
+          "height": 512
+        },
+        "image": "https://yin.vn/assets/logo/icon-512.png",
         "founder": {
           "@type": "Person",
           "name": "Khang (Yin Kenna)"
@@ -78,25 +97,15 @@
         }
       },
       {
-        "@type": "WebSite",
-        "@id": "https://yin.vn/#website",
-        "url": "https://yin.vn",
-        "name": "Yin - Thi Công Phần Mềm & Công Nghệ",
-        "description": "Chuyên thi công xây dựng kiến trúc phần mềm công nghệ, làm phần mềm chất lượng cao.",
-        "publisher": {
-          "@id": "https://yin.vn/#organization"
-        },
-        "inLanguage": "vi-VN"
-      },
-      {
         "@type": "ProfessionalService",
         "@id": "https://yin.vn/#service",
-        "name": "Dịch Vụ Thi Công Phần Mềm Yin Kenna",
-        "serviceType": "Thi công phần mềm, Làm phần mềm, Kiến trúc hệ thống công nghệ",
+        "name": "Dịch Vụ Thi Công Phần Mềm Yin",
+        "serviceType": ["Thi công phần mềm", "Làm phần mềm theo yêu cầu", "Kiến trúc hệ thống công nghệ"],
         "provider": {
           "@id": "https://yin.vn/#organization"
         },
         "areaServed": "VN",
+        "url": "https://yin.vn",
         "description": "Cung cấp dịch vụ thi công phần mềm trọn gói, gia công phần mềm, làm phần mềm quản lý, web app và giải pháp công nghệ hiệu năng cao."
       }
     ]
@@ -104,6 +113,32 @@
   </script>
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <main style="max-width: 1200px; margin: 0 auto; padding: 48px 24px; font-family: Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; background: #0b1849; min-height: 100vh; box-sizing: border-box;">
+      <header style="margin-bottom: 32px;">
+        <h1 style="font-size: 2.25rem; font-weight: 800; color: #ffffff; line-height: 1.25; margin: 0 0 16px 0;">
+          Yin — Thi Công Phần Mềm &amp; Giải Pháp Công Nghệ Cao Cấp
+        </h1>
+        <p style="font-size: 1.125rem; line-height: 1.6; color: #94a3b8; max-width: 800px; margin: 0;">
+          <strong>Yin</strong> (<strong><a href="https://yin.vn" style="color: #60a5fa; text-decoration: none;">yin.vn</a></strong>) là đơn vị chuyên thiết kế kiến trúc và thi công phần mềm theo yêu cầu, xây dựng nền tảng chịu tải lớn, bảo mật tuyệt đối và vận hành ổn định cho doanh nghiệp.
+        </p>
+      </header>
+
+      <section style="margin-bottom: 32px; background: rgba(255,255,255,0.05); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: #38bdf8; margin: 0 0 16px 0;">
+          Dịch Vụ Thi Công Phần Mềm Trọng Tâm Tại Yin
+        </h2>
+        <ul style="line-height: 1.8; color: #cbd5e1; margin: 0; padding-left: 20px;">
+          <li><strong>Thi công phần mềm doanh nghiệp:</strong> Xây dựng web application, mobile app và hệ thống phần mềm quản lý vận hành chuyên sâu.</li>
+          <li><strong>Kiến trúc hệ thống &amp; Cloud:</strong> Thiết kế kiến trúc chịu tải hàng triệu giao dịch, bảo mật cao cấp.</li>
+          <li><strong>Gia công &amp; Phát triển theo yêu cầu:</strong> Nghiên cứu giải pháp, thi công trọn gói và bảo hành mã nguồn trọn đời.</li>
+        </ul>
+      </section>
+
+      <footer style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; color: #64748b; font-size: 0.875rem;">
+        <p style="margin: 0;">&copy; 2026 Yin (yin.vn) — All rights reserved.</p>
+      </footer>
+    </main>
+  </app-root>
 </body>
 </html>

@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# Disallow private and administrative paths
+Disallow: /admin
+Disallow: /admin/
+Disallow: /client/
+Disallow: /api/admin/
+
+# Explicitly permit search engines and AI answer engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Sitemap
+Sitemap: https://yin.vn/sitemap.xml

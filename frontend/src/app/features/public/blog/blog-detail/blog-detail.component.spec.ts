@@ -16,7 +16,7 @@ describe('BlogDetailComponent', () => {
     slug: 'toi-uu-change-detection-angular-v22-signals',
     summary: 'Khám phá cách mạng Signals trong Angular...',
     category: 'Cong-Nghe',
-    thumbnailUrl: '/assets/logo/yinkenna.svg',
+    thumbnailUrl: '/assets/logo/yin.svg',
     status: 'PUBLISHED',
     focusKeyword: 'Angular Signals',
     contentHtml: '<h2 id="section-1">1. Mở đầu</h2><p>Nội dung bài viết rất dài...</p><h2 id="section-2">2. Kết luận</h2><p>Hết bài.</p>',
@@ -113,5 +113,12 @@ describe('BlogDetailComponent', () => {
 
     component.closeLightbox();
     expect(component['zoomedImage']()).toBeNull();
+
+    // Direct click on cover image
+    component.handleImageClick('https://example.com/cover.jpg', 'Ảnh bìa');
+    expect(component['zoomedImage']()).toEqual({
+      src: 'https://example.com/cover.jpg',
+      caption: 'Ảnh bìa'
+    });
   });
 });

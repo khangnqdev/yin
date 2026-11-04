@@ -14,10 +14,10 @@ export interface SeoMetadata {
 }
 
 const DEFAULT_SEO: SeoMetadata = {
-  title: 'Trang Chủ',
+  title: 'Yin | Thi Công Phần Mềm & Giải Pháp Công Nghệ Cao Cấp',
   description: 'Yin (Yin Kenna) - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và phát triển kiến trúc công nghệ cao cấp. Kiến trúc vững chắc, chịu tải lớn, bảo mật tuyệt đối.',
-  keywords: 'Yin, Yin Kenna, thi công phần mềm, làm phần mềm, xây dựng phần mềm, lập trình phần mềm, thiết kế phần mềm, gia công phần mềm, công ty phần mềm, kiến trúc phần mềm, phát triển web app',
-  ogImage: '/assets/logo/icon-512.png',
+  keywords: 'Yin, yin.vn, Yin Kenna, thi công phần mềm, làm phần mềm, xây dựng phần mềm, lập trình phần mềm, thiết kế phần mềm, gia công phần mềm, công ty phần mềm, kiến trúc phần mềm, phát triển web app',
+  ogImage: 'https://yin.vn/assets/logo/icon-512.png',
   type: 'website'
 };
 
@@ -70,9 +70,14 @@ export class SeoService {
     this.lastSeo = seo;
     // 1. Chuẩn hóa Title: Đảm bảo format "Yin | <Tên trang>"
     const rawTitle = this.language.text((seo.title || DEFAULT_SEO.title).trim());
-    const formattedTitle = rawTitle.startsWith('Yin |') 
-      ? rawTitle 
-      : (rawTitle.toLowerCase() === 'yin' ? 'Yin | Thi Công Phần Mềm & Công Nghệ' : `Yin | ${rawTitle}`);
+    let formattedTitle: string;
+    if (rawTitle.startsWith('Yin |')) {
+      formattedTitle = rawTitle;
+    } else if (rawTitle.toLowerCase() === 'yin' || rawTitle === 'Trang Chủ' || rawTitle === 'Home') {
+      formattedTitle = this.language.text(DEFAULT_SEO.title);
+    } else {
+      formattedTitle = `Yin | ${rawTitle}`;
+    }
 
     this.titleService.setTitle(formattedTitle);
 

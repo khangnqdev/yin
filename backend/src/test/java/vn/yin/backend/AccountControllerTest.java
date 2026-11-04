@@ -115,7 +115,7 @@ class AccountControllerTest {
         assertStatus(HttpStatus.UNAUTHORIZED, () -> api.createSupport(client, Map.of("subject", "Help", "message", "Please help with this issue")));
         verify(support, never()).create(any(), any(), any());
         assertStatus(HttpStatus.BAD_REQUEST, () -> api.supportRequests("HACKED", 0, 20));
-        assertStatus(HttpStatus.BAD_REQUEST, () -> api.createAdmin(Map.of("username", "fixer1", "password", "a-long-private-password", "role", "CLIENT")));
+        assertStatus(HttpStatus.BAD_REQUEST, () -> api.createAdmin(adminJwt(), Map.of("username", "fixer1", "role", "CLIENT")));
     }
 
     @Test
@@ -129,18 +129,40 @@ class AccountControllerTest {
     }
 
     @Test
-    void cannotDisableLastActiveAdminAndCanResetPassword() {
+    void cannotManageEqualRoleAndCanResetLowerRolePassword() {
         var admin = Map.<String, Object>of("id", "admin-id", "username", "admin", "role", "ADMIN",
                 "isActive", true, "createdAt", "2026-01-01T00:00:00Z");
         when(accounts.admin("admin-id")).thenReturn(admin);
-        assertStatus(HttpStatus.CONFLICT,
-                () -> api.updateAdminStatus("admin-id", Map.of("isActive", false)));
-        verify(accounts).updateAdminStatus("admin-id", false);
+        when(accounts.activePrincipal("actor-id")).thenReturn(Map.of("role", "ADMIN"));
+        assertStatus(HttpStatus.FORBIDDEN,
+                () -> api.updateAdminStatus(adminJwt(), "admin-id", Map.of("isActive", false)));
+        verify(accounts, never()).updateAdminStatus(any(), anyBoolean());
 
-        when(accounts.resetAdminPassword(eq("admin-id"), any())).thenReturn(true);
-        api.resetAdminPassword("admin-id", Map.of("password", "a-new-private-password"));
-        verify(accounts).resetAdminPassword(eq("admin-id"),
+        when(accounts.admin("manager-id")).thenReturn(Map.of("id", "manager-id", "role", "MANAGER"));
+        when(accounts.resetAdminPassword(eq("manager-id"), any())).thenReturn(true);
+        api.resetAdminPassword(adminJwt(), "manager-id", Map.of("password", "a-new-private-password"));
+        verify(accounts).resetAdminPassword(eq("manager-id"),
                 argThat(hash -> new BCryptPasswordEncoder().matches("a-new-private-password", hash)));
+    }
+
+    @Test
+    void generatedPasswordAndRoleHierarchy() {
+        when(accounts.activePrincipal("actor-id")).thenReturn(Map.of("role", "ADMIN"));
+        assertStatus(HttpStatus.FORBIDDEN, () -> api.createAdmin(adminJwt(), Map.of("username", "peer", "role", "ADMIN")));
+        when(accounts.createAdmin(eq("fixer"), any(), eq("FIXER"))).thenReturn(Map.of("id", "fixer-id"));
+        when(accounts.admin("fixer-id")).thenReturn(Map.of("id", "fixer-id", "username", "fixer", "role", "FIXER"));
+        var result = api.createAdmin(adminJwt(), Map.of("username", "fixer", "role", "FIXER"));
+        String generated = String.valueOf(result.get("generatedPassword"));
+        assertTrue(generated.length() >= 32);
+        verify(accounts).createAdmin(eq("fixer"), argThat(hash -> new BCryptPasswordEncoder().matches(generated, hash)), eq("FIXER"));
+        assertStatus(HttpStatus.BAD_REQUEST, () -> api.createAdmin(adminJwt(), Map.of("username", "other", "role", "FIXER", "password", "manual-password")));
+        when(accounts.activePrincipal("actor-id")).thenReturn(Map.of("role", "MANAGER"));
+        assertStatus(HttpStatus.FORBIDDEN, () -> api.createAdmin(adminJwt(), Map.of("username", "peer", "role", "MANAGER")));
+        verify(accounts, never()).createAdmin(eq("peer"), any(), any());
+    }
+
+    private Jwt adminJwt() {
+        return Jwt.withTokenValue("test").header("alg", "none").subject("actor-id").build();
     }
 
     private Map<String, Object> registration() {

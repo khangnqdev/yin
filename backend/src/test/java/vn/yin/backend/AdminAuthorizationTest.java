@@ -41,11 +41,11 @@ class AdminAuthorizationTest {
     }
 
     @Test
-    void managerCanWriteCmsButCannotManageAdminAccounts() throws Exception {
+    void managerCanWriteCmsAndReachAccountManagement() throws Exception {
         mvc.perform(post("/api/admin/articles").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_MANAGER")))
                 .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isOk());
         mvc.perform(get("/api/admin/accounts").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_MANAGER"))))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 }

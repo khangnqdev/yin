@@ -30,7 +30,10 @@ import vn.yin.backend.repository.SiteRepository;
 public class SiteService {
     public static final Set<String> PAGE_KEYS = Set.of("home", "about", "projects", "blog", "contact");
     public static final Set<String> ARTICLE_STATUSES = Set.of("DRAFT", "PUBLISHED", "ARCHIVED");
-    public static final Set<String> BLOCK_TYPES = Set.of("hero", "stats", "projects-grid", "rich-content", "testimonials", "cta");
+    public static final Set<String> BLOCK_TYPES = Set.of(
+            "hero", "stats", "projects-grid", "rich-content", "testimonials", "cta",
+            "text", "steps", "options", "multi-column", "programs", "video", "form", "section", "faq"
+    );
     public static final Safelist HTML = Safelist.relaxed()
             .addTags("h1", "h2", "h3", "h4", "h5", "h6", "table", "thead", "tbody", "tr", "th", "td", "figure", "figcaption", "mark", "hr", "s", "u")
             .addAttributes(":all", "id", "class", "style")
@@ -274,7 +277,7 @@ public class SiteService {
         a.put("slug", validatedSlug(finalSlug));
         a.put("summary", field(body, "summary", 100_000));
         a.put("category", field(body, "category", 500).isEmpty() ? "Cong-Nghe" : field(body, "category", 500));
-        a.put("thumbnailUrl", validatedUrl(field(body, "thumbnailUrl", 1000).isEmpty() ? "/assets/logo/yinkenna.svg" : field(body, "thumbnailUrl", 1000), false));
+        a.put("thumbnailUrl", validatedUrl(field(body, "thumbnailUrl", 1000).isEmpty() ? "/assets/logo/yin.svg" : field(body, "thumbnailUrl", 1000), false));
         String contentJson = field(body, "contentJson", 50_000_000);
         a.put("contentJson", jsonDocument(contentJson.isEmpty() ? "{\"type\":\"doc\",\"content\":[]}" : contentJson));
         a.put("contentHtml", Jsoup.clean(field(body, "contentHtml", 50_000_000), HTML));
@@ -299,6 +302,8 @@ public class SiteService {
         a.put("viewCount", current == null ? 0 : current.get("viewCount"));
         String author = field(body, "authorName", 200);
         a.put("authorName", author.isEmpty() ? (current == null ? "Khang (Founder)" : current.get("authorName")) : author);
+        String authorRole = field(body, "authorRole", 200);
+        a.put("authorRole", authorRole.isEmpty() ? (current == null ? "" : current.get("authorRole")) : authorRole);
         String previousPublication = current == null ? null : (String) current.get("publishedAt");
         String publication = previousPublication;
         if ("PUBLISHED".equals(status)) {

@@ -1,16 +1,30 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContactService } from '../../../core/services/contact.service';
 import { DraftStorageService } from '../../../core/services/draft-storage.service';
 import { Contact, ContactStatus } from '../../../core/models/contact.model';
 import { YinIconComponent } from '../../../core/components/icon/icon.component';
 import { YinSlideDrawerComponent } from '../../../shared/components/slide-drawer/slide-drawer.component';
+import {
+  YinDataTableComponent,
+  YinCellDefDirective,
+  TableColumn,
+  TableFilter,
+} from '../../../shared/components/data-table/data-table.component';
 
 @Component({
   selector: 'yin-admin-contacts',
   templateUrl: './admin-contacts.component.html',
   styleUrls: ['./admin-contacts.component.css'],
-  imports: [FormsModule, YinIconComponent, YinSlideDrawerComponent]
+  imports: [
+    FormsModule,
+    DatePipe,
+    YinIconComponent,
+    YinSlideDrawerComponent,
+    YinDataTableComponent,
+    YinCellDefDirective,
+  ]
 })
 export class AdminContactsComponent implements OnInit, OnDestroy {
   private readonly contactsService = inject(ContactService);
@@ -29,6 +43,33 @@ export class AdminContactsComponent implements OnInit, OnDestroy {
   protected readonly loadingMore = signal<boolean>(false);
   protected readonly hasMore = signal<boolean>(false);
   protected readonly nextCursor = signal<string | null>(null);
+
+  public readonly columns: TableColumn<Contact>[] = [
+    { key: 'fullName', label: 'Khách Hàng / Đơn Vị', icon: 'user', width: '220px', sortable: true },
+    { key: 'contact', label: 'Thông Tin Liên Lạc', icon: 'mail', width: '210px' },
+    { key: 'projectType', label: 'Đề Bài Dự Án', icon: 'briefcase', width: '260px' },
+    { key: 'budgetRange', label: 'Ngân Sách', icon: 'wallet', width: '130px' },
+    { key: 'status', label: 'Trạng Thái', icon: 'check-circle', width: '150px', sortable: true },
+    { key: 'createdAt', label: 'Ngày Gửi', icon: 'calendar', width: '140px', sortable: true },
+    { key: 'actions', label: 'Thao Tác', icon: 'settings', width: '120px', align: 'center' },
+  ];
+
+  protected readonly filterPills = computed<TableFilter[]>(() => [
+    {
+      id: 'status',
+      label: 'Trạng Thái',
+      icon: 'check-circle',
+      activeValue: this.selectedStatus(),
+      options: [
+        { label: 'Tất cả trạng thái', value: 'ALL' },
+        { label: 'Mới tiếp nhận', value: 'NEW' },
+        { label: 'Đã liên hệ', value: 'CONTACTED' },
+        { label: 'Đang xử lý', value: 'IN_PROGRESS' },
+        { label: 'Đã giải quyết', value: 'RESOLVED' },
+        { label: 'Đánh dấu Spam', value: 'SPAM' },
+      ],
+    },
+  ]);
 
   private searchDebounceTimer?: ReturnType<typeof setTimeout>;
   private currentRequestId = 0;
@@ -97,6 +138,37 @@ export class AdminContactsComponent implements OnInit, OnDestroy {
     if (this.selectedStatus() === status) return;
     this.selectedStatus.set(status);
     void this.loadContacts(true);
+  }
+
+  onFilterChange(event: { id: string; value: any }): void {
+    if (event.id === 'status') {
+      this.setStatus(event.value);
+    }
+  }
+
+  onExportCsv(): void {
+    const list = this.contactsList();
+    const headers = ['ID', 'FullName', 'CompanyName', 'Email', 'Phone', 'ProjectType', 'BudgetRange', 'Status', 'CreatedAt'];
+    const rows = list.map((c) => [
+      c.id,
+      `"${c.fullName || ''}"`,
+      `"${c.companyName || ''}"`,
+      `"${c.email || ''}"`,
+      c.phone || '',
+      `"${c.projectType || ''}"`,
+      `"${c.budgetRange || ''}"`,
+      c.status,
+      c.createdAt || '',
+    ]);
+    const csvContent =
+      'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `contacts-${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   async loadMore(): Promise<void> {

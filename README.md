@@ -4,7 +4,7 @@ Angular frontend, Spring Boot 3 backend và PostgreSQL 17. Nội dung công khai
 
 ## Chạy bằng Docker
 
-1. Sao chép `.env.example` thành `.env`, đặt `POSTGRES_PASSWORD`, `JWT_SECRET` (ít nhất 32 byte UTF-8) và `ADMIN_PASSWORD` (ít nhất 12 ký tự). Không dùng giá trị mẫu khi triển khai.
+1. Sao chép `.env.example` thành `.env`, đặt `POSTGRES_PASSWORD`, `JWT_SECRET` (ít nhất 32 byte UTF-8), `ADMIN_PASSWORD` (ít nhất 12 ký tự) và `AI_SETTINGS_ENCRYPTION_KEY` (base64 của 32 byte ngẫu nhiên). Không dùng giá trị mẫu khi triển khai.
 2. Chạy `docker-compose -f docker-compose.yml up --build -d`.
 3. Mở `http://localhost:4200` và đăng nhập quản trị tại `http://localhost:4200/admin/login` bằng `ADMIN_USERNAME`/`ADMIN_PASSWORD`.
 
@@ -55,6 +55,18 @@ Bài viết mới mặc định là `DRAFT`. Luồng hợp lệ: `DRAFT` → `PU
 Các quyết định nghiệp vụ, thay đổi cấu hình và điểm cần kiểm chứng khi triển khai được ghi trong [báo cáo rà soát backend](docs/backend-review-2026-11-03.md).
 
 Các API danh sách đều giới hạn `size` mặc định 20, tối đa 100. Client, hỗ trợ, tài khoản quản trị và trang CMS dùng `page` (bắt đầu từ 0) và trả `{items,page,size,total}`. Bài viết, liên hệ và phiên đọc dùng `cursor` và trả `{items,size,hasMore,nextCursor}`. `/api/admin/bootstrap` chỉ trả summary. Xem [kế hoạch chuyển đổi FE](docs/frontend-pagination-plan.md) trước khi triển khai contract mới.
+
+## AI soạn bài
+
+Bộ quy tắc biên tập và quy trình kiểm tra nội dung nằm tại [docs/ai-writing-skill.md](docs/ai-writing-skill.md). Quản trị viên có thể chỉnh **Quy tắc viết**, **Phong cách trình bày** và mức sáng tạo trong Thiết lập AI; các thay đổi được áp dụng cho lượt tạo, rà soát và sửa tiếp theo.
+
+Trong trang quản trị, `ADMIN` mở **Cài đặt → Thiết lập AI**, chọn OpenAI hoặc Gemini, nhập model và API key rồi lưu. Backend mã hóa key bằng AES-256-GCM trong PostgreSQL; API đọc cài đặt chỉ trả `hasApiKey`, không trả key. Tạo `AI_SETTINGS_ENCRYPTION_KEY` bằng `openssl rand -base64 32`, giữ bí mật và sao lưu ổn định: mất hoặc đổi khóa này sẽ làm key đã lưu không thể giải mã. Dùng HTTPS khi triển khai để bảo vệ key lúc nhập. Key từng lưu bằng phiên bản cũ trong `localStorage` sẽ bị xóa khi ứng dụng mới khởi động; cần nhập lại trong Cài đặt.
+
+Sau khi lưu, bấm **Kiểm Tra Kết Nối AI**, rồi vào trình soạn bài để tạo, xem trước và áp dụng bản nháp. Lỗi nhà cung cấp sẽ được hiển thị; hệ thống không tạo bài mô phỏng thay thế. `ADMIN` cấu hình và kiểm tra kết nối; `ADMIN` và `MANAGER` có thể tạo bản nháp. Không cần MCP cho luồng dùng API key này; nếu sau này kết nối MCP server riêng, cần xác định transport, tên công cụ tạo bài và xác thực của server.
+
+Trong trình soạn bài, chọn một đoạn để mở toolbar nổi (P/H2/H3, định dạng và **AI sửa**). Nút **AI rà soát** liệt kê các đoạn có vấn đề; người viết có thể chọn tối đa tám đoạn, gửi một yêu cầu sửa chung, xem từng cặp trước/sau rồi áp dụng tất cả. Khi văn bản thay đổi trong lúc AI xử lý, các gợi ý cũ bị vô hiệu hóa để tránh thay nhầm đoạn. Mỗi yêu cầu AI đều tính vào giới hạn 6 yêu cầu/phút/tài khoản.
+
+Bài đã xuất bản và chưa bị xóa được lưu trong PostgreSQL như trước. Khi tạo bài mới, backend lấy tối đa ba bài xuất bản gần đây phù hợp làm ví dụ giọng văn, giới hạn độ dài và không dùng bản nháp. Đây là **tham chiếu lúc viết**, không phải huấn luyện lại trọng số mô hình; AI không tự học vĩnh viễn khi lưu bài. Cần kiểm tra dữ kiện, ngày giờ và tính trùng lặp trước khi xuất bản.
 
 ## Kiểm tra bảo mật
 

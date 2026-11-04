@@ -105,6 +105,178 @@
   font-size: 0.9rem;
 }
 
+/* Modern Cell Styling for YinDataTable */
+.contact-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.contact-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--yin-main, #0B1849);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.88rem;
+  flex-shrink: 0;
+}
+
+.contact-name-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.company-sub-text {
+  font-size: 0.76rem;
+  color: #64748B;
+}
+
+.contact-meta-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.contact-email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--yin-main, #0B1849);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: 0.82rem;
+}
+
+.contact-email-link:hover {
+  color: #2563EB;
+}
+
+.contact-phone-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #64748B;
+  font-size: 0.8rem;
+}
+
+.project-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-tag {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 2px 8px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1D4ED8;
+}
+
+.msg-snippet-text {
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.budget-pill-modern {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.status-pill-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status-pill-modern .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-pill-modern.status-new {
+  background: #EFF6FF;
+  color: #1E40AF;
+}
+.status-pill-modern.status-new .status-dot { background: #3B82F6; }
+
+.status-pill-modern.status-contacted {
+  background: #FDF2F8;
+  color: #9D174D;
+}
+.status-pill-modern.status-contacted .status-dot { background: #EC4899; }
+
+.status-pill-modern.status-in_progress {
+  background: #FFFBEB;
+  color: #92400E;
+}
+.status-pill-modern.status-in_progress .status-dot { background: #F59E0B; }
+
+.status-pill-modern.status-resolved {
+  background: #ECFDF5;
+  color: #065F46;
+}
+.status-pill-modern.status-resolved .status-dot { background: #10B981; }
+
+.status-pill-modern.status-spam,
+.status-pill-modern.status-closed {
+  background: #F1F5F9;
+  color: #475569;
+}
+.status-pill-modern.status-spam .status-dot,
+.status-pill-modern.status-closed .status-dot { background: #94A3B8; }
+
+.btn-detail-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-detail-action:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
 .client-name {
   color: var(--yin-main);
   font-weight: 800;

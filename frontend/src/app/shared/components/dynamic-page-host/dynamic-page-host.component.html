@@ -1,22 +1,311 @@
 <div class="dynamic-page-stream">
   @for (block of blocks(); track block.id) {
-    @switch (block.type) {
-      @case ('hero') {
-        <yin-hero-block [block]="$any(block)" />
+    <div 
+      class="dynamic-block-outer" 
+      [attr.data-block-type]="block.type"
+      [class.pad-none]="block.style?.paddingY === 'none'"
+      [class.pad-sm]="block.style?.paddingY === 'sm'"
+      [class.pad-md]="block.style?.paddingY === 'md'"
+      [class.pad-lg]="block.style?.paddingY === 'lg'"
+      [class.pad-xl]="block.style?.paddingY === 'xl'"
+      [class.align-left]="block.style?.textAlign === 'left'"
+      [class.align-center]="block.style?.textAlign === 'center'"
+      [class.align-right]="block.style?.textAlign === 'right'"
+      [class.layout-row]="block.style?.layoutDirection === 'row'"
+      [class.layout-col]="block.style?.layoutDirection === 'column'"
+      [class.is-contained]="!block.style?.fullWidth"
+      [style]="getBlockStyles(block)">
+
+      @if (block.style?.backgroundImage) {
+        <div 
+          class="block-bg-overlay" 
+          [style.opacity]="block.style?.backgroundOverlay !== undefined ? block.style?.backgroundOverlay : 0.4">
+        </div>
       }
-      @case ('stats') {
-        <yin-stats-block [block]="$any(block)" />
-      }
-      @case ('projects-grid') {
-        <yin-projects-grid-block [block]="$any(block)" />
-      }
-      @case ('rich-content') {
-        <yin-rich-content-block [block]="$any(block)" />
-      }
-      @case ('cta') {
-        <yin-cta-block [block]="$any(block)" />
-      }
-    }
+
+      <div class="dynamic-block-inner" [class.yin-container]="!block.style?.fullWidth">
+        @switch (block.type) {
+          @case ('hero') {
+            <yin-hero-block [block]="$any(block)" />
+          }
+          @case ('stats') {
+            <yin-stats-block [block]="$any(block)" />
+          }
+          @case ('projects-grid') {
+            <yin-projects-grid-block [block]="$any(block)" />
+          }
+          @case ('rich-content') {
+            <yin-rich-content-block [block]="$any(block)" />
+          }
+          @case ('cta') {
+            <yin-cta-block [block]="$any(block)" />
+          }
+
+          <!-- Text Block -->
+          @case ('text') {
+            @let b = asText(block);
+            <section class="dyn-text-section">
+              @if (b.badge) {
+                <span class="dyn-badge">{{ b.badge }}</span>
+              }
+              <h2 class="dyn-headline">{{ b.headline }}</h2>
+              <p class="dyn-description">{{ b.description }}</p>
+              @if (b.buttonText && b.buttonLink) {
+                <div class="dyn-cta-row">
+                  <a [routerLink]="b.buttonLink" class="yin-btn yin-btn-primary">{{ b.buttonText }}</a>
+                </div>
+              }
+            </section>
+          }
+
+          <!-- Steps Block -->
+          @case ('steps') {
+            @let b = asSteps(block);
+            <section class="dyn-steps-section">
+              <div class="dyn-section-header">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                @if (b.description) { <p class="dyn-subtitle">{{ b.description }}</p> }
+              </div>
+              <div class="dyn-steps-grid" [class.grid-row]="b.style?.layoutDirection === 'row'">
+                @for (st of b.steps; track $index) {
+                  <div class="dyn-step-card yin-card">
+                    <span class="step-num-badge">{{ st.stepNumber || ('0' + ($index + 1)) }}</span>
+                    <h3 class="step-title">{{ st.title }}</h3>
+                    <p class="step-desc">{{ st.description }}</p>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- Options / Pricing Block -->
+          @case ('options') {
+            @let b = asOptions(block);
+            <section class="dyn-options-section">
+              <div class="dyn-section-header">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                @if (b.description) { <p class="dyn-subtitle">{{ b.description }}</p> }
+              </div>
+              <div class="dyn-options-grid" [class.grid-row]="b.style?.layoutDirection === 'row'">
+                @for (opt of b.options; track $index) {
+                  <div class="dyn-option-card yin-card" [class.is-featured]="opt.isFeatured">
+                    @if (opt.isFeatured) {
+                      <div class="option-featured-pill">Được Đề Xuất</div>
+                    }
+                    <h3 class="option-title">{{ opt.title }}</h3>
+                    @if (opt.price) {
+                      <div class="option-price">{{ opt.price }}</div>
+                    }
+                    <p class="option-desc">{{ opt.description }}</p>
+                    <ul class="option-features-list">
+                      @for (feat of opt.features; track $index) {
+                        <li>
+                          <yin-icon name="check" [size]="14"></yin-icon>
+                          <span>{{ feat }}</span>
+                        </li>
+                      }
+                    </ul>
+                    @if (opt.buttonText) {
+                      <a [routerLink]="opt.buttonLink || '/contact'" class="yin-btn w-full" [class.yin-btn-primary]="opt.isFeatured" [class.yin-btn-secondary]="!opt.isFeatured">
+                        {{ opt.buttonText }}
+                      </a>
+                    }
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- Multi Column Block -->
+          @case ('multi-column') {
+            @let b = asMultiColumn(block);
+            <section class="dyn-multicolumn-section">
+              <div class="dyn-section-header">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                @if (b.description) { <p class="dyn-subtitle">{{ b.description }}</p> }
+              </div>
+              <div class="dyn-columns-grid" [attr.data-cols]="b.columnsCount || 3">
+                @for (col of b.columns; track $index) {
+                  <div class="dyn-col-card yin-card">
+                    @if (col.imageUrl) {
+                      <div class="col-img-box">
+                        <img [src]="col.imageUrl" [alt]="col.title" loading="lazy" />
+                      </div>
+                    }
+                    <h3 class="col-title">{{ col.title }}</h3>
+                    <p class="col-desc">{{ col.description }}</p>
+                    @if (col.linkText && col.link) {
+                      <a [routerLink]="col.link" class="col-link">
+                        <span>{{ col.linkText }}</span>
+                        <yin-icon name="arrow-right" [size]="14"></yin-icon>
+                      </a>
+                    }
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- Programs Block -->
+          @case ('programs') {
+            @let b = asPrograms(block);
+            <section class="dyn-programs-section">
+              <div class="dyn-section-header">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                @if (b.description) { <p class="dyn-subtitle">{{ b.description }}</p> }
+              </div>
+              <div class="dyn-programs-grid">
+                @for (prog of b.programs; track $index) {
+                  <div class="dyn-prog-card yin-card">
+                    <div class="prog-meta">
+                      <span class="prog-cat">{{ prog.category }}</span>
+                      @if (prog.duration) { <span class="prog-duration">{{ prog.duration }}</span> }
+                    </div>
+                    <h3 class="prog-title">{{ prog.title }}</h3>
+                    <p class="prog-desc">{{ prog.description }}</p>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- Video Block -->
+          @case ('video') {
+            @let b = asVideo(block);
+            <section class="dyn-video-section">
+              <div class="dyn-section-header">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                @if (b.description) { <p class="dyn-subtitle">{{ b.description }}</p> }
+              </div>
+              <div class="dyn-video-wrapper">
+                @if (b.videoUrl) {
+                  <iframe 
+                    [src]="b.videoUrl" 
+                    title="Video Player"
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                  </iframe>
+                }
+              </div>
+              @if (b.caption) {
+                <p class="dyn-video-caption">{{ b.caption }}</p>
+              }
+            </section>
+          }
+
+          <!-- Form Block -->
+          @case ('form') {
+            @let b = asForm(block);
+            <section class="dyn-form-section yin-card">
+              <div class="dyn-section-header">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                @if (b.description) { <p class="dyn-subtitle">{{ b.description }}</p> }
+              </div>
+              <form class="dyn-inquiry-form" (submit)="$event.preventDefault()">
+                <div class="form-fields-grid">
+                  @for (fld of b.fields; track $index) {
+                    <div class="form-field-item" [class.field-full]="fld.fieldType === 'textarea'">
+                      <label class="form-label">
+                        {{ fld.label }}
+                        @if (fld.required) { <span class="req">*</span> }
+                      </label>
+                      @if (fld.fieldType === 'textarea') {
+                        <textarea class="live-input" rows="3" [placeholder]="fld.placeholder"></textarea>
+                      } @else {
+                        <input [type]="fld.fieldType" class="live-input" [placeholder]="fld.placeholder" />
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="form-action-row">
+                  <button type="submit" class="yin-btn yin-btn-primary">{{ b.submitButtonText || 'Gửi Yêu Cầu' }}</button>
+                </div>
+              </form>
+            </section>
+          }
+
+          <!-- Section (Split Row / Banner) Block -->
+          @case ('section') {
+            @let b = asSection(block);
+            <section class="dyn-split-section" [class.img-left]="b.imagePosition === 'left'" [class.img-right]="b.imagePosition !== 'left'">
+              <div class="split-text-col">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                <p class="dyn-description">{{ b.description }}</p>
+                @if (b.buttonText && b.buttonLink) {
+                  <div class="dyn-cta-row">
+                    <a [routerLink]="b.buttonLink" class="yin-btn yin-btn-primary">{{ b.buttonText }}</a>
+                  </div>
+                }
+              </div>
+              @if (b.imageUrl) {
+                <div class="split-image-col">
+                  <img [src]="b.imageUrl" [alt]="b.headline" loading="lazy" />
+                </div>
+              }
+            </section>
+          }
+
+          <!-- FAQ Block -->
+          @case ('faq') {
+            @let b = asFaq(block);
+            <section class="dyn-faq-section">
+              <div class="dyn-section-header">
+                @if (b.badge) { <span class="dyn-badge">{{ b.badge }}</span> }
+                <h2 class="dyn-headline">{{ b.headline }}</h2>
+                @if (b.description) { <p class="dyn-subtitle">{{ b.description }}</p> }
+              </div>
+              <div class="dyn-faq-list">
+                @for (item of b.items; track $index) {
+                  <details class="dyn-faq-card yin-card" [open]="$index === 0">
+                    <summary class="faq-question">
+                      <span>{{ item.question }}</span>
+                      <yin-icon name="chevron-down" [size]="16" className="faq-chevron"></yin-icon>
+                    </summary>
+                    <div class="faq-answer">
+                      <p>{{ item.answer }}</p>
+                    </div>
+                  </details>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- Testimonials Block -->
+          @case ('testimonials') {
+            @let b = asTestimonials(block);
+            <section class="dyn-testimonials-section">
+              <div class="dyn-section-header">
+                <h2 class="dyn-headline">{{ b.title || 'Đánh Giá Của Khách Hàng' }}</h2>
+                @if (b.subtitle) { <p class="dyn-subtitle">{{ b.subtitle }}</p> }
+              </div>
+              <div class="dyn-testimonials-grid">
+                @for (item of b.items; track $index) {
+                  <div class="dyn-testi-card yin-card">
+                    <div class="testi-stars">
+                      @for (star of [1,2,3,4,5]; track $index) {
+                        <span class="star-icon">★</span>
+                      }
+                    </div>
+                    <blockquote class="testi-quote">"{{ item.quote }}"</blockquote>
+                    <div class="testi-author">
+                      <strong class="author-name">{{ item.author }}</strong>
+                      <span class="author-role">{{ item.position }} • {{ item.company }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+        }
+      </div>
+    </div>
   }
 </div>
-

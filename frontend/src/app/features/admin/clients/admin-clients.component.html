@@ -19,33 +19,6 @@
     </div>
   </header>
 
-  <!-- Filter & Search Toolbar -->
-  <div class="filter-toolbar yin-card">
-    <div class="search-input-wrap">
-      <yin-icon name="search" [size]="16" class="search-icon"></yin-icon>
-      <input 
-        type="text" 
-        class="search-input" 
-        placeholder="Tìm kiếm theo username, email hoặc số điện thoại…" 
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        (keyup.enter)="onSearch()" />
-      <button type="button" class="yin-btn yin-btn-secondary filter-btn" (click)="onSearch()">
-        <span>Tìm kiếm</span>
-      </button>
-    </div>
-
-    <div class="filter-actions">
-      <label class="toggle-switch-label">
-        <input 
-          type="checkbox" 
-          [checked]="updatesOnly()" 
-          (change)="toggleUpdatesOnly()" />
-        <span class="toggle-text">Chỉ hiện khách hàng đăng ký nhận tin</span>
-      </label>
-    </div>
-  </div>
-
   @if (error()) {
     <div class="alert-box alert-error" role="alert">
       <yin-icon name="alert-circle" [size]="18"></yin-icon>
@@ -53,78 +26,62 @@
     </div>
   }
 
-  <!-- Data Table -->
-  <div class="table-card yin-card">
-    @if (loading()) {
-      <div class="table-loading">Đang tải danh sách khách hàng…</div>
-    } @else if (clients().length === 0) {
-      <div class="table-empty">
-        <yin-icon name="inbox" [size]="36"></yin-icon>
-        <p>Không tìm thấy khách hàng nào phù hợp với bộ lọc hiện tại.</p>
-      </div>
-    } @else {
-      <div class="table-responsive">
-        <table class="admin-data-table">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Số Điện Thoại</th>
-              <th>Ngày Sinh</th>
-              <th>Nhận Bản Tin</th>
-              <th>Ngày Đăng Ký</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (client of clients(); track client.id) {
-              <tr>
-                <td class="client-name-cell">
-                  <div class="client-avatar">{{ client.username.charAt(0).toUpperCase() }}</div>
-                  <span class="font-bold">{{ client.username }}</span>
-                </td>
-                <td>{{ client.email }}</td>
-                <td class="font-mono">{{ client.phone }}</td>
-                <td class="font-mono">{{ client.dateOfBirth }}</td>
-                <td>
-                  @if (client.receiveUpdates) {
-                    <span class="badge-optin active">Đang nhận tin</span>
-                  } @else {
-                    <span class="badge-optin inactive">Đã tắt</span>
-                  }
-                </td>
-                <td class="font-mono date-cell">
-                  {{ client.createdAt | date:'dd/MM/yyyy HH:mm' }}
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+  <!-- REUSABLE ENTERPRISE DATA TABLE -->
+  <yin-data-table
+    [columns]="columns"
+    [data]="clients()"
+    [loading]="loading()"
+    [totalCount]="totalCount()"
+    [searchQuery]="searchTerm()"
+    [searchPlaceholder]="'Tìm kiếm theo username, email hoặc số điện thoại…'"
+    [filterPills]="filterPills()"
+    [pageSize]="pageSize()"
+    [currentPage]="currentPage() + 1"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
+    (pageChange)="changePage($event - 1)"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (exportClick)="onExportCsv()">
 
-      <!-- Pagination Footer -->
-      <footer class="pagination-footer">
-        <span class="page-info">
-          Trang <strong>{{ currentPage() + 1 }}</strong> trên <strong>{{ totalPages() }}</strong> (Hiển thị tối đa 20 dòng/trang)
-        </span>
-        <div class="page-buttons">
-          <button 
-            type="button" 
-            class="yin-btn yin-btn-secondary" 
-            [disabled]="currentPage() === 0"
-            (click)="changePage(currentPage() - 1)">
-            &larr; Trang trước
-          </button>
-          <button 
-            type="button" 
-            class="yin-btn yin-btn-secondary" 
-            [disabled]="currentPage() + 1 >= totalPages()"
-            (click)="changePage(currentPage() + 1)">
-            Trang tiếp &rarr;
-          </button>
-        </div>
-      </footer>
-    }
-  </div>
+    <!-- COLUMN: Khách hàng (Avatar + Username) -->
+    <ng-template yinCell="username" let-client>
+      <div class="client-name-cell">
+        <div class="client-avatar">{{ client.username.charAt(0).toUpperCase() }}</div>
+        <span class="font-bold single-line-ellipsis" [title]="client.username">{{ client.username }}</span>
+      </div>
+    </ng-template>
+
+    <!-- COLUMN: Email (Link) -->
+    <ng-template yinCell="email" let-client>
+      <a [href]="'mailto:' + client.email" class="client-email-link single-line-ellipsis" [title]="client.email">
+        {{ client.email }}
+      </a>
+    </ng-template>
+
+    <!-- COLUMN: Số điện thoại -->
+    <ng-template yinCell="phone" let-client>
+      <span class="font-mono text-muted">{{ client.phone || '—' }}</span>
+    </ng-template>
+
+    <!-- COLUMN: Ngày sinh -->
+    <ng-template yinCell="dateOfBirth" let-client>
+      <span class="font-mono text-muted">{{ client.dateOfBirth || '—' }}</span>
+    </ng-template>
+
+    <!-- COLUMN: Bản tin (Status pill) -->
+    <ng-template yinCell="receiveUpdates" let-client>
+      <span class="status-pill-modern" [class.active]="client.receiveUpdates" [class.locked]="!client.receiveUpdates">
+        <span class="status-dot"></span>
+        <span>{{ client.receiveUpdates ? 'Đang nhận tin' : 'Đã tắt' }}</span>
+      </span>
+    </ng-template>
+
+    <!-- COLUMN: Ngày đăng ký -->
+    <ng-template yinCell="createdAt" let-client>
+      <span class="font-mono date-cell">{{ client.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+    </ng-template>
+
+  </yin-data-table>
 
 </div>
 

@@ -1,0 +1,497 @@
+<div class="yin-table-wrapper">
+  
+  <!-- TOP TOOLBAR: Views, Search, Customize, Export, Add Action -->
+  <div class="table-top-toolbar">
+    
+    <!-- Left: View Mode Switches (Table, Board, List) -->
+    @if (showViews()) {
+      <div class="view-switcher-group" role="tablist" aria-label="Kiểu hiển thị">
+        <button 
+          type="button" 
+          class="view-switch-btn" 
+          [class.active]="localView() === 'table'"
+          (click)="setView('table')"
+          role="tab"
+          [attr.aria-selected]="localView() === 'table'"
+          title="Chế độ Bảng (Table)">
+          <yin-icon name="table" [size]="15"></yin-icon>
+          <span class="view-label">Table</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="view-switch-btn" 
+          [class.active]="localView() === 'board'"
+          (click)="setView('board')"
+          role="tab"
+          [attr.aria-selected]="localView() === 'board'"
+          title="Chế độ Thẻ (Board)">
+          <yin-icon name="layout" [size]="15"></yin-icon>
+          <span class="view-label">Board</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="view-switch-btn" 
+          [class.active]="localView() === 'list'"
+          (click)="setView('list')"
+          role="tab"
+          [attr.aria-selected]="localView() === 'list'"
+          title="Chế độ Danh sách (List)">
+          <yin-icon name="list" [size]="15"></yin-icon>
+          <span class="view-label">List</span>
+        </button>
+      </div>
+    } @else {
+      <div></div>
+    }
+
+    <!-- Right: Search, Hide, Customize, More, Export, Primary Action -->
+    <div class="toolbar-actions-group">
+      
+      <!-- Search Input -->
+      @if (showSearch()) {
+        <div class="table-search-box">
+          <yin-icon name="search" [size]="15" className="search-icon"></yin-icon>
+          <input 
+            type="text" 
+            class="table-search-input" 
+            [placeholder]="searchPlaceholder()"
+            [ngModel]="localSearch()"
+            (ngModelChange)="onSearchInput($event)" />
+          @if (localSearch()) {
+            <button type="button" class="search-clear-btn" (click)="clearSearch()" title="Xóa tìm kiếm">
+              <yin-icon name="close" [size]="12"></yin-icon>
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Hide Toggle -->
+      @if (showHide()) {
+        <button 
+          type="button" 
+          class="tool-btn" 
+          (click)="toggleCustomize()" 
+          title="Ẩn / hiện cột dữ liệu">
+          <yin-icon name="eye-off" [size]="15"></yin-icon>
+          <span>Hide</span>
+        </button>
+      }
+
+      <!-- Customize Toggle -->
+      @if (showCustomize()) {
+        <div class="customize-dropdown-wrap">
+          <button 
+            type="button" 
+            class="tool-btn" 
+            (click)="toggleCustomize()" 
+            title="Tùy biến bảng">
+            <yin-icon name="settings" [size]="15"></yin-icon>
+            <span>Customize</span>
+          </button>
+
+          @if (isCustomizeOpen()) {
+            <div class="customize-popover" (mouseleave)="isCustomizeOpen.set(false)">
+              <div class="customize-head">
+                <span>Hiển thị cột</span>
+                <button type="button" class="popover-close-btn" (click)="isCustomizeOpen.set(false)">✕</button>
+              </div>
+              <div class="customize-body">
+                @for (col of columns(); track col.key) {
+                  <label class="customize-col-item">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isColumnVisible(col.key)" 
+                      (change)="toggleColumnVisibility(col.key)" />
+                    <span>{{ col.label }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- More Options (...) -->
+      @if (showMore()) {
+        <button 
+          type="button" 
+          class="tool-btn icon-only" 
+          (click)="isMoreOpen.set(!isMoreOpen())" 
+          title="Tùy chọn khác">
+          <yin-icon name="settings" [size]="15"></yin-icon>
+        </button>
+      }
+
+      <!-- Export Button -->
+      @if (showExport()) {
+        <button 
+          type="button" 
+          class="tool-btn export-btn" 
+          (click)="onExport()" 
+          title="Xuất dữ liệu">
+          <yin-icon name="download" [size]="15"></yin-icon>
+          <span>Export</span>
+        </button>
+      }
+
+      <!-- Primary Action Button (e.g. Add User / Viết bài mới) -->
+      @if (primaryActionLabel()) {
+        <button 
+          type="button" 
+          class="primary-action-btn" 
+          (click)="onPrimaryAction()" 
+          title="{{ primaryActionLabel() }}">
+          <yin-icon [name]="primaryActionIcon()" [size]="16"></yin-icon>
+          <span>{{ primaryActionLabel() }}</span>
+        </button>
+      }
+
+      <!-- Extra Action Projection Slot -->
+      <ng-content select="[table-actions]"></ng-content>
+
+    </div>
+
+  </div>
+
+  <!-- FILTER PILLS BAR -->
+  @if (filterPills().length > 0) {
+    <div class="table-filter-bar">
+      
+      @for (filter of filterPills(); track filter.id) {
+        <div class="filter-pill-dropdown-wrap">
+          <button 
+            type="button" 
+            class="filter-pill-btn" 
+            [class.active]="filter.activeValue !== undefined && filter.activeValue !== null && filter.activeValue !== '' && filter.activeValue !== 'ALL'"
+            (click)="toggleFilter(filter.id)">
+            @if (filter.icon) {
+              <yin-icon [name]="filter.icon" [size]="14" className="filter-pill-icon"></yin-icon>
+            }
+            <span class="filter-label">
+              {{ filter.label }}
+              @if (filter.activeValue && filter.activeValue !== 'ALL') {
+                <strong class="filter-val">: {{ filter.activeValue }}</strong>
+              }
+            </span>
+            <yin-icon name="chevron-down" [size]="12" className="chevron-icon"></yin-icon>
+          </button>
+
+          <!-- Popover Options -->
+          @if (openFilterId() === filter.id) {
+            <div class="filter-popover-menu" (mouseleave)="closeFilter()">
+              <div class="filter-popover-header">Lọc theo {{ filter.label }}</div>
+              @for (opt of filter.options; track opt.value) {
+                <button 
+                  type="button" 
+                  class="filter-option-btn" 
+                  [class.selected]="filter.activeValue === opt.value"
+                  (click)="selectFilterValue(filter.id, opt.value)">
+                  <span>{{ opt.label }}</span>
+                  @if (filter.activeValue === opt.value) {
+                    <yin-icon name="check" [size]="13"></yin-icon>
+                  }
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Extra Filter Projection Slot -->
+      <ng-content select="[table-filters]"></ng-content>
+
+    </div>
+  }
+
+  <!-- DATA PRESENTATION CONTAINER -->
+  <div class="table-card-body">
+    
+    <!-- TABLE VIEW -->
+    @if (localView() === 'table') {
+      <div class="table-scroll-container">
+        <table class="yin-core-table">
+          
+          <!-- TABLE HEAD -->
+          <thead>
+            <tr>
+              @if (selectable()) {
+                <th class="th-checkbox">
+                  <input 
+                    type="checkbox" 
+                    class="yin-checkbox"
+                    [checked]="allSelected()"
+                    [indeterminate]="isIndeterminate()"
+                    (change)="toggleAll()"
+                    aria-label="Chọn tất cả các dòng" />
+                </th>
+              }
+
+              @for (col of visibleColumns(); track col.key) {
+                <th 
+                  [class]="'th-' + col.key + (col.cellClass ? ' ' + col.cellClass : '')"
+                  [style.width]="col.width || 'auto'"
+                  [style.text-align]="col.align || 'left'">
+                  <div class="th-content-wrap" [style.justify-content]="col.align === 'center' ? 'center' : col.align === 'right' ? 'flex-end' : 'flex-start'">
+                    @if (col.icon) {
+                      <yin-icon [name]="col.icon" [size]="14" className="th-icon"></yin-icon>
+                    }
+                    <span class="th-label">{{ col.label }}</span>
+                  </div>
+                </th>
+              }
+            </tr>
+          </thead>
+
+          <!-- TABLE BODY -->
+          <tbody>
+            @if (loading()) {
+              <tr>
+                <td [attr.colspan]="visibleColumns().length + (selectable() ? 1 : 0)" class="cell-loading-state">
+                  <div class="loading-inner">
+                    <yin-icon name="clock" [size]="22" className="spinning-icon"></yin-icon>
+                    <span>Đang tải dữ liệu…</span>
+                  </div>
+                </td>
+              </tr>
+            } @else if (displayRows().length === 0) {
+              <tr>
+                <td [attr.colspan]="visibleColumns().length + (selectable() ? 1 : 0)" class="cell-empty-state">
+                  <div class="empty-inner">
+                    <yin-icon name="inbox" [size]="38" className="empty-icon"></yin-icon>
+                    <p class="empty-title">{{ emptyMessage() }}</p>
+                    @if (emptySubMessage()) {
+                      <p class="empty-sub">{{ emptySubMessage() }}</p>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @else {
+              @for (row of displayRows(); track getRowKey(row); let rIdx = $index) {
+                <tr [class.row-selected]="isRowSelected(row)">
+                  
+                  <!-- Checkbox Column -->
+                  @if (selectable()) {
+                    <td class="td-checkbox">
+                      <input 
+                        type="checkbox" 
+                        class="yin-checkbox"
+                        [checked]="isRowSelected(row)"
+                        (change)="toggleRow(row)"
+                        aria-label="Chọn dòng" />
+                    </td>
+                  }
+
+                  <!-- Data Columns -->
+                  @for (col of visibleColumns(); track col.key) {
+                    <td 
+                      [class]="'td-' + col.key + (col.cellClass ? ' ' + col.cellClass : '')"
+                      [style.text-align]="col.align || 'left'">
+                      
+                      <!-- Custom Cell Template Outlet if provided -->
+                      @if (getCellTemplate(col.key); as customTpl) {
+                        <ng-container *ngTemplateOutlet="customTpl; context: { $implicit: row, col: col, index: rIdx }"></ng-container>
+                      } @else {
+                        <!-- Default single-line truncated text with hover tooltip -->
+                        <span 
+                          class="cell-text-ellipsis" 
+                          [title]="getCellValue(row, col.key)">
+                          {{ getCellValue(row, col.key) }}
+                        </span>
+                      }
+
+                    </td>
+                  }
+
+                </tr>
+              }
+            }
+          </tbody>
+
+        </table>
+      </div>
+    }
+
+    <!-- BOARD VIEW (Cards Layout) -->
+    @if (localView() === 'board') {
+      <div class="board-grid-container">
+        @if (loading()) {
+          <div class="board-loading">
+            <yin-icon name="clock" [size]="24" className="spinning-icon"></yin-icon>
+            <span>Đang tải dữ liệu…</span>
+          </div>
+        } @else if (displayRows().length === 0) {
+          <div class="board-empty">
+            <yin-icon name="inbox" [size]="40"></yin-icon>
+            <p>{{ emptyMessage() }}</p>
+          </div>
+        } @else {
+          @for (row of displayRows(); track getRowKey(row)) {
+            <div class="board-card" [class.selected]="isRowSelected(row)">
+              <div class="board-card-header">
+                @if (selectable()) {
+                  <input 
+                    type="checkbox" 
+                    class="yin-checkbox"
+                    [checked]="isRowSelected(row)"
+                    (change)="toggleRow(row)" />
+                }
+                <div class="board-card-title cell-text-ellipsis" [title]="getCellValue(row, visibleColumns()[0]?.key || '')">
+                  @if (getCellTemplate(visibleColumns()[0]?.key || ''); as tpl) {
+                    <ng-container *ngTemplateOutlet="tpl; context: { $implicit: row, col: visibleColumns()[0] }"></ng-container>
+                  } @else {
+                    {{ getCellValue(row, visibleColumns()[0]?.key || '') }}
+                  }
+                </div>
+              </div>
+
+              <div class="board-card-body">
+                @for (col of visibleColumns().slice(1); track col.key) {
+                  <div class="board-field-row">
+                    <span class="board-field-label">{{ col.label }}:</span>
+                    <span class="board-field-value cell-text-ellipsis" [title]="getCellValue(row, col.key)">
+                      @if (getCellTemplate(col.key); as tpl) {
+                        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: row, col: col }"></ng-container>
+                      } @else {
+                        {{ getCellValue(row, col.key) }}
+                      }
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+
+    <!-- LIST VIEW (Dense Compact Layout) -->
+    @if (localView() === 'list') {
+      <div class="list-container">
+        @if (loading()) {
+          <div class="list-loading">
+            <yin-icon name="clock" [size]="20" className="spinning-icon"></yin-icon>
+            <span>Đang tải…</span>
+          </div>
+        } @else if (displayRows().length === 0) {
+          <div class="list-empty">
+            <yin-icon name="inbox" [size]="32"></yin-icon>
+            <span>{{ emptyMessage() }}</span>
+          </div>
+        } @else {
+          @for (row of displayRows(); track getRowKey(row)) {
+            <div class="list-row-item" [class.selected]="isRowSelected(row)">
+              @if (selectable()) {
+                <input 
+                  type="checkbox" 
+                  class="yin-checkbox"
+                  [checked]="isRowSelected(row)"
+                  (change)="toggleRow(row)" />
+              }
+              <div class="list-row-columns">
+                @for (col of visibleColumns(); track col.key) {
+                  <div class="list-cell cell-text-ellipsis" [title]="getCellValue(row, col.key)">
+                    @if (getCellTemplate(col.key); as tpl) {
+                      <ng-container *ngTemplateOutlet="tpl; context: { $implicit: row, col: col }"></ng-container>
+                    } @else {
+                      <span class="list-col-name">{{ col.label }}:</span>
+                      {{ getCellValue(row, col.key) }}
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+
+  </div>
+
+  <!-- PAGINATION FOOTER: Rows per page, Row range, Page numbers -->
+  <footer class="table-pagination-footer">
+    
+    <!-- Left: Rows per page selector & Total rows counter -->
+    <div class="pagination-left">
+      <span class="rows-per-page-label">Rows per page</span>
+      
+      <div class="rows-select-wrap">
+        <select 
+          class="rows-page-select" 
+          [ngModel]="localPageSize()" 
+          (ngModelChange)="onPageSizeSelect($event)">
+          @for (opt of pageSizeOptions(); track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        <yin-icon name="chevron-down" [size]="12" className="select-arrow"></yin-icon>
+      </div>
+
+      <span class="pagination-range-text">{{ rangeText() }}</span>
+    </div>
+
+    <!-- Right: Page buttons: « ‹ 1 2 ... 5 › » -->
+    <div class="pagination-right">
+      
+      <!-- First Page « -->
+      <button 
+        type="button" 
+        class="page-nav-btn first-page-btn" 
+        [disabled]="localPage() <= 1"
+        (click)="goToPage(1)"
+        title="Trang đầu">
+        «
+      </button>
+
+      <!-- Prev Page ‹ -->
+      <button 
+        type="button" 
+        class="page-nav-btn prev-page-btn" 
+        [disabled]="localPage() <= 1"
+        (click)="goToPage(localPage() - 1)"
+        title="Trang trước">
+        <yin-icon name="chevron-left" [size]="14"></yin-icon>
+      </button>
+
+      <!-- Numeric Page Numbers with Ellipsis -->
+      @for (page of pageList(); track $index) {
+        @if (page === '...') {
+          <span class="page-ellipsis">…</span>
+        } @else {
+          <button 
+            type="button" 
+            class="page-num-btn" 
+            [class.active]="localPage() === page"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        }
+      }
+
+      <!-- Next Page › -->
+      <button 
+        type="button" 
+        class="page-nav-btn next-page-btn" 
+        [disabled]="localPage() >= totalPages()"
+        (click)="goToPage(localPage() + 1)"
+        title="Trang sau">
+        <yin-icon name="chevron-right" [size]="14"></yin-icon>
+      </button>
+
+      <!-- Last Page » -->
+      <button 
+        type="button" 
+        class="page-nav-btn last-page-btn" 
+        [disabled]="localPage() >= totalPages()"
+        (click)="goToPage(totalPages())"
+        title="Trang cuối">
+        »
+      </button>
+
+    </div>
+
+  </footer>
+
+</div>
+

@@ -54,6 +54,7 @@
           <div class="author-avatar">Y</div>
           <div class="author-details">
             <span class="author-name">{{ art.authorName }}</span>
+            @if (art.authorRole) { <span class="pub-date">{{ art.authorRole }}</span> }
             <span class="pub-date">Đăng tải ngày: {{ formattedPublishedDate() }}</span>
           </div>
           <div class="view-counter">
@@ -64,22 +65,35 @@
       </div>
     </header>
 
-    <!-- Thân bài viết với Layout: TOC bên trái, Nội dung ở giữa (ẩn hoàn toàn TOC nếu không có thẻ H) -->
-    <div class="yin-container content-container">
-      <div class="article-layout" [class.no-toc]="toc().length === 0">
-        
-        <!-- Table of Contents Sticky Sidebar (Chỉ hiển thị khi bài viết có heading H1, H2, H3) -->
-        @if (toc().length > 0) {
-          <aside class="article-toc-sidebar" aria-label="Mục lục bài viết">
-            <div class="toc-sticky-box">
-              <div 
-                class="toc-title clickable" 
-                (click)="scrollToFirstSection()" 
-                title="Nhấn để cuộn tới đầu nội dung bài viết">
-                <yin-icon name="file-text" [size]="15"></yin-icon>
-                <span>Nội Dung Chính</span>
-              </div>
+    <!-- Ảnh bìa bài viết (Cover Hero Image - 100% kích thước, tối đa 1200px) -->
+    @if (art.thumbnailUrl && !art.thumbnailUrl.includes('yin.svg')) {
+      <div class="yin-container cover-image-container">
+        <div class="article-hero-cover-box">
+          <img 
+            [src]="art.thumbnailUrl" 
+            [alt]="art.title" 
+            class="article-hero-cover-img"
+            (click)="handleImageClick(art.thumbnailUrl, art.title)" />
+        </div>
+      </div>
+    }
 
+    <!-- Thân bài viết với Layout: TOC bên trái, Nội dung ở giữa -->
+    <div class="yin-container content-container">
+      <div class="article-layout">
+        
+        <!-- Table of Contents Sticky Sidebar: "Nội Dung Chính" cố định khi cuộn -->
+        <aside class="article-toc-sidebar" aria-label="Mục lục bài viết">
+          <div class="toc-sticky-box">
+            <div 
+              class="toc-title clickable" 
+              (click)="scrollToFirstSection()" 
+              title="Nhấn để cuộn tới đầu nội dung bài viết">
+              <yin-icon name="file-text" [size]="15"></yin-icon>
+              <span>Nội Dung Chính</span>
+            </div>
+
+            @if (toc().length > 0) {
               <nav class="toc-nav">
                 @for (item of toc(); track item.id; let idx = $index) {
                   <button 
@@ -96,9 +110,23 @@
                   </button>
                 }
               </nav>
+            } @else {
+              <div class="toc-fallback-nav">
+                <div class="toc-fallback-item">
+                  <span class="toc-bullet">&bull;</span>
+                  <span class="toc-text">Nội dung toàn bài</span>
+                </div>
+              </div>
+            }
+
+            <div class="toc-footer-action">
+              <button type="button" class="toc-top-btn" (click)="scrollToTop()" title="Cuộn lên đầu trang">
+                <yin-icon name="arrow-up" [size]="13"></yin-icon>
+                <span>Lên đầu trang</span>
+              </button>
             </div>
-          </aside>
-        }
+          </div>
+        </aside>
 
         <!-- Main Content Renderer -->
         <main class="article-main-body" (click)="handleContentClick($event)">

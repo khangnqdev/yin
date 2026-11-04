@@ -1,4 +1,40 @@
 <header class="yin-header-root">
+  <!-- Top Utility Bar (Nav nhỏ trên cùng navbar - Chiều cao 24px, màu tối sang trọng, bên trái SĐT, bên phải cụm chuyển đổi) -->
+  <div class="yin-topbar">
+    <div class="yin-container topbar-container">
+      <div class="topbar-left">
+        <a href="tel:+84900123456" class="topbar-phone-link" title="Hotline Kỹ Thuật & Tư Vấn Dự Án (24/7)">
+          <yin-icon name="phone" [size]="11"></yin-icon>
+          <span class="hotline-title">Hotline:</span>
+          <span class="hotline-val">+84 (0) 900 123 456</span>
+          <span class="hotline-status-dot" aria-hidden="true"></span>
+          <span class="hotline-badge">24/7</span>
+        </a>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Language Switcher -->
+        <div class="language-switch" role="group" [attr.aria-label]="languageService.language() === 'vi' ? 'Ngôn ngữ trang web' : 'Website language'">
+          <button type="button" [class.active]="languageService.language() === 'vi'" [attr.aria-pressed]="languageService.language() === 'vi'" (click)="languageService.setLanguage('vi')">VI</button>
+          <button type="button" [class.active]="languageService.language() === 'en'" [attr.aria-pressed]="languageService.language() === 'en'" (click)="languageService.setLanguage('en')">EN</button>
+        </div>
+
+        <span class="topbar-divider" aria-hidden="true"></span>
+
+        <!-- Theme Switcher -->
+        <button 
+          type="button" 
+          class="theme-toggle-btn" 
+          (click)="themeService.toggleTheme()" 
+          [title]="themeService.isDark() ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối'"
+          [attr.aria-label]="themeService.isDark() ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối'">
+          <yin-icon [name]="themeService.isDark() ? 'sun' : 'moon'" [size]="11"></yin-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Bar -->
   <div class="yin-container header-container">
     <div class="header-left">
       <a routerLink="/" class="brand-link" (click)="closeMobileMenu()">
@@ -15,11 +51,6 @@
     </div>
 
     <div class="header-actions">
-      <div class="language-switch" role="group" [attr.aria-label]="languageService.language() === 'vi' ? 'Ngôn ngữ trang web' : 'Website language'">
-        <button type="button" [class.active]="languageService.language() === 'vi'" [attr.aria-pressed]="languageService.language() === 'vi'" (click)="languageService.setLanguage('vi')">VI</button>
-        <button type="button" [class.active]="languageService.language() === 'en'" [attr.aria-pressed]="languageService.language() === 'en'" (click)="languageService.setLanguage('en')">EN</button>
-      </div>
-      
       <!-- Client Auth State -->
       @if (clientAuth.isLoggedIn()) {
         <a routerLink="/account" class="client-portal-pill" title="Hồ sơ tài khoản khách hàng">
@@ -41,15 +72,6 @@
       <yin-contact-link class="header-contact-action" cssClass="yin-btn yin-btn-primary nav-cta-pill">
         <span>Tư Vấn Dự Án</span>
       </yin-contact-link>
-
-      <!-- Theme Switcher -->
-      <button 
-        type="button" 
-        class="theme-toggle-btn" 
-        (click)="themeService.toggleTheme()" 
-        [title]="themeService.isDark() ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối'">
-        <yin-icon [name]="themeService.isDark() ? 'sun' : 'moon'" [size]="18"></yin-icon>
-      </button>
 
       <button class="mobile-toggle-btn" (click)="toggleMobileMenu()" [attr.aria-label]="languageService.language() === 'vi' ? 'Mở hoặc đóng menu' : 'Toggle menu'">
         <yin-icon [name]="isMobileMenuOpen() ? 'close' : 'list'" [size]="24"></yin-icon>

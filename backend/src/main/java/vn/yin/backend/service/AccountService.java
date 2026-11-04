@@ -6,6 +6,9 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.LinkedHashMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +24,23 @@ import vn.yin.backend.repository.AccountRepository;
 @Service
 public class AccountService {
     public static final Set<String> ADMIN_ROLES = Set.of("MANAGER", "ADMIN", "FIXER");
+    private static final SecureRandom PASSWORD_RANDOM = new SecureRandom();
+
+    private int rank(String role) {
+        return switch (role) { case "ADMIN" -> 3; case "MANAGER" -> 2; case "FIXER" -> 1; default -> 0; };
+    }
+
+    private String actorRole(String actorId) {
+        Map<String, Object> actor = accounts.activePrincipal(actorId);
+        if (actor == null || rank(String.valueOf(actor.get("role"))) == 0)
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account unavailable");
+        return String.valueOf(actor.get("role"));
+    }
+
+    private void requireSuperior(String actorId, String targetRole) {
+        if (rank(actorRole(actorId)) <= rank(targetRole))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Role must be below your own");
+    }
 
     private final AccountRepository accounts;
     private final AuthenticationManager authentication;
@@ -162,42 +182,65 @@ public class AccountService {
         return accounts.admins(page(page), checkedSize);
     }
 
-    public Map<String, Object> createAdmin(Map<String, Object> body) {
-        only(body, "username", "password", "role");
-        String username = username(body, true);
-        String password = password(body, true);
-        String role = trimmed(body, "role", 30);
-        if (!ADMIN_ROLES.contains(role)) bad("Invalid role");
-        Map<String, Object> created = accounts.createAdmin(username, passwords.encode(password), role);
-        return accounts.admin((String) created.get("id"));
+    public Map<String, Object> authorProfile(String actorId) {
+        Map<String, Object> profile = accounts.authorProfile(actorId);
+        if (profile == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account unavailable");
+        return profile;
     }
 
-    public Map<String, Object> updateAdminStatus(String id, Map<String, Object> body) {
+    public Map<String, Object> updateAuthorProfile(String actorId, Map<String, Object> body) {
+        only(body, "authorName", "authorRole");
+        String name = trimmed(body, "authorName", 200);
+        String role = trimmed(body, "authorRole", 200);
+        if (accounts.authorProfile(actorId) == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account unavailable");
+        return accounts.updateAuthorProfile(actorId, name, role);
+    }
+
+    public Map<String, Object> createAdmin(String actorId, Map<String, Object> body) {
+        only(body, "username", "role");
+        String username = username(body, true);
+        String role = trimmed(body, "role", 30);
+        if (!ADMIN_ROLES.contains(role)) bad("Invalid role");
+        requireSuperior(actorId, role);
+        byte[] random = new byte[24];
+        PASSWORD_RANDOM.nextBytes(random);
+        String password = Base64.getUrlEncoder().withoutPadding().encodeToString(random);
+        Map<String, Object> created = accounts.createAdmin(username, passwords.encode(password), role);
+        Map<String, Object> result = new LinkedHashMap<>(accounts.admin((String) created.get("id")));
+        result.put("generatedPassword", password);
+        return result;
+    }
+
+    public Map<String, Object> updateAdminStatus(String actorId, String id, Map<String, Object> body) {
         only(body, "isActive");
         if (!body.containsKey("isActive")) bad("isActive is required");
         boolean active = booleanField(body, "isActive", false);
         Map<String, Object> current = adminOrNotFound(id);
+        requireSuperior(actorId, String.valueOf(current.get("role")));
         if (active == Boolean.TRUE.equals(current.get("isActive"))) return current;
         if (!accounts.updateAdminStatus(id, active))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot disable the last active ADMIN");
         return adminOrNotFound(id);
     }
 
-    public Map<String, Object> updateAdminRole(String id, Map<String, Object> body) {
+    public Map<String, Object> updateAdminRole(String actorId, String id, Map<String, Object> body) {
         only(body, "role");
         String role = trimmed(body, "role", 30);
         if (!ADMIN_ROLES.contains(role)) bad("Invalid role");
         Map<String, Object> current = adminOrNotFound(id);
+        requireSuperior(actorId, String.valueOf(current.get("role")));
+        requireSuperior(actorId, role);
         if (role.equals(current.get("role"))) return current;
         if (!accounts.updateAdminRole(id, role))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot demote the last active ADMIN");
         return adminOrNotFound(id);
     }
 
-    public Map<String, Object> resetAdminPassword(String id, Map<String, Object> body) {
+    public Map<String, Object> resetAdminPassword(String actorId, String id, Map<String, Object> body) {
         only(body, "password");
         String password = password(body, true);
-        adminOrNotFound(id);
+        requireSuperior(actorId, String.valueOf(adminOrNotFound(id).get("role")));
         if (!accounts.resetAdminPassword(id, passwords.encode(password)))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
         return adminOrNotFound(id);

@@ -237,6 +237,12 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     }, 1800);
   }
 
+  handleImageClick(src: string, caption?: string): void {
+    if (src) {
+      this.zoomedImage.set({ src, caption: caption || '' });
+    }
+  }
+
   handleContentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (target && target.tagName === 'IMG') {

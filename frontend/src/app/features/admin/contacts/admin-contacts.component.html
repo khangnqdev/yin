@@ -6,133 +6,101 @@
     </div>
   </div>
 
-  <!-- Search & Filter Controls -->
-  <div class="filters-bar yin-card">
-    <div class="search-input-wrap">
-      <yin-icon name="search" [size]="16" className="filter-search-icon"></yin-icon>
-      <input 
-        type="text" 
-        class="yin-input search-field" 
-        placeholder="Tìm kiếm theo tên, email, sđt, công ty..."
-        [ngModel]="searchQuery()"
-        (ngModelChange)="onSearchChange($event)" />
-    </div>
+  <!-- REUSABLE ENTERPRISE DATA TABLE -->
+  <yin-data-table
+    [columns]="columns"
+    [data]="contactsList()"
+    [loading]="loading()"
+    [totalCount]="contactsList().length"
+    [searchQuery]="searchQuery()"
+    [searchPlaceholder]="'Tìm kiếm theo tên, email, sđt, công ty, nội dung…'"
+    [filterPills]="filterPills()"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
+    (exportClick)="onExportCsv()">
 
-    <div class="status-tabs">
-      <button 
-        type="button" 
-        class="tab-btn" 
-        [class.active]="selectedStatus() === 'ALL'" 
-        (click)="setStatus('ALL')">
-        Tất Cả
-      </button>
-      <button 
-        type="button" 
-        class="tab-btn" 
-        [class.active]="selectedStatus() === 'NEW'" 
-        (click)="setStatus('NEW')">
-        Mới Nhận
-      </button>
-      <button 
-        type="button" 
-        class="tab-btn" 
-        [class.active]="selectedStatus() === 'IN_PROGRESS'" 
-        (click)="setStatus('IN_PROGRESS')">
-        Đang Tư Vấn
-      </button>
-      <button 
-        type="button" 
-        class="tab-btn" 
-        [class.active]="selectedStatus() === 'CLOSED'" 
-        (click)="setStatus('CLOSED')">
-        Đã Chốt
-      </button>
-    </div>
-  </div>
-
-  <!-- Contacts Table -->
-  <div class="table-card yin-card">
-    <div class="table-responsive">
-      <table class="contacts-table">
-        <thead>
-          <tr>
-            <th>Khách Hàng / Đơn Vị</th>
-            <th>Thông Tin Liên Lạc</th>
-            <th>Đề Bài Dự Án</th>
-            <th>Ngân Sách</th>
-            <th>Trạng Thái</th>
-            <th>Ngày Gửi</th>
-            <th>Thao Tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if (loading()) {
-            <tr>
-              <td colspan="7" class="loading-cell">Đang tải danh sách liên hệ…</td>
-            </tr>
-          } @else if (contactsList().length === 0) {
-            <tr>
-              <td colspan="7" class="empty-cell">Không có yêu cầu liên hệ nào phù hợp.</td>
-            </tr>
-          } @else {
-            @for (c of contactsList(); track c.id) {
-              <tr>
-                <td>
-                  <div class="client-name">{{ c.fullName }}</div>
-                  @if (c.companyName) {
-                    <div class="client-corp">{{ c.companyName }}</div>
-                  }
-                </td>
-                <td>
-                  <div class="client-email">{{ c.email }}</div>
-                  <div class="client-phone">{{ c.phone }}</div>
-                </td>
-                <td>
-                  <div class="project-type-tag">{{ c.projectType }}</div>
-                  <div class="msg-snippet">{{ c.message }}</div>
-                </td>
-                <td>
-                  <span class="budget-pill">{{ c.budgetRange }}</span>
-                </td>
-                <td>
-                  <span class="status-badge" [class]="c.status.toLowerCase()">
-                    {{ c.status }}
-                  </span>
-                </td>
-                <td>
-                  <span class="date-text">{{ c.createdAt ? c.createdAt.substring(0, 10) : '' }}</span>
-                </td>
-                <td>
-                  <button type="button" class="action-btn" (click)="openContactModal(c)">
-                    <yin-icon name="edit" [size]="14"></yin-icon>
-                    <span>Chi Tiết</span>
-                  </button>
-                </td>
-              </tr>
-            }
+    <!-- COLUMN: Khách Hàng / Đơn Vị -->
+    <ng-template yinCell="fullName" let-c>
+      <div class="contact-user-cell">
+        <div class="contact-avatar">{{ c.fullName?.charAt(0)?.toUpperCase() || 'C' }}</div>
+        <div class="contact-name-box">
+          <span class="font-bold single-line-ellipsis" [title]="c.fullName">{{ c.fullName }}</span>
+          @if (c.companyName) {
+            <span class="company-sub-text single-line-ellipsis" [title]="c.companyName">{{ c.companyName }}</span>
           }
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Keyset Cursor Load More Button (Xem Thêm) -->
-    @if (hasMore()) {
-      <div class="load-more-footer">
-        <button 
-          type="button" 
-          class="yin-btn yin-btn-secondary load-more-btn"
-          [disabled]="loadingMore()"
-          (click)="loadMore()">
-          @if (loadingMore()) {
-            <span>Đang tải thêm…</span>
-          } @else {
-            <span>Xem Thêm Liên Hệ</span>
-            <yin-icon name="chevron-down" [size]="16"></yin-icon>
-          }
-        </button>
+        </div>
       </div>
-    }
-  </div>
+    </ng-template>
+
+    <!-- COLUMN: Thông Tin Liên Lạc -->
+    <ng-template yinCell="contact" let-c>
+      <div class="contact-meta-cell">
+        <a [href]="'mailto:' + c.email" class="contact-email-link single-line-ellipsis" [title]="c.email">
+          <yin-icon name="mail" [size]="12"></yin-icon>
+          <span>{{ c.email }}</span>
+        </a>
+        @if (c.phone) {
+          <span class="contact-phone-text font-mono single-line-ellipsis" [title]="c.phone">
+            <yin-icon name="phone" [size]="12"></yin-icon>
+            <span>{{ c.phone }}</span>
+          </span>
+        }
+      </div>
+    </ng-template>
+
+    <!-- COLUMN: Đề Bài Dự Án -->
+    <ng-template yinCell="projectType" let-c>
+      <div class="project-cell">
+        <span class="project-tag">{{ c.projectType || 'Tư vấn phần mềm' }}</span>
+        <span class="msg-snippet-text single-line-ellipsis" [title]="c.message">{{ c.message }}</span>
+      </div>
+    </ng-template>
+
+    <!-- COLUMN: Ngân Sách -->
+    <ng-template yinCell="budgetRange" let-c>
+      <span class="budget-pill-modern font-mono">{{ c.budgetRange || 'Thỏa thuận' }}</span>
+    </ng-template>
+
+    <!-- COLUMN: Trạng Thái (Status pill with bullet dot) -->
+    <ng-template yinCell="status" let-c>
+      <span class="status-pill-modern" [class]="'status-' + (c.status || 'new').toLowerCase()">
+        <span class="status-dot"></span>
+        <span>{{ c.status }}</span>
+      </span>
+    </ng-template>
+
+    <!-- COLUMN: Ngày Gửi -->
+    <ng-template yinCell="createdAt" let-c>
+      <span class="font-mono date-cell">{{ c.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+    </ng-template>
+
+    <!-- COLUMN: Thao Tác -->
+    <ng-template yinCell="actions" let-c>
+      <button type="button" class="btn-detail-action" (click)="openContactModal(c)" title="Xem chi tiết và tư vấn">
+        <yin-icon name="edit" [size]="14"></yin-icon>
+        <span>Chi Tiết</span>
+      </button>
+    </ng-template>
+
+  </yin-data-table>
+
+  <!-- Load more for cursor pagination if available -->
+  @if (hasMore()) {
+    <div class="load-more-container">
+      <button 
+        type="button" 
+        class="yin-btn yin-btn-secondary load-more-btn"
+        [disabled]="loadingMore()"
+        (click)="loadMore()">
+        @if (loadingMore()) {
+          <span>Đang tải thêm…</span>
+        } @else {
+          <span>Xem Thêm Liên Hệ</span>
+          <yin-icon name="chevron-down" [size]="16"></yin-icon>
+        }
+      </button>
+    </div>
+  }
 
   <!-- Slide-Over Drawer: Chi Tiết & Cập Nhật Trạng Thái (Right Popup) -->
   @if (selectedContact(); as contact) {

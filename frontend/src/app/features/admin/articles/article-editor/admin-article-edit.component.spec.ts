@@ -94,24 +94,48 @@ describe('AdminArticleEditComponent', () => {
     expect(component['authorRole']()).toBe('Chief Architect & Founder');
   });
 
-  it('should open and close AI modal and apply AI generated result', () => {
-    component['openAiModal']();
-    expect(component['isAiModalOpen']()).toBe(true);
+  it('should open and close format guide modal', () => {
+    component['openFormatModal']();
+    expect(component['isFormatModalOpen']()).toBe(true);
 
-    component['aiGeneratedResult'].set({
-      title: 'AI Generated Title',
-      slug: 'ai-generated-title',
-      excerpt: 'AI summary',
-      categories: ['AI', 'Tech'],
-      contentHtml: '<p>AI content</p>'
-    });
+    component['closeFormatModal']();
+    expect(component['isFormatModalOpen']()).toBe(false);
+  });
 
-    component['applyAiResult']();
-    expect(component['title']()).toBe('AI Generated Title');
-    expect(component['slug']()).toBe('ai-generated-title');
-    expect(component['excerpt']()).toBe('AI summary');
-    expect(component['categories']()).toEqual(['AI', 'Tech']);
-    expect(component['isAiModalOpen']()).toBe(false);
+  it('should parse imported markdown file and apply it to editor', async () => {
+    const rawMarkdown = `---
+title: "Tiêu Đề Markdown Chuẩn SEO"
+slug: "tieu-de-markdown-chuan-seo"
+excerpt: "Đoạn mô tả ngắn tóm tắt giá trị bài viết"
+category: "Công Nghệ"
+tags: ["SEO", "Testing"]
+cover_image_prompt: "Modern tech illustration"
+---
+
+## 1. Giới thiệu
+Nội dung chi tiết được soạn thảo bởi AI bên ngoài.
+`;
+
+    const fakeFile = new File([rawMarkdown], 'bai-viet.md', { type: 'text/markdown' });
+    await component.processMarkdownFile(fakeFile);
+
+    expect(component['isImportPreviewOpen']()).toBe(true);
+    const parsed = component['importedArticle']();
+    expect(parsed).toBeTruthy();
+    expect(parsed?.title).toBe('Tiêu Đề Markdown Chuẩn SEO');
+    expect(parsed?.slug).toBe('tieu-de-markdown-chuan-seo');
+    expect(parsed?.excerpt).toBe('Đoạn mô tả ngắn tóm tắt giá trị bài viết');
+    expect(parsed?.category).toBe('Công Nghệ');
+    expect(parsed?.tags).toEqual(['SEO', 'Testing']);
+    expect(parsed?.coverImagePrompt).toBe('Modern tech illustration');
+
+    // Apply the imported result to form and editor
+    component.applyImportedArticle();
+    expect(component['title']()).toBe('Tiêu Đề Markdown Chuẩn SEO');
+    expect(component['slug']()).toBe('tieu-de-markdown-chuan-seo');
+    expect(component['excerpt']()).toBe('Đoạn mô tả ngắn tóm tắt giá trị bài viết');
+    expect(component['categories']()).toEqual(['Công Nghệ', 'SEO', 'Testing']);
+    expect(component['isImportPreviewOpen']()).toBe(false);
   });
 
   it('should upload cover image via file and update coverImage signal', async () => {

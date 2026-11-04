@@ -29,6 +29,16 @@
       <span>{{ successMessage() }}</span>
     </div>
   }
+  @if (createdCredential(); as credential) {
+    <div class="credential-box" role="status">
+      <div>
+        <strong>Mật khẩu tạm của {{ credential.username }}</strong>
+        <p>Chỉ hiển thị lần này. Hãy chuyển cho người dùng qua kênh an toàn.</p>
+        <code>{{ credential.password }}</code>
+      </div>
+      <button type="button" class="yin-btn yin-btn-secondary" (click)="createdCredential.set(null)">Đã lưu mật khẩu</button>
+    </div>
+  }
 
   <!-- Error Message -->
   @if (error()) {
@@ -42,7 +52,7 @@
   <yin-slide-drawer
     [isOpen]="isAddingAccount()"
     [title]="'Thêm Quản Trị Viên Mới'"
-    [subtitle]="'Cung cấp thông tin để tạo tài khoản quản trị viên mới.'"
+    [subtitle]="'Mật khẩu sẽ được tạo tự động. Vai trò phải thấp hơn vai trò của bạn.'"
     [saveText]="submitting() ? 'Đang tạo…' : 'Tạo Tài Khoản'"
     [cancelText]="'Hủy bỏ'"
     [isSaving]="submitting()"
@@ -79,25 +89,6 @@
         <span class="field-hint">3–50 ký tự ASCII chữ, số, _, ., -</span>
       </div>
 
-      <!-- Password -->
-      <div class="form-group">
-        <label for="admin-pass" class="form-label">
-          <span>Mật khẩu ban đầu</span>
-          <span class="required-star">*</span>
-        </label>
-        <input 
-          id="admin-pass" 
-          name="password" 
-          type="password" 
-          class="yin-input" 
-          placeholder="Tối thiểu 12 ký tự" 
-          [ngModel]="newPassword()"
-          (ngModelChange)="newPassword.set($event)"
-          maxlength="72"
-          required />
-        <span class="field-hint">Từ 12 đến 72 ký tự, không chứa khoảng trắng ở 2 đầu.</span>
-      </div>
-
       <!-- Role -->
       <div class="form-group">
         <label for="admin-role" class="form-label">
@@ -110,11 +101,11 @@
           class="yin-select" 
           [ngModel]="newRole()"
           (ngModelChange)="newRole.set($event)">
-          @for (role of availableRoles; track role) {
+          @for (role of creatableRoles(); track role) {
             <option [value]="role">{{ role }}</option>
           }
         </select>
-        <span class="field-hint">MANAGER: Quản lý; ADMIN: Quản trị tối cao; FIXER: Kỹ sư kỹ thuật.</span>
+        <span class="field-hint">Chỉ được cấp vai trò thấp hơn quyền hiện tại.</span>
       </div>
     </div>
   </yin-slide-drawer>
@@ -143,99 +134,88 @@
     </div>
   </yin-slide-drawer>
 
-  <!-- Table Card -->
-  <div class="table-card yin-card">
-    @if (loading()) {
-      <div class="table-loading">Đang tải danh sách tài khoản quản trị…</div>
-    } @else {
-      <div class="table-responsive">
-        <table class="admin-data-table">
-          <thead>
-            <tr>
-              <th>Tên tài khoản</th>
-              <th>Vai Trò</th>
-              <th>Trạng Thái</th>
-              <th>Ngày Tạo</th>
-              <th>Mã Định Danh</th>
-              <th>Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (acc of accounts(); track acc.id) {
-              <tr>
-                <td class="user-cell">
-                  <div class="user-avatar-small">{{ acc.username.charAt(0).toUpperCase() }}</div>
-                  <span class="font-bold">{{ acc.username }}</span>
-                </td>
-                <td>
-                  <span class="role-badge" [class.role-admin]="acc.role === 'ADMIN'"
-                    [class.role-manager]="acc.role === 'MANAGER'" [class.role-fixer]="acc.role === 'FIXER'">
-                    {{ acc.role }}
-                  </span>
-                </td>
-                <td>
-                  <span class="status-pill" [class.active]="acc.isActive" [class.locked]="!acc.isActive">
-                    <span>{{ acc.isActive ? 'Hoạt Động' : 'Đã Khóa' }}</span>
-                  </span>
-                </td>
-                <td class="date-cell">
-                  {{ acc.createdAt | date:'dd/MM/yyyy HH:mm' }}
-                </td>
-                <td class="uuid-cell" [title]="acc.id">
-                  {{ acc.id }}
-                </td>
-                <td>
-                  <div class="account-actions">
-                    <select class="yin-select" [ngModel]="acc.role"
-                      (ngModelChange)="changeRole(acc, $event)"
-                      [disabled]="acc.id === db.adminUser()?.id || !!busyAccountId()"
-                      [attr.aria-label]="'Đổi vai trò của ' + acc.username">
-                      @for (role of availableRoles; track role) {
-                        <option [value]="role">{{ role }}</option>
-                      }
-                    </select>
-                    <button type="button" class="yin-btn yin-btn-secondary"
-                      [disabled]="acc.id === db.adminUser()?.id || !!busyAccountId()"
-                      (click)="toggleActive(acc)">
-                      {{ acc.isActive ? 'Khóa' : 'Mở khóa' }}
-                    </button>
-                    <button type="button" class="yin-btn yin-btn-secondary"
-                      [disabled]="!!busyAccountId()" (click)="openPasswordReset(acc)">
-                      Đặt lại mật khẩu
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+  <!-- REUSABLE ENTERPRISE DATA TABLE -->
+  <yin-data-table
+    [columns]="columns"
+    [data]="filteredAccounts()"
+    [loading]="loading()"
+    [totalCount]="totalCount()"
+    [searchQuery]="searchQuery()"
+    [searchPlaceholder]="'Tìm kiếm theo tên tài khoản, vai trò, mã ID…'"
+    [filterPills]="filterPills()"
+    [pageSize]="pageSize()"
+    [currentPage]="currentPage() + 1"
+    [primaryActionLabel]="'Thêm Quản Trị Viên'"
+    [primaryActionIcon]="'plus'"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
+    (pageChange)="changePage($event - 1)"
+    (primaryActionClick)="openAddDrawer()"
+    (exportClick)="onExportCsv()">
 
-      <!-- Pagination Controls -->
-      @if (totalPages() > 1) {
-        <div class="pagination-footer">
-          <div class="pagination-info">
-            Hiển thị trang {{ currentPage() + 1 }} / {{ totalPages() }} (Tổng số {{ totalCount() }} tài khoản)
-          </div>
-          <div class="pagination-actions">
-            <button 
-              type="button" 
-              class="yin-btn yin-btn-secondary page-btn" 
-              [disabled]="currentPage() === 0"
-              (click)="changePage(currentPage() - 1)">
-              &larr; Trang trước
-            </button>
-            <button 
-              type="button" 
-              class="yin-btn yin-btn-secondary page-btn" 
-              [disabled]="currentPage() >= totalPages() - 1"
-              (click)="changePage(currentPage() + 1)">
-              Trang sau &rarr;
-            </button>
-          </div>
-        </div>
-      }
-    }
-  </div>
+    <!-- COLUMN: Tên tài khoản (Avatar Circle + Username) -->
+    <ng-template yinCell="username" let-acc>
+      <div class="user-cell">
+        <div class="user-avatar-small">{{ acc.username.charAt(0).toUpperCase() }}</div>
+        <span class="font-bold single-line-ellipsis" [title]="acc.username">{{ acc.username }}</span>
+      </div>
+    </ng-template>
+
+    <!-- COLUMN: Vai Trò -->
+    <ng-template yinCell="role" let-acc>
+      <span class="role-badge" 
+        [class.role-admin]="acc.role === 'ADMIN'"
+        [class.role-manager]="acc.role === 'MANAGER'" 
+        [class.role-fixer]="acc.role === 'FIXER'">
+        {{ acc.role }}
+      </span>
+    </ng-template>
+
+    <!-- COLUMN: Trạng Thái (Status pill with bullet dot) -->
+    <ng-template yinCell="isActive" let-acc>
+      <span class="status-pill-modern" [class.active]="acc.isActive" [class.locked]="!acc.isActive">
+        <span class="status-dot"></span>
+        <span>{{ acc.isActive ? 'Hoạt Động' : 'Đã Khóa' }}</span>
+      </span>
+    </ng-template>
+
+    <!-- COLUMN: Ngày Tạo -->
+    <ng-template yinCell="createdAt" let-acc>
+      <span class="date-cell font-mono">{{ acc.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+    </ng-template>
+
+    <!-- COLUMN: Mã Định Danh -->
+    <ng-template yinCell="id" let-acc>
+      <span class="uuid-cell font-mono single-line-ellipsis" [title]="acc.id">{{ acc.id }}</span>
+    </ng-template>
+
+    <!-- COLUMN: Thao Tác -->
+    <ng-template yinCell="actions" let-acc>
+      <div class="account-actions-row">
+        <select class="yin-select-compact" [ngModel]="acc.role"
+          (ngModelChange)="changeRole(acc, $event)"
+          [disabled]="!canManage(acc) || !!busyAccountId()"
+          [attr.aria-label]="'Đổi vai trò của ' + acc.username">
+          @for (role of creatableRoles(); track role) {
+            <option [value]="role">{{ role }}</option>
+          }
+          @if (!canManage(acc)) { <option [value]="acc.role">{{ acc.role }}</option> }
+        </select>
+        <button type="button" class="btn-table-action"
+          [disabled]="!canManage(acc) || !!busyAccountId()"
+          (click)="toggleActive(acc)"
+          title="{{ acc.isActive ? 'Khóa tài khoản này' : 'Mở khóa tài khoản' }}">
+          {{ acc.isActive ? 'Khóa' : 'Mở khóa' }}
+        </button>
+        <button type="button" class="btn-table-action"
+          [disabled]="!canManage(acc) || !!busyAccountId()" 
+          (click)="openPasswordReset(acc)"
+          title="Đặt lại mật khẩu">
+          Đổi mật khẩu
+        </button>
+      </div>
+    </ng-template>
+
+  </yin-data-table>
 
 </div>

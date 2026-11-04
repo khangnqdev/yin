@@ -4,6 +4,70 @@
   padding: 24px;
 }
 
+.settings-menu { display: flex; gap: 8px; border-bottom: 1px solid var(--border-color, #e5e7eb); margin-bottom: 28px; overflow-x: auto; }
+.settings-menu button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted, #6b7280); cursor: pointer; text-align: left; padding: 12px 18px; font: inherit; font-weight: 650; white-space: nowrap; }
+.settings-menu button span { display: block; font-size: 12px; font-weight: 400; margin-top: 3px; }
+.settings-menu button.active { color: var(--text-heading, #111827); border-bottom-color: #2563eb; }
+.settings-menu button:focus-visible, .btn:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+.section-title { font-size: 18px; margin: 0 0 18px; color: var(--text-heading, #111827); }
+.account-card { max-width: 680px; }
+.profile-error { color: #991b1b; }
+.profile-success { color: #065f46; }
+
+.template-guide-card {
+  max-width: 680px;
+}
+.guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.step-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-item strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text-heading, #111827);
+  margin-bottom: 3px;
+}
+.step-item p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+  line-height: 1.5;
+}
+.template-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-color, #e5e7eb);
+}
+@media (max-width: 760px) {
+  .settings-page-root { padding: 16px; }
+  .settings-header { flex-direction: column; }
+  .header-actions { flex-wrap: wrap; }
+  .settings-menu button { padding-inline: 12px; }
+}
+
 .settings-header {
   display: flex;
   justify-content: space-between;

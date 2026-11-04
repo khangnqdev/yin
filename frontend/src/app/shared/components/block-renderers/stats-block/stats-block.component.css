@@ -1,7 +1,7 @@
 .yin-stats-section {
   padding: 80px 0;
-  background: var(--yin-cream);
-  border-bottom: 1px solid var(--yin-cream-border);
+  background: var(--yin-bg-alt);
+  border-bottom: 1px solid var(--yin-border);
 }
 
 .stats-grid {
@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #FFFFFF;
+  background: var(--yin-surface);
   border: 1px solid var(--yin-border);
   border-radius: var(--yin-radius-lg);
   padding: 32px 24px;
@@ -38,16 +38,31 @@
   margin-bottom: 6px;
 }
 
+:host-context([data-theme="dark"]) .stat-num,
+[data-theme="dark"] .stat-num {
+  color: #FFFFFF;
+}
+
 .stat-name {
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--yin-main);
 }
 
+:host-context([data-theme="dark"]) .stat-name,
+[data-theme="dark"] .stat-name {
+  color: #FFFFFF;
+}
+
 .stat-desc {
   font-size: 0.9rem;
   color: var(--yin-text-muted);
   line-height: 1.5;
+}
+
+:host-context([data-theme="dark"]) .stat-desc,
+[data-theme="dark"] .stat-desc {
+  color: #CBD5E1;
 }
 
 @media (max-width: 992px) {

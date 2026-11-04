@@ -61,11 +61,15 @@ public class SecurityConfig {
                                 "/swagger-resources",
                                 "/swagger-resources/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/admin/accounts").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/accounts").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/admin/accounts", "/api/admin/accounts/*/reset-password")
-                            .hasAuthority("ROLE_ADMIN")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
                         .requestMatchers(HttpMethod.PATCH, "/api/admin/accounts/*/status", "/api/admin/accounts/*/role")
-                            .hasAuthority("ROLE_ADMIN")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/me/profile")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER", "ROLE_FIXER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/admin/me/profile")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER", "ROLE_FIXER")
                         .requestMatchers(HttpMethod.GET, "/api/admin/clients", "/api/admin/contacts")
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/api/admin/contacts/*", "/api/admin/pages/*",

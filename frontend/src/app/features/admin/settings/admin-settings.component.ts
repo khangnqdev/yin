@@ -1,8 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AiConfigService, AiProvider, AiSettings } from '../../../core/services/ai-config.service';
-import { AiWriterService } from '../../../core/services/ai-writer.service';
 import { YinIconComponent } from '../../../core/components/icon/icon.component';
+import { AuthorProfileService } from '../../../core/services/author-profile.service';
+import { ARTICLE_FORMAT_MARKDOWN_TEMPLATE, ARTICLE_AI_SYSTEM_PROMPT } from '../../../core/constants/article-format-template';
 
 @Component({
   selector: 'yin-admin-settings',
@@ -10,78 +10,62 @@ import { YinIconComponent } from '../../../core/components/icon/icon.component';
   styleUrls: ['./admin-settings.component.css'],
   imports: [FormsModule, YinIconComponent]
 })
-export class AdminSettingsComponent {
-  private readonly configService = inject(AiConfigService);
-  private readonly writerService = inject(AiWriterService);
+export class AdminSettingsComponent implements OnInit {
+  private readonly authorProfile = inject(AuthorProfileService);
+  
+  protected readonly authorName = signal('');
+  protected readonly authorRole = signal('');
+  protected readonly profileError = signal('');
+  protected readonly profileSaved = signal(false);
+  protected readonly profileSaving = signal(false);
+  protected readonly isCopiedPrompt = signal(false);
 
-  // Form Signals
-  protected readonly provider = signal<AiProvider>(this.configService.settings().provider);
-  protected readonly acpServerUrl = signal<string>(this.configService.settings().acpServerUrl);
-  protected readonly apiKey = signal<string>(this.configService.settings().apiKey);
-  protected readonly modelName = signal<string>(this.configService.settings().modelName);
-  protected readonly systemPrompt = signal<string>(this.configService.settings().systemPrompt);
-  protected readonly temperature = signal<number>(this.configService.settings().temperature);
-
-  // Status Signals
-  protected readonly isTesting = signal<boolean>(false);
-  protected readonly testResult = signal<{ success: boolean; message: string } | null>(null);
-  protected readonly isSavedSuccess = signal<boolean>(false);
-  protected readonly showApiKey = signal<boolean>(false);
-
-  toggleShowApiKey(): void {
-    this.showApiKey.update(v => !v);
-  }
-
-  async testConnection(): Promise<void> {
-    this.isTesting.set(true);
-    this.testResult.set(null);
-
-    // Lưu tạm thời để test với giá trị hiện tại trên form
-    this.saveSettingsLocally();
-
+  async ngOnInit(): Promise<void> {
     try {
-      const res = await this.writerService.testConnection();
-      this.testResult.set(res);
+      const profile = await this.authorProfile.load();
+      this.authorName.set(profile.authorName);
+      this.authorRole.set(profile.authorRole);
     } catch {
-      this.testResult.set({
-        success: false,
-        message: 'Lỗi khi kiểm tra kết nối. Vui lòng kiểm tra lại địa chỉ máy chủ và API Key.'
-      });
-    } finally {
-      this.isTesting.set(false);
+      this.profileError.set('Không thể tải thông tin tác giả. Vui lòng tải lại trang.');
     }
   }
 
-  saveSettings(): void {
-    this.saveSettingsLocally();
-    this.isSavedSuccess.set(true);
-    setTimeout(() => {
-      this.isSavedSuccess.set(false);
-    }, 2500);
+  async saveAuthorProfile(): Promise<void> {
+    const authorName = this.authorName().trim();
+    const authorRole = this.authorRole().trim();
+    if (!authorName || !authorRole || authorName.length > 200 || authorRole.length > 200) {
+      this.profileError.set('Nhập tên tác giả và vai trò, tối đa 200 ký tự mỗi mục.');
+      return;
+    }
+    this.profileSaving.set(true);
+    this.profileError.set('');
+    this.profileSaved.set(false);
+    try {
+      await this.authorProfile.save({ authorName, authorRole });
+      this.profileSaved.set(true);
+      setTimeout(() => this.profileSaved.set(false), 2500);
+    } catch {
+      this.profileError.set('Không thể lưu thông tin tác giả. Vui lòng thử lại.');
+    } finally {
+      this.profileSaving.set(false);
+    }
   }
 
-  private saveSettingsLocally(): void {
-    this.configService.saveSettings({
-      provider: this.provider(),
-      acpServerUrl: this.acpServerUrl().trim(),
-      apiKey: this.apiKey().trim(),
-      modelName: this.modelName().trim(),
-      systemPrompt: this.systemPrompt().trim(),
-      temperature: this.temperature()
-    });
+  downloadFormatGuide(): void {
+    const blob = new Blob([ARTICLE_FORMAT_MARKDOWN_TEMPLATE], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'quy-dinh-va-mau-soan-bai.md';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
-  resetDefaults(): void {
-    if (confirm('Bạn có chắc muốn khôi phục toàn bộ cài đặt AI về mặc định?')) {
-      this.configService.resetToDefaults();
-      const current = this.configService.settings();
-      this.provider.set(current.provider);
-      this.acpServerUrl.set(current.acpServerUrl);
-      this.apiKey.set(current.apiKey);
-      this.modelName.set(current.modelName);
-      this.systemPrompt.set(current.systemPrompt);
-      this.temperature.set(current.temperature);
-      this.testResult.set(null);
+  copyAiPrompt(): void {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      void navigator.clipboard.writeText(ARTICLE_AI_SYSTEM_PROMPT);
+      this.isCopiedPrompt.set(true);
+      setTimeout(() => this.isCopiedPrompt.set(false), 2000);
     }
   }
 }

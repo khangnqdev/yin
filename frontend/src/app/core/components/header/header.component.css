@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   width: 100%;
-  height: 72px;
+  min-height: 88px;
   z-index: 1000;
   background: var(--yin-surface);
   border-bottom: 1px solid var(--yin-border);
@@ -12,11 +12,174 @@
   transition: background 0.25s ease, border-color 0.25s ease;
 }
 
+/* ==============================================================================
+   1. TOP UTILITY BAR (CHIỀU CAO 24PX, MÀU TỐI, BÊN TRÁI SĐT, BÊN PHẢI CỤM CHUYỂN ĐỔI)
+   ============================================================================== */
+.yin-topbar {
+  height: 24px;
+  min-height: 24px;
+  background: #060D24;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  transition: background 0.25s ease, border-color 0.25s ease;
+  font-size: 0.72rem;
+  line-height: 24px;
+}
+
+.topbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+.topbar-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-phone-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #E2E8F0;
+  text-decoration: none;
+  font-size: 0.71rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.topbar-phone-link yin-icon {
+  color: var(--yin-gold);
+  display: inline-flex;
+  align-items: center;
+}
+
+.hotline-title {
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+.hotline-val {
+  color: #FFFFFF;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.topbar-phone-link:hover .hotline-val {
+  color: var(--yin-gold);
+}
+
+.hotline-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #34D399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.8);
+  display: inline-block;
+}
+
+.hotline-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.16);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #34D399;
+  font-size: 0.6rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.topbar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+  height: 18px;
+}
+
+.language-switch button {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #94A3B8;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  line-height: 14px;
+  transition: all 0.2s ease;
+}
+
+.language-switch button:hover {
+  color: #FFFFFF;
+}
+
+.language-switch button.active {
+  background: var(--yin-gold);
+  color: #0B1849;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.language-switch button:focus-visible {
+  outline: 1px solid var(--yin-gold);
+}
+
+.theme-toggle-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--yin-gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--yin-gold);
+  color: #FDE047;
+  transform: rotate(15deg);
+}
+
+/* ==============================================================================
+   2. MAIN NAVBAR BAR
+   ============================================================================== */
 .header-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
+  height: 64px;
 }
 
 .header-left {
@@ -43,26 +206,33 @@
   gap: 22px;
 }
 
-.nav-item {
+.nav-item,
+:host ::ng-deep .nav-item {
   color: var(--yin-main);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
   transition: all 0.2s ease;
   position: relative;
-  padding: 10px 0;
+  padding: 8px 0;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
 }
 
-.nav-item:hover {
+.nav-item:hover,
+:host ::ng-deep .nav-item:hover {
   color: #8C6A0A;
 }
 
-.nav-item.active {
+.nav-item.active,
+:host ::ng-deep .nav-item.active {
   color: var(--yin-main);
 }
 
-.nav-item.active::after {
+.nav-item.active::after,
+:host ::ng-deep .nav-item.active::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -77,43 +247,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.language-switch {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px;
-  border: 1px solid var(--yin-border);
-  border-radius: 999px;
-  background: var(--yin-surface);
-  flex-shrink: 0;
-}
-
-.language-switch button {
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--yin-text-dim);
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.73rem;
-  font-weight: 800;
-  padding: 6px 7px;
-}
-
-.language-switch button.active {
-  background: var(--yin-main);
-  color: #fff;
-}
-
-.language-switch button:focus-visible {
-  outline: 2px solid var(--yin-gold);
-  outline-offset: 2px;
-}
-
-@media (max-width: 520px) {
-  .header-actions { gap: 7px; }
-  .language-switch button { padding: 5px 6px; }
 }
 
 .client-portal-pill {
@@ -141,7 +274,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--yin-main);
+  background: #0B1849;
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -200,8 +333,8 @@
 }
 
 .nav-cta-pill {
-  padding: 10px 24px;
-  font-size: 0.9rem;
+  padding: 9px 22px;
+  font-size: 0.88rem;
 }
 
 .mobile-toggle-btn {
@@ -221,15 +354,19 @@
   border-bottom: 1px solid var(--yin-border);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   gap: 16px;
+  max-height: calc(100vh - 88px);
+  overflow-y: auto;
 }
 
-.mobile-nav-item {
+.mobile-nav-item,
+:host ::ng-deep .mobile-nav-item {
   color: var(--yin-main);
   text-decoration: none;
   font-weight: 700;
   font-size: 1.05rem;
   padding: 8px 0;
   border-bottom: 1px solid var(--yin-border-subtle);
+  display: block;
 }
 
 .mobile-actions {
@@ -239,34 +376,85 @@
   margin-top: 12px;
 }
 
-.theme-toggle-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--yin-border);
-  background: var(--yin-surface);
-  color: var(--yin-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.theme-toggle-btn:hover {
-  background: var(--yin-surface-elevated);
-  border-color: var(--yin-gold);
-  color: var(--yin-gold);
-  transform: rotate(15deg);
-}
-
+/* ==============================================================================
+   3. DARK THEME STYLING FOR NAVBAR
+   ============================================================================== */
 :host-context([data-theme="dark"]) .yin-header-root,
 [data-theme="dark"] .yin-header-root {
-  background: rgba(18, 18, 22, 0.92);
+  background: rgba(14, 14, 18, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+:host-context([data-theme="dark"]) .yin-topbar,
+[data-theme="dark"] .yin-topbar {
+  background: #070709;
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+}
+
+:host-context([data-theme="dark"]) .nav-item,
+:host-context([data-theme="dark"]) :host ::ng-deep .nav-item,
+[data-theme="dark"] .nav-item,
+[data-theme="dark"] :host ::ng-deep .nav-item {
+  color: #E4E4E7;
+}
+
+:host-context([data-theme="dark"]) .nav-item:hover,
+:host-context([data-theme="dark"]) :host ::ng-deep .nav-item:hover,
+[data-theme="dark"] .nav-item:hover,
+[data-theme="dark"] :host ::ng-deep .nav-item:hover {
+  color: var(--yin-gold);
+}
+
+:host-context([data-theme="dark"]) .nav-item.active,
+:host-context([data-theme="dark"]) :host ::ng-deep .nav-item.active,
+[data-theme="dark"] .nav-item.active,
+[data-theme="dark"] :host ::ng-deep .nav-item.active {
+  color: #FFFFFF;
+}
+
+:host-context([data-theme="dark"]) .nav-login-btn,
+[data-theme="dark"] .nav-login-btn {
+  color: #E4E4E7;
+}
+
+:host-context([data-theme="dark"]) .nav-login-btn:hover,
+[data-theme="dark"] .nav-login-btn:hover {
+  color: var(--yin-gold);
+}
+
+:host-context([data-theme="dark"]) .nav-register-btn,
+[data-theme="dark"] .nav-register-btn {
+  background: #222228;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+}
+
+:host-context([data-theme="dark"]) .nav-register-btn:hover,
+[data-theme="dark"] .nav-register-btn:hover {
+  border-color: var(--yin-gold);
+  color: var(--yin-gold);
+  background: #2A2A32;
+}
+
+:host-context([data-theme="dark"]) .client-portal-pill,
+[data-theme="dark"] .client-portal-pill {
+  background: #222228;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+}
+
+:host-context([data-theme="dark"]) .client-avatar-badge,
+[data-theme="dark"] .client-avatar-badge {
+  background: var(--yin-gold);
+  color: #0B1849;
+}
+
+:host-context([data-theme="dark"]) .mobile-toggle-btn,
+[data-theme="dark"] .mobile-toggle-btn {
+  color: #FFFFFF;
 }
 
 :host-context([data-theme="dark"]) .mobile-menu-drawer,
@@ -275,11 +463,22 @@
   border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
+:host-context([data-theme="dark"]) .mobile-nav-item,
+:host-context([data-theme="dark"]) :host ::ng-deep .mobile-nav-item,
+[data-theme="dark"] .mobile-nav-item,
+[data-theme="dark"] :host ::ng-deep .mobile-nav-item {
+  color: #FFFFFF;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ==============================================================================
+   4. RESPONSIVE BREAKPOINTS
+   ============================================================================== */
 @media (max-width: 1320px) {
   .desktop-nav {
     display: none;
   }
-  .admin-portal-pill, .header-contact-action {
+  .header-contact-action {
     display: none;
   }
   .mobile-toggle-btn {
@@ -289,6 +488,12 @@
 
 @media (max-width: 700px) {
   .nav-login-btn, .nav-register-btn, .client-portal-pill, .header-logout-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .hotline-title, .hotline-badge, .hotline-status-dot {
     display: none;
   }
 }

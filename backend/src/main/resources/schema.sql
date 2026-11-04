@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
     receive_updates boolean NOT NULL DEFAULT false,
     token_version integer NOT NULL DEFAULT 0
 );
+ALTER TABLE users ADD COLUMN IF NOT EXISTS author_name varchar(200);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS author_role varchar(200);
 CREATE UNIQUE INDEX IF NOT EXISTS ix_yin_users_email ON users(email) WHERE email IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ix_yin_users_role_created ON users(role, created_at DESC, id DESC)
     INCLUDE (username, email, phone, receive_updates);
@@ -38,6 +40,7 @@ CREATE TABLE IF NOT EXISTS articles (
     sort_at timestamp GENERATED ALWAYS AS (coalesce(published_at, created_at)) STORED,
     deleted_at timestamp
 );
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS author_role varchar(200) NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS ix_yin_articles_status_published ON articles(status, published_at DESC);
 CREATE INDEX IF NOT EXISTS ix_yin_articles_sort ON articles(sort_at DESC, id DESC);
 CREATE INDEX IF NOT EXISTS ix_yin_articles_status_sort ON articles(status, sort_at DESC, id DESC);

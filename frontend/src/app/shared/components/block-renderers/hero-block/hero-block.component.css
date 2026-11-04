@@ -1,8 +1,14 @@
 .yin-hero-section {
   position: relative;
   padding: 84px 0 64px 0;
-  background: radial-gradient(ellipse at 50% 0%, var(--yin-cream) 0%, #FFFFFF 80%);
+  background: radial-gradient(ellipse at 50% 0%, var(--yin-cream) 0%, var(--yin-bg) 80%);
   border-bottom: 1px solid var(--yin-border);
+}
+
+:host-context([data-theme="dark"]) .yin-hero-section,
+[data-theme="dark"] .yin-hero-section {
+  background: radial-gradient(ellipse at 50% -10%, rgba(228, 176, 40, 0.08) 0%, #15151A 45%, #0E0E11 85%);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .hero-container {
@@ -29,6 +35,11 @@
   margin-bottom: 24px;
 }
 
+:host-context([data-theme="dark"]) .hero-headline,
+[data-theme="dark"] .hero-headline {
+  color: #FFFFFF;
+}
+
 .highlight-text {
   display: block;
   color: var(--yin-gold);
@@ -45,6 +56,11 @@
   max-width: 780px;
   margin-left: auto;
   margin-right: auto;
+}
+
+:host-context([data-theme="dark"]) .hero-description,
+[data-theme="dark"] .hero-description {
+  color: #CBD5E1;
 }
 
 .hero-buttons {
@@ -83,6 +99,11 @@
   font-weight: 700;
 }
 
+:host-context([data-theme="dark"]) .trust-title,
+[data-theme="dark"] .trust-title {
+  color: #94A3B8;
+}
+
 .trust-badges {
   display: flex;
   align-items: center;
@@ -92,7 +113,7 @@
 }
 
 .trust-chip {
-  background: #FFFFFF;
+  background: var(--yin-surface);
   border: 1px solid var(--yin-cream-border);
   padding: 6px 18px;
   border-radius: var(--yin-radius-pill);
@@ -100,6 +121,15 @@
   font-weight: 700;
   color: var(--yin-green);
   box-shadow: var(--yin-shadow-sm);
+  transition: all 0.2s ease;
+}
+
+:host-context([data-theme="dark"]) .trust-chip,
+[data-theme="dark"] .trust-chip {
+  background: #18181C;
+  border-color: rgba(74, 222, 128, 0.3);
+  color: #4ADE80;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 /* Stats preview cards */
@@ -112,7 +142,7 @@
 }
 
 .stat-card-workday {
-  background: #FFFFFF;
+  background: var(--yin-surface);
   border: 1px solid var(--yin-border);
   border-radius: var(--yin-radius-md);
   padding: 22px;
@@ -122,6 +152,12 @@
   align-items: center;
   gap: 4px;
   transition: all 0.25s ease;
+}
+
+:host-context([data-theme="dark"]) .stat-card-workday,
+[data-theme="dark"] .stat-card-workday {
+  background: #18181C;
+  border-color: #282832;
 }
 
 .stat-card-workday:hover {
@@ -137,12 +173,22 @@
   font-family: var(--yin-font-mono);
 }
 
+:host-context([data-theme="dark"]) .stat-val,
+[data-theme="dark"] .stat-val {
+  color: #FFFFFF;
+}
+
 .stat-lbl {
   font-size: 0.82rem;
   color: var(--yin-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
+}
+
+:host-context([data-theme="dark"]) .stat-lbl,
+[data-theme="dark"] .stat-lbl {
+  color: #94A3B8;
 }
 
 @media (max-width: 768px) {

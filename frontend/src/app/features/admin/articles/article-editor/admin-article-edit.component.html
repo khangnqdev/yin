@@ -10,29 +10,47 @@
       <div class="header-left">
         <button type="button" class="close-article-btn" (click)="cancel()" title="Đóng và quay lại danh sách">
           <yin-icon name="close" [size]="15"></yin-icon>
-          <span class="page-title-text">Soạn Thảo Bài Viết</span>
+          <span class="page-title-text">{{ isEditMode() ? 'Chỉnh Sửa Bài Viết' : 'Soạn Thảo Bài Viết' }}</span>
         </button>
       </div>
 
-      <!-- Right: Action Buttons (Hủy bài, Lưu bài viết, Xuất bản & AI Soạn Bài) -->
+      <!-- Right: Action Buttons (Mẫu Quy Định, Nhập .MD, Hủy bài, Lưu bài viết, Xuất bản) -->
       <div class="header-right">
         
-        <!-- AI Writer Assistant Trigger Button -->
+        <!-- Hidden input for markdown file import -->
+        <input 
+          type="file" 
+          #markdownFileInput 
+          accept=".md,.markdown,text/markdown,text/plain" 
+          (change)="onMarkdownFileSelected($event)" 
+          style="display: none" />
+
+        <!-- 1. Mẫu Quy Định Button -->
         <button 
           type="button" 
-          class="btn-ai-assistant" 
-          (click)="openAiModal()" 
-          title="Sử dụng AI kết nối qua ACP Server để tự động soạn thảo bài viết">
-          <yin-icon name="sparkles" [size]="15"></yin-icon>
-          <span>AI Soạn Bài</span>
+          class="btn-format-guide" 
+          (click)="openFormatModal()" 
+          title="Xem quy chuẩn bài viết, tải file mẫu .md hoặc sao chép Prompt cho AI">
+          <yin-icon name="file-text" [size]="15"></yin-icon>
+          <span>Mẫu Quy Định</span>
         </button>
 
-        <!-- Hủy bài Button -->
+        <!-- 2. Nhập File .MD Button -->
+        <button 
+          type="button" 
+          class="btn-import-md" 
+          (click)="triggerImportMarkdown()" 
+          title="Nhập bài viết từ file .md đã soạn bởi AI bên ngoài">
+          <yin-icon name="upload" [size]="15"></yin-icon>
+          <span>Nhập File .MD</span>
+        </button>
+
+        <!-- 3. Hủy bài Button -->
         <button type="button" class="btn-cancel" (click)="cancel()" title="Hủy bỏ thao tác">
           Hủy bài
         </button>
 
-        <!-- Lưu bài viết Button -->
+        <!-- 4. Lưu bài viết Button -->
         <button 
           type="button" 
           class="btn-save-draft" 
@@ -43,7 +61,7 @@
           <span>{{ isSaving() ? 'Đang lưu…' : 'Lưu bài viết' }}</span>
         </button>
 
-        <!-- Xuất bản Button -->
+        <!-- 5. Xuất bản Button -->
         <button 
           type="button" 
           class="btn-publish" 
@@ -103,7 +121,7 @@
         <div class="field-block content-field-block">
           <label class="field-label">
             <span class="label-primary">Nội dung</span>
-            <span class="label-muted">(Soạn thảo nội dung bài viết)</span>
+            <span class="label-muted">(Soạn thảo hoặc kéo thả file .md / hình ảnh vào đây)</span>
           </label>
 
           <!-- Hidden File Input for Tiptap Content Image Upload -->
@@ -117,7 +135,7 @@
           <!-- Tiptap Editor Box Frame -->
           <div class="tiptap-editor-card">
             
-            <!-- Tiptap Toolbar (Matching screenshot toolbar buttons) -->
+            <!-- Tiptap Toolbar -->
             <div class="tiptap-toolbar">
               
               <!-- Style / Format Dropdown -->
@@ -332,7 +350,7 @@
       <!-- RIGHT COLUMN: Metadata Sidebar -->
       <div class="right-sidebar-column">
         
-        <!-- Field: Thao tác nhanh (Thay thế dropdown trạng thái bằng các nút chọn nhanh) -->
+        <!-- Field: Thao tác nhanh -->
         <div class="sidebar-field-block">
           <label class="field-label">
             <span class="label-primary">Thao tác bài viết</span>
@@ -564,152 +582,212 @@
 
   </div>
 
-  <!-- AI WRITER ASSISTANT MODAL (Integrated via ACP Protocol) -->
-  @if (isAiModalOpen()) {
-    <div class="ai-modal-backdrop" (click)="closeAiModal()">
-      <div class="ai-modal-card" (click)="$event.stopPropagation()">
+  <!-- =========================================================================
+       MODAL 1: FORMAT GUIDE & EXPORT MODAL
+       ========================================================================= -->
+  @if (isFormatModalOpen()) {
+    <div class="format-modal-backdrop" (click)="closeFormatModal()">
+      <div class="format-modal-card" (click)="$event.stopPropagation()">
         
         <!-- Modal Head -->
-        <div class="ai-modal-header">
-          <div class="ai-modal-title-wrap">
-            <div class="sparkle-circle">
-              <yin-icon name="sparkles" [size]="18"></yin-icon>
+        <div class="format-modal-header">
+          <div class="format-modal-title-wrap">
+            <div class="format-icon-circle">
+              <yin-icon name="file-text" [size]="18"></yin-icon>
             </div>
             <div>
-              <h3 class="ai-modal-title">AI Soạn Thảo Bài Viết</h3>
-              <p class="ai-modal-subtitle">
-                Kết nối giao thức ACP Server: 
-                <span class="acp-badge">{{ aiConfigService.settings().provider.toUpperCase() }}</span>
-                <span class="acp-url">({{ aiConfigService.settings().acpServerUrl }})</span>
-              </p>
+              <h3 class="format-modal-title">Quy Chuẩn Soạn Thảo & Mẫu File .MD</h3>
+              <p class="format-modal-subtitle">Xuất mẫu quy định hoặc sao chép Prompt để đưa cho AI ngoài (ChatGPT, Claude, Gemini, DeepSeek...)</p>
             </div>
           </div>
-          <button type="button" class="ai-close-btn" (click)="closeAiModal()" title="Đóng">
+          <button type="button" class="format-close-btn" (click)="closeFormatModal()" title="Đóng">
             <yin-icon name="close" [size]="16"></yin-icon>
           </button>
         </div>
 
         <!-- Modal Body -->
-        <div class="ai-modal-body">
+        <div class="format-modal-body">
           
-          <div class="ai-form-group">
-            <label class="ai-label" for="aiTopicInput">Chủ đề hoặc mô tả bài viết cần soạn:</label>
-            <textarea 
-              id="aiTopicInput"
-              rows="3" 
-              class="ai-input" 
-              placeholder="vd: Hướng dẫn xây dựng landing page tỷ lệ chuyển đổi cao với video marketing và Tiptap editor…" 
-              [ngModel]="aiTopic()" 
-              (ngModelChange)="aiTopic.set($event)"></textarea>
+          <!-- Quy trình 4 bước -->
+          <div class="format-guide-section">
+            <h4 class="guide-section-title">
+              <yin-icon name="check-circle" [size]="16"></yin-icon>
+              <span>Quy trình biên soạn và nạp bài viết:</span>
+            </h4>
+            <ol class="workflow-steps-list">
+              <li>
+                <strong>Bước 1: Tải mẫu hoặc sao chép Prompt AI</strong>
+                <p>Tải file <code>.md</code> mẫu về máy hoặc sao chép Prompt AI đã được tối ưu hóa tiêu chuẩn SEO & CORE-EEAT.</p>
+              </li>
+              <li>
+                <strong>Bước 2: Yêu cầu AI soạn bài & xuất file .md</strong>
+                <p>Gửi nội dung cần viết cho AI (ChatGPT, Claude...) kèm quy chuẩn mẫu. Nhắc AI xuất ra file Markdown kèm cấu trúc Frontmatter (tiêu đề, slug, tóm tắt, danh mục, gợi ý ảnh bìa).</p>
+              </li>
+              <li>
+                <strong>Bước 3: Nhập file .md vào website</strong>
+                <p>Bấm nút <strong>"Nhập File .MD"</strong> trên thanh công cụ hoặc kéo thả file <code>.md</code> trực tiếp vào khung soạn thảo. Hệ thống sẽ tự động điền toàn bộ dữ liệu và hiển thị bản xem trước.</p>
+              </li>
+              <li>
+                <strong>Bước 4: Tùy biến hình ảnh & định dạng</strong>
+                <p>Tải ảnh bìa theo gợi ý prompt, chèn thêm hình ảnh minh họa bằng nút hình ảnh hoặc kéo thả ảnh vào vị trí mong muốn trong bài viết.</p>
+              </li>
+            </ol>
           </div>
 
-          <div class="ai-row-2">
-            <div class="ai-form-group">
-              <label class="ai-label" for="aiKeywordsInput">Từ khóa SEO (ngăn cách bằng dấu phẩy):</label>
-              <input 
-                id="aiKeywordsInput"
-                type="text" 
-                class="ai-input" 
-                placeholder="vd: Video Marketing, Conversion Rate, Landing Page" 
-                [ngModel]="aiKeywords()" 
-                (ngModelChange)="aiKeywords.set($event)" />
-            </div>
-
-            <div class="ai-form-group">
-              <label class="ai-label" for="aiToneSelect">Văn phong bài viết:</label>
-              <select 
-                id="aiToneSelect"
-                class="ai-select" 
-                [ngModel]="aiTone()" 
-                (ngModelChange)="aiTone.set($event)">
-                <option value="Chuyên sâu kỹ thuật & Thực chiến">Chuyên sâu kỹ thuật & Thực chiến</option>
-                <option value="Tiếp thị công nghệ cao & Chuyển đổi">Tiếp thị công nghệ cao & Chuyển đổi</option>
-                <option value="Chia sẻ kinh nghiệm thực tế">Chia sẻ kinh nghiệm thực tế</option>
-                <option value="Phân tích kiến trúc giải pháp">Phân tích kiến trúc giải pháp</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Generate Action Button -->
-          <div class="ai-actions-bar">
-            <button 
-              type="button" 
-              class="btn-generate-ai" 
-              (click)="generateWithAi()" 
-              [disabled]="isAiGenerating()">
-              @if (isAiGenerating()) {
-                <yin-icon name="clock" [size]="16" className="spinning-icon"></yin-icon>
-                <span>Đang kết nối ACP Server & Viết bài…</span>
-              } @else {
-                <yin-icon name="sparkles" [size]="16"></yin-icon>
-                <span>Tạo Toàn Bộ Bài Viết Với AI</span>
-              }
+          <!-- Actions Row: Download file mẫu & Sao chép Prompt -->
+          <div class="format-actions-bar">
+            <button type="button" class="btn-download-format" (click)="downloadFormatGuide()">
+              <yin-icon name="download" [size]="16"></yin-icon>
+              <span>Tải File Mẫu Quy Định (.md)</span>
             </button>
 
-            <a routerLink="/admin/settings" class="ai-settings-link" (click)="closeAiModal()" title="Cài đặt API Keys">
-              <yin-icon name="settings" [size]="14"></yin-icon>
-              <span>Cấu hình API Keys trong Cài đặt</span>
-            </a>
+            <button type="button" class="btn-copy-prompt" (click)="copyAiPrompt()">
+              <yin-icon [name]="isCopiedPrompt() ? 'check' : 'copy'" [size]="16"></yin-icon>
+              <span>{{ isCopiedPrompt() ? 'Đã sao chép Prompt vào bộ nhớ tạm!' : 'Sao Chép Prompt AI Chuẩn SEO' }}</span>
+            </button>
           </div>
 
-          <!-- Status Message -->
-          @if (aiStatusMessage()) {
-            <div class="ai-status-note">
-              {{ aiStatusMessage() }}
+          <!-- Format Preview -->
+          <div class="format-preview-block">
+            <div class="format-preview-label">Cấu trúc mẫu Frontmatter (.md):</div>
+            <pre class="format-preview-code"><code>---
+title: "Tiêu Đề Bài Viết Hấp Dẫn Dưới 65 Ký Tự Chuẩn SEO"
+slug: "tieu-de-bai-viet-chuan-seo"
+excerpt: "Đoạn mô tả ngắn tóm tắt giá trị bài viết từ 120-160 ký tự, giúp tối ưu thẻ Meta Description."
+category: "Công Nghệ"
+tags: ["SEO", "Công Nghệ", "Hướng Dẫn"]
+cover_image_prompt: "Minimalist modern 3D illustration of digital technology..."
+---
+
+Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đầu dòng, bảng biểu...</code></pre>
+          </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="format-modal-footer">
+          <button type="button" class="btn-modal-close" (click)="closeFormatModal()">Đóng cửa sổ</button>
+          <button type="button" class="btn-modal-import" (click)="closeFormatModal(); triggerImportMarkdown()">
+            <yin-icon name="upload" [size]="15"></yin-icon>
+            <span>Chọn file .MD để nhập ngay</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- =========================================================================
+       MODAL 2: IMPORT PREVIEW MODAL
+       ========================================================================= -->
+  @if (isImportPreviewOpen() && importedArticle(); as parsed) {
+    <div class="import-preview-backdrop" (click)="closeImportPreview()">
+      <div class="import-preview-card" (click)="$event.stopPropagation()">
+        
+        <!-- Modal Head -->
+        <div class="import-preview-header">
+          <div class="import-title-wrap">
+            <div class="import-icon-circle">
+              <yin-icon name="file-text" [size]="18"></yin-icon>
             </div>
-          }
+            <div>
+              <h3 class="import-preview-title">Xem Trước Bài Viết Từ File .MD</h3>
+              <p class="import-preview-subtitle">Kiểm tra thông tin đã phân tích tự động trước khi áp dụng vào trình soạn thảo</p>
+            </div>
+          </div>
+          <button type="button" class="import-close-btn" (click)="closeImportPreview()" title="Đóng">
+            <yin-icon name="close" [size]="16"></yin-icon>
+          </button>
+        </div>
 
-          <!-- Generated Result Preview -->
-          @if (aiGeneratedResult()) {
-            <div class="ai-result-preview-box">
-              <div class="preview-tabs">
-                <button 
-                  type="button" 
-                  class="preview-tab" 
-                  [class.active]="aiActiveTab() === 'preview'" 
-                  (click)="aiActiveTab.set('preview')">
-                  Xem Trước
-                </button>
-                <button 
-                  type="button" 
-                  class="preview-tab" 
-                  [class.active]="aiActiveTab() === 'meta'" 
-                  (click)="aiActiveTab.set('meta')">
-                  Tiêu đề & Tóm tắt
-                </button>
-                <button 
-                  type="button" 
-                  class="preview-tab" 
-                  [class.active]="aiActiveTab() === 'html'" 
-                  (click)="aiActiveTab.set('html')">
-                  Mã HTML
-                </button>
-              </div>
+        <!-- Modal Body -->
+        <div class="import-preview-body">
+          
+          <!-- Metadata Summary Cards -->
+          <div class="preview-meta-grid">
+            <div class="preview-meta-item">
+              <span class="preview-meta-label">Tiêu đề (Title):</span>
+              <strong class="preview-meta-value">{{ parsed.title || '(Chưa có tiêu đề)' }}</strong>
+            </div>
 
-              <div class="preview-body">
-                @if (aiActiveTab() === 'preview') {
-                  <div class="preview-content-rendered" [innerHTML]="aiGeneratedResult()?.contentHtml"></div>
-                } @else if (aiActiveTab() === 'meta') {
-                  <div class="preview-meta-fields">
-                    <div><strong>Tiêu đề:</strong> {{ aiGeneratedResult()?.title }}</div>
-                    <div><strong>Slug:</strong> {{ aiGeneratedResult()?.slug }}</div>
-                    <div><strong>Tóm tắt:</strong> {{ aiGeneratedResult()?.excerpt }}</div>
-                    <div><strong>Danh mục:</strong> {{ aiGeneratedResult()?.categories?.join(', ') }}</div>
-                  </div>
-                } @else {
-                  <pre class="preview-raw-html"><code>{{ aiGeneratedResult()?.contentHtml }}</code></pre>
+            <div class="preview-meta-item">
+              <span class="preview-meta-label">Đường dẫn tĩnh (Slug):</span>
+              <span class="preview-meta-value slug-text">/blog/{{ parsed.slug || slugify(parsed.title) }}</span>
+            </div>
+
+            <div class="preview-meta-item">
+              <span class="preview-meta-label">Danh mục & Thẻ:</span>
+              <div class="preview-tags-row">
+                @if (parsed.category) {
+                  <span class="preview-cat-badge">{{ parsed.category }}</span>
+                }
+                @for (t of parsed.tags; track t) {
+                  <span class="preview-tag-badge">#{{ t }}</span>
                 }
               </div>
-
-              <div class="preview-action-row">
-                <button type="button" class="btn-apply-ai" (click)="applyAiResult()">
-                  <yin-icon name="check" [size]="16"></yin-icon>
-                  <span>Áp Dụng Vào Trình Soạn Thảo (Tiptap)</span>
-                </button>
-              </div>
             </div>
-          }
 
+            <div class="preview-meta-item full-width">
+              <span class="preview-meta-label">Đoạn trích tóm tắt (Excerpt):</span>
+              <p class="preview-meta-excerpt">{{ parsed.excerpt || '(Chưa có đoạn tóm tắt)' }}</p>
+            </div>
+
+            @if (parsed.coverImagePrompt) {
+              <div class="preview-cover-prompt-card full-width">
+                <div class="prompt-card-header">
+                  <yin-icon name="image" [size]="15"></yin-icon>
+                  <span>Gợi ý Prompt tạo ảnh bìa:</span>
+                  <button type="button" class="btn-copy-cover-prompt" (click)="copyCoverPrompt(parsed.coverImagePrompt)">
+                    <yin-icon [name]="isCopiedCoverPrompt() ? 'check' : 'copy'" [size]="13"></yin-icon>
+                    <span>{{ isCopiedCoverPrompt() ? 'Đã sao chép prompt ảnh!' : 'Sao chép prompt tạo ảnh' }}</span>
+                  </button>
+                </div>
+                <p class="prompt-text">{{ parsed.coverImagePrompt }}</p>
+                <div class="prompt-hint">Bạn có thể dán prompt này vào Midjourney, DALL-E hoặc Canva để tạo ảnh bìa chuẩn kích thước.</div>
+              </div>
+            }
+          </div>
+
+          <!-- Preview Content Tabs -->
+          <div class="preview-tabs-bar">
+            <button 
+              type="button" 
+              class="preview-tab-pill" 
+              [class.active]="previewTab() === 'rendered'" 
+              (click)="previewTab.set('rendered')">
+              <yin-icon name="eye" [size]="14"></yin-icon>
+              <span>Xem trực quan (HTML)</span>
+            </button>
+            <button 
+              type="button" 
+              class="preview-tab-pill" 
+              [class.active]="previewTab() === 'markdown'" 
+              (click)="previewTab.set('markdown')">
+              <yin-icon name="code" [size]="14"></yin-icon>
+              <span>File Markdown gốc (.md)</span>
+            </button>
+          </div>
+
+          <!-- Content Render Viewport -->
+          <div class="preview-content-viewport">
+            @if (previewTab() === 'rendered') {
+              <div class="preview-rendered-body" [innerHTML]="parsed.contentHtml"></div>
+            } @else {
+              <pre class="preview-markdown-raw"><code>{{ parsed.rawMarkdown }}</code></pre>
+            }
+          </div>
+
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="import-preview-footer">
+          <button type="button" class="btn-cancel-import" (click)="closeImportPreview()">
+            Hủy bỏ
+          </button>
+          <button type="button" class="btn-apply-import" (click)="applyImportedArticle()">
+            <yin-icon name="check" [size]="16"></yin-icon>
+            <span>Áp Dụng Vào Trình Soạn Thảo (Tiptap)</span>
+          </button>
         </div>
 
       </div>

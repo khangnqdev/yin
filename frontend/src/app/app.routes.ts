@@ -7,11 +7,11 @@ export const routes: Routes = [
   // 1. PUBLIC LANDING PAGES
   {
     path: '',
-    title: 'Trang Chủ',
+    title: 'Yin | Thi Công Phần Mềm & Giải Pháp Công Nghệ Cao Cấp',
     data: {
-      title: 'Trang Chủ',
+      title: 'Yin | Thi Công Phần Mềm & Giải Pháp Công Nghệ Cao Cấp',
       description: 'Yin (Yin Kenna) - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và phát triển kiến trúc công nghệ cao cấp. Chịu tải lớn, vững chắc, bảo mật tuyệt đối.',
-      keywords: 'Yin, Yin Kenna, thi công phần mềm, làm phần mềm, xây dựng phần mềm, lập trình phần mềm, thiết kế phần mềm, gia công phần mềm, kiến trúc phần mềm, phát triển web app'
+      keywords: 'Yin, yin.vn, Yin Kenna, thi công phần mềm, làm phần mềm, xây dựng phần mềm, lập trình phần mềm, thiết kế phần mềm, gia công phần mềm, kiến trúc phần mềm, phát triển web app'
     },
     loadComponent: () => import('./features/public/home/home.component').then(m => m.HomeComponent)
   },
@@ -208,7 +208,7 @@ export const routes: Routes = [
         path: 'accounts',
         title: 'Quản Trị Tài Khoản',
         data: {
-          roles: ['ADMIN'],
+          roles: ['ADMIN', 'MANAGER'],
           title: 'Quản Trị Tài Khoản',
           description: 'Quản lý tài khoản nội bộ và phân quyền quản trị Yin Platform.'
         },
@@ -217,11 +217,11 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
-        title: 'Cài Đặt Hệ Thống & AI',
+        title: 'Cài Đặt Hệ Thống',
         data: {
           roles: ['ADMIN', 'MANAGER'],
-          title: 'Cài Đặt Hệ Thống & AI',
-          description: 'Cấu hình API Keys, giao thức ACP Server và các thông số mô hình AI.'
+          title: 'Cài Đặt Hệ Thống',
+          description: 'Cấu hình hồ sơ tác giả và quy chuẩn soạn thảo bài viết.'
         },
         canActivate: [adminRoleGuard],
         loadComponent: () => import('./features/admin/settings/admin-settings.component').then(m => m.AdminSettingsComponent)

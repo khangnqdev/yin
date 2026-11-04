@@ -27,6 +27,20 @@ public class AccountRepository {
         return rows.isEmpty() ? null : rows.get(0);
     }
 
+    public Map<String, Object> authorProfile(String id) {
+        var rows = jdbc.queryForList("SELECT author_name,author_role FROM users WHERE id=? AND is_active=true AND role IN ('ADMIN','MANAGER','FIXER')", id);
+        if (rows.isEmpty()) return null;
+        var result = new LinkedHashMap<String, Object>();
+        result.put("authorName", rows.get(0).get("author_name") == null ? "" : rows.get(0).get("author_name"));
+        result.put("authorRole", rows.get(0).get("author_role") == null ? "" : rows.get(0).get("author_role"));
+        return result;
+    }
+
+    public Map<String, Object> updateAuthorProfile(String id, String name, String role) {
+        jdbc.update("UPDATE users SET author_name=?,author_role=? WHERE id=? AND is_active=true AND role IN ('ADMIN','MANAGER','FIXER')", name, role, id);
+        return authorProfile(id);
+    }
+
     public Map<String, Object> client(String id) {
         var rows = jdbc.queryForList("SELECT id,username,email,phone,date_of_birth,receive_updates,role,created_at FROM users WHERE id=? AND role='CLIENT' AND is_active=true", id);
         return rows.isEmpty() ? null : profile(rows.get(0));

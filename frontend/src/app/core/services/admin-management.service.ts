@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { ClientProfile, AdminAccount, CreateAdminDto } from '../models/client-auth.model';
+import { ClientProfile, AdminAccount, CreateAdminDto, CreatedAdminAccount } from '../models/client-auth.model';
 import { AdminSupportRequest, SupportStatus } from '../models/support-request.model';
 import { OffsetPage } from '../models/pagination.model';
 
@@ -80,9 +80,9 @@ export class AdminManagementService {
   /**
    * Tạo tài khoản quản trị mới
    */
-  async createAdminAccount(data: CreateAdminDto): Promise<AdminAccount> {
+  async createAdminAccount(data: CreateAdminDto): Promise<CreatedAdminAccount> {
     return await firstValueFrom(
-      this.http.post<AdminAccount>('/api/admin/accounts', data)
+      this.http.post<CreatedAdminAccount>('/api/admin/accounts', data)
     );
   }
 

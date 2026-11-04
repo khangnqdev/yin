@@ -8,7 +8,7 @@
    ============================================================================== */
 
 :root, [data-theme="light"] {
-  --yin-header-height: 72px;
+  --yin-header-height: 88px;
 
   /* User-Defined Brand Colors */
   --yin-main: #0B1849;          /* Deep Royal Navy (Main) */
@@ -83,6 +83,7 @@
   --yin-shadow-gold: 0 4px 18px rgba(228, 176, 40, 0.35);
 
   --yin-font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --yin-font-family: 'Montserrat', sans-serif;
   --yin-font-mono: 'JetBrains Mono', Consolas, monospace;
 }
 
@@ -90,10 +91,27 @@
    DARK THEME SYSTEM (Sleek Pitch Black / Charcoal - matches reference dark design)
    ============================================================================== */
 [data-theme="dark"] {
+  --yin-header-height: 88px;
+
   --yin-main: #E4E4E7;
   --yin-main-dark: #FFFFFF;
   --yin-main-light: #A1A1AA;
   --yin-main-subtle: rgba(228, 176, 40, 0.12);
+
+  --yin-green: #34D399;         /* Vibrant readable tech green in dark mode */
+  --yin-green-light: #6EE7B7;
+  --yin-green-subtle: rgba(52, 211, 153, 0.15);
+
+  --yin-gold: #E4B028;          /* Warm Golden Amber */
+  --yin-gold-hover: #F59E0B;
+  --yin-gold-subtle: rgba(228, 176, 40, 0.15);
+
+  --yin-cream: #1C1C22;
+  --yin-cream-subtle: #121216;
+  --yin-cream-border: #2E2E38;
+
+  --yin-navy: #151D3B;
+  --yin-navy-dark: #0D1326;
 
   --yin-bg: #0E0E11;
   --yin-bg-alt: #141418;
@@ -138,14 +156,17 @@
   padding: 0;
 }
 
-body {
+html, body {
   background-color: var(--yin-bg);
   color: var(--yin-text, #333333);
-  font-family: var(--yin-font-sans);
+  font-family: 'Montserrat', var(--yin-font-sans), sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  overflow-x: clip;
+}
+
+button, input, select, textarea, optgroup {
+  font-family: 'Montserrat', var(--yin-font-sans), sans-serif;
 }
 
 /* ==============================================================================
@@ -226,12 +247,13 @@ body {
 /* Primary Action: Gold with Deep Navy text (High Contrast & Luxury Tech) */
 .yin-btn-primary {
   background-color: var(--yin-gold);
-  color: var(--yin-main);
+  color: #0B1849 !important;
   box-shadow: var(--yin-shadow-gold);
 }
 
 .yin-btn-primary:hover {
   background-color: var(--yin-gold-hover);
+  color: #060E2C !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 24px rgba(228, 176, 40, 0.45);
 }
@@ -249,6 +271,16 @@ body {
   box-shadow: 0 6px 20px rgba(11, 24, 73, 0.35);
 }
 
+[data-theme="dark"] .yin-btn-navy {
+  background-color: #222D5A;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .yin-btn-navy:hover {
+  background-color: #2D3A73;
+}
+
 /* Secondary Button: Clean Outline */
 .yin-btn-secondary {
   background: var(--yin-surface);
@@ -261,6 +293,33 @@ body {
   border-color: var(--yin-gold);
   color: var(--yin-gold);
   transform: translateY(-2px);
+}
+
+[data-theme="dark"] .yin-btn-secondary {
+  background: #18181C;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .yin-btn-secondary:hover {
+  background: #222228;
+  border-color: var(--yin-gold);
+  color: var(--yin-gold);
+}
+
+/* Global Nav Links Fallback */
+a.nav-item {
+  color: var(--yin-main);
+  text-decoration: none;
+}
+
+[data-theme="dark"] a.nav-item {
+  color: #E4E4E7;
+}
+
+a.nav-item:hover,
+[data-theme="dark"] a.nav-item:hover {
+  color: var(--yin-gold);
 }
 
 /* Clean Enterprise Card */
@@ -334,7 +393,7 @@ body {
   margin: 1.8em 0 0.8em 0;
   font-weight: 800;
   line-height: 1.35;
-  scroll-margin-top: 150px; /* Khớp chuẩn xác với 72px Navbar + 54px Toolbar + 24px khoảng thở */
+  scroll-margin-top: calc(var(--yin-header-height, 88px) + 78px); /* Khớp chuẩn xác với Navbar + Toolbar + khoảng thở */
 }
 
 .tiptap-content h1 { font-size: 2.2rem; }
@@ -387,22 +446,43 @@ body {
 
 .tiptap-content table {
   width: 100%;
-  border-collapse: collapse;
-  margin: 1.6em 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.8em 0;
   border: 1px solid var(--yin-border);
+  border-radius: var(--yin-radius-md, 10px);
+  overflow: hidden;
+  box-shadow: var(--yin-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.03));
 }
 
 .tiptap-content th, .tiptap-content td {
-  border: 1px solid var(--yin-border);
+  border-bottom: 1px solid var(--yin-border);
+  border-right: 1px solid var(--yin-border);
   padding: 12px 16px;
   text-align: left;
   color: var(--yin-text);
+  font-size: 0.95rem;
+}
+
+.tiptap-content th:last-child,
+.tiptap-content td:last-child {
+  border-right: none;
+}
+
+.tiptap-content tr:last-child td {
+  border-bottom: none;
 }
 
 .tiptap-content th {
-  background: var(--yin-surface-elevated);
-  color: var(--yin-text-main);
+  background: var(--yin-surface-elevated, #F8FAFC);
+  color: var(--yin-text-main, #0F172A);
   font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
+}
+
+.tiptap-content tr:hover td {
+  background: var(--yin-surface-elevated, #F8FAFC);
 }
 
 .tiptap-content img {

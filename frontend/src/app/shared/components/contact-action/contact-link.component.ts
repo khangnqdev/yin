@@ -15,6 +15,9 @@ import { ContactActionBaseComponent } from './contact-action-base.component';
  */
 @Component({
   selector: 'yin-contact-link',
+  host: {
+    style: 'display: contents;'
+  },
   template: `
     <a 
       routerLink="/contact" 

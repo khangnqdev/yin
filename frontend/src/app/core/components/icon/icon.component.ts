@@ -59,6 +59,51 @@ import { Component, input, computed } from '@angular/core';
         @case ('align-center') {
           <line x1="21" x2="3" y1="6" y2="6"/><line x1="17" x2="7" y1="12" y2="12"/><line x1="19" x2="5" y1="18" y2="18"/>
         }
+        @case ('align-right') {
+          <line x1="21" x2="3" y1="6" y2="6"/><line x1="21" x2="9" y1="12" y2="12"/><line x1="21" x2="7" y1="18" y2="18"/>
+        }
+        @case ('align-justify') {
+          <line x1="21" x2="3" y1="6" y2="6"/><line x1="21" x2="3" y1="12" y2="12"/><line x1="21" x2="3" y1="18" y2="18"/>
+        }
+        @case ('arrow-left') {
+          <line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        }
+        @case ('arrow-down') {
+          <line x1="12" x2="12" y1="5" y2="19"/><polyline points="19 12 12 19 5 12"/>
+        }
+        @case ('monitor') {
+          <rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>
+        }
+        @case ('tablet') {
+          <rect width="16" height="20" x="4" y="2" rx="2"/><line x1="12" x2="12.01" y1="18" y2="18"/>
+        }
+        @case ('more-vertical') {
+          <circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+        }
+        @case ('grip-vertical') {
+          <circle cx="9" cy="12" r="1.5"/><circle cx="9" cy="6" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+        }
+        @case ('columns') {
+          <path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/>
+        }
+        @case ('rows') {
+          <path d="M3 12h18"/><rect width="18" height="18" x="3" y="3" rx="2"/>
+        }
+        @case ('video') {
+          <polygon points="23 7 16 12 23 17 23 7"/><rect width="15" height="14" x="1" y="5" rx="2" ry="2"/>
+        }
+        @case ('globe') {
+          <circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        }
+        @case ('mouse-pointer') {
+          <path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/>
+        }
+        @case ('type') {
+          <polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/>
+        }
+        @case ('sliders') {
+          <line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/>
+        }
         @case ('undo') {
           <path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
         }

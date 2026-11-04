@@ -1,0 +1,24 @@
+# Yin (yin.vn)
+
+> Yin là thương hiệu công nghệ & đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu, xây dựng kiến trúc hệ thống chịu tải lớn và phát triển các giải pháp số cao cấp cho doanh nghiệp tại Việt Nam.
+
+## Thông Tin Doanh Nghiệp
+- Tên thương hiệu: Yin
+- Tên pháp lý / Người sáng lập: Khang (Yin Kenna)
+- Tên miền chính thức: https://yin.vn
+- Quốc gia: Việt Nam
+- Lĩnh vực: Công nghệ thông tin, Thiết kế kiến trúc phần mềm, Thi công phần mềm
+
+## Dịch Vụ Cốt Lõi
+- Thi công phần mềm doanh nghiệp theo yêu cầu (Custom Software Engineering)
+- Thiết kế kiến trúc phân tán & Microservices chịu tải cao
+- Phát triển Web Application & Mobile Application cao cấp
+- Tối ưu hóa hiệu năng cơ sở dữ liệu, caching & bảo mật hạ tầng
+- Tư vấn giải pháp kiến trúc công nghệ dài hạn
+
+## Trang Chính & Đường Dẫn
+- Trang chủ: https://yin.vn/
+- Giới thiệu & Triết lý kỹ thuật: https://yin.vn/about
+- Giải pháp & Dự án tiêu biểu: https://yin.vn/projects
+- Tri thức & Báo chí công nghệ: https://yin.vn/blog
+- Liên hệ & Khảo sát bài toán kỹ thuật: https://yin.vn/contact

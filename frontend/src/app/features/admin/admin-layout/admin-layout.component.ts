@@ -18,7 +18,6 @@ export class AdminLayoutComponent {
 
   protected readonly adminUser = this.db.adminUser;
   protected readonly canManageContent = () => ['ADMIN', 'MANAGER'].includes(this.adminUser()?.role || '');
-  protected readonly isAdmin = () => this.adminUser()?.role === 'ADMIN';
   protected readonly isCollapsed = signal<boolean>(this.getStoredCollapsedState());
   protected readonly isDashboardOpen = signal<boolean>(true);
   protected readonly isProfileMenuOpen = signal<boolean>(false);

@@ -6,6 +6,7 @@ export type SiteLanguage = 'vi' | 'en';
 // Unrecognised CMS content stays in its original language until an editor supplies a translation.
 const ENGLISH: Record<string, string> = {
   'Trang Chủ': 'Home', 'Về Yin': 'About Yin', 'Giải Pháp & Dự Án': 'Solutions & Projects',
+  'Yin | Thi Công Phần Mềm & Giải Pháp Công Nghệ Cao Cấp': 'Yin | Custom Software Development & Enterprise Tech Solutions',
   'Chi Tiết Bài Viết': 'Article', 'Liên Hệ & Khảo Sát': 'Contact & Consultation',
   'Cong-Nghe': 'Technology', 'Kien-Truc-Phan-Mem': 'Software Architecture', 'Ho-So-Du-An': 'Case Studies',
   'Thanh công cụ đọc bài viết': 'Article reading toolbar', 'Mục lục bài viết': 'Article contents',
@@ -117,6 +118,8 @@ const ENGLISH: Record<string, string> = {
   'Mở Google Maps và bắt đầu dẫn đường': 'Open Google Maps for directions',
   'Sao chép địa chỉ văn phòng': 'Copy office address',
   'Bản đồ vị trí Công ty Công nghệ Yin': 'Map showing Yin’s office',
+  'Nếu bản đồ không hiển thị do trình duyệt hoặc tiện ích chặn bên thứ ba, bạn có thể bấm trực tiếp nút': 'If the map is blocked by your browser or third-party extensions, click',
+  'ở trên để xem trực tiếp.': 'above to view directly in Google Maps.',
   'Khu Công Nghệ Cao, Xa lộ Hà Nội, TP. Thủ Đức, TP. Hồ Chí Minh': 'High-Tech Park, Hanoi Highway, Thu Duc City, Ho Chi Minh City',
   'Văn Phòng Kỹ Nghệ Công Nghệ Yin': 'Yin Technology Studio',
   'Người sáng lập': 'Founder', 'Nền Tảng & Giải Pháp': 'Platforms & Solutions',

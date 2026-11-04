@@ -11,7 +11,10 @@ import { LocalDbService } from '../../../core/services/local-db.service';
     <main class="login-shell">
       <form class="login-card" (ngSubmit)="submit()">
         <a routerLink="/" class="back-link">← Về trang chủ</a>
-        <img src="/assets/logo/yinkenna.svg" alt="Yin" width="150" height="45" />
+        <div class="logo-box">
+          <img src="/assets/logo/yin.svg" alt="Yin" class="admin-login-logo light-logo" width="120" height="36" />
+          <img src="/assets/logo/yin-w.svg" alt="Yin" class="admin-login-logo dark-logo" width="120" height="36" />
+        </div>
         <h1>Đăng nhập quản trị</h1>
         <label for="username">Tên đăng nhập</label>
         <input
@@ -74,6 +77,22 @@ import { LocalDbService } from '../../../core/services/local-db.service';
       .back-link:hover {
         color: var(--yin-gold);
       }
+      .logo-box {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .admin-login-logo {
+        height: 36px;
+        width: auto;
+        object-fit: contain;
+      }
+      .dark-logo { display: none; }
+      .light-logo { display: block; }
+      :host-context([data-theme="dark"]) .dark-logo,
+      [data-theme="dark"] .dark-logo { display: block; }
+      :host-context([data-theme="dark"]) .light-logo,
+      [data-theme="dark"] .light-logo { display: none; }
       .login-card h1 {
         font-size: 1.65rem;
         margin: 4px 0 8px;

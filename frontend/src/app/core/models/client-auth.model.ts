@@ -48,7 +48,10 @@ export interface AdminAccount {
 
 export interface CreateAdminDto {
   username: string;
-  password: string;
-  role: 'MANAGER' | 'ADMIN' | 'FIXER';
+  role: 'MANAGER' | 'FIXER';
+}
+
+export interface CreatedAdminAccount extends AdminAccount {
+  generatedPassword: string;
 }
 

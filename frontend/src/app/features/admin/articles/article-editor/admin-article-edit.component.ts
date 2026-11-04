@@ -7,16 +7,19 @@ import {
   viewChild,
   inject,
   signal,
-  computed,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LocalDbService } from '../../../../core/services/local-db.service';
 import { Article, ArticleStatus } from '../../../../core/models/article.model';
 import { YinIconComponent } from '../../../../core/components/icon/icon.component';
-import { AiConfigService } from '../../../../core/services/ai-config.service';
-import { AiWriterService, AiArticleResponse } from '../../../../core/services/ai-writer.service';
+import {
+  ParsedArticleMarkdown,
+  ARTICLE_FORMAT_MARKDOWN_TEMPLATE,
+  ARTICLE_AI_SYSTEM_PROMPT,
+  parseArticleMarkdown,
+} from '../../../../core/constants/article-format-template';
 
 import { Editor, Node, mergeAttributes } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -63,20 +66,20 @@ export const Figure = Node.create({
   selector: 'yin-admin-article-edit',
   templateUrl: './admin-article-edit.component.html',
   styleUrls: ['./admin-article-edit.component.css'],
-  imports: [FormsModule, RouterLink, YinIconComponent],
+  imports: [FormsModule, YinIconComponent],
 })
 export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly db = inject(LocalDbService);
-  protected readonly aiConfigService = inject(AiConfigService);
-  private readonly aiWriterService = inject(AiWriterService);
 
-  // Template Ref for Tiptap
+  // Template Ref for Tiptap & File Inputs
   protected readonly tiptapEditorRef = viewChild<ElementRef<HTMLDivElement>>('tiptapEditorRef');
   protected readonly coverFileInput = viewChild<ElementRef<HTMLInputElement>>('coverFileInput');
   protected readonly editorImageFileInput =
     viewChild<ElementRef<HTMLInputElement>>('editorImageFileInput');
+  protected readonly markdownFileInput =
+    viewChild<ElementRef<HTMLInputElement>>('markdownFileInput');
 
   // Image Upload State Signals
   protected readonly isCoverDragging = signal<boolean>(false);
@@ -88,7 +91,7 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   protected readonly isEditMode = signal<boolean>(false);
   protected readonly articleId = signal<string>('');
 
-  // Article Form Signals (Matching UI Prototype)
+  // Article Form Signals
   protected readonly title = signal<string>('');
   protected readonly slug = signal<string>('');
   protected readonly excerpt = signal<string>('');
@@ -128,17 +131,14 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   protected readonly isSavedSuccess = signal<boolean>(false);
   protected readonly errorMessage = signal<string>('');
 
-  // AI Assistant Modal Signals
-  protected readonly isAiModalOpen = signal<boolean>(false);
-  protected readonly aiTopic = signal<string>('');
-  protected readonly aiKeywords = signal<string>('');
-  protected readonly aiCategory = signal<string>('Công Nghệ');
-  protected readonly aiTone = signal<string>('Chuyên sâu kỹ thuật & Thực chiến');
-  protected readonly aiLength = signal<'short' | 'medium' | 'long'>('medium');
-  protected readonly isAiGenerating = signal<boolean>(false);
-  protected readonly aiStatusMessage = signal<string>('');
-  protected readonly aiGeneratedResult = signal<AiArticleResponse | null>(null);
-  protected readonly aiActiveTab = signal<'preview' | 'meta' | 'html'>('preview');
+  // External AI Format & Markdown Import Signals
+  protected readonly isFormatModalOpen = signal<boolean>(false);
+  protected readonly isImportPreviewOpen = signal<boolean>(false);
+  protected readonly importedArticle = signal<ParsedArticleMarkdown | null>(null);
+  protected readonly isCopiedPrompt = signal<boolean>(false);
+  protected readonly isCopiedCoverPrompt = signal<boolean>(false);
+  protected readonly previewTab = signal<'rendered' | 'meta' | 'markdown'>('rendered');
+  protected readonly isProcessingImport = signal<boolean>(false);
 
   // Available Presets
   protected readonly availableCategories = [
@@ -243,25 +243,19 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
       extensions: [
         StarterKit.configure({
           heading: {
-            levels: [1, 2, 3, 4],
+            levels: [1, 2, 3],
           },
-          link: false,
-          underline: false,
         }),
         Image.configure({
+          inline: false,
           allowBase64: true,
-          HTMLAttributes: {
-            class: 'editor-embedded-image',
-          },
         }),
-        Figure,
         Figcaption,
+        Figure,
         Link.configure({
           openOnClick: false,
           HTMLAttributes: {
             class: 'editor-link',
-            target: '_blank',
-            rel: 'noopener noreferrer',
           },
         }),
         Underline,
@@ -269,7 +263,8 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
           multicolor: false,
         }),
         Placeholder.configure({
-          placeholder: 'Bắt đầu viết nội dung bài viết của bạn tại đây...',
+          placeholder:
+            'Bắt đầu viết nội dung bài viết, thả file .md hoặc kéo thả hình ảnh vào đây...',
         }),
         Table.configure({
           resizable: true,
@@ -281,46 +276,33 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
           types: ['heading', 'paragraph'],
         }),
       ],
-      content: this.initialLoadedHtml || this.getDefaultInitialContent(),
+      content: this.initialLoadedHtml || '<p></p>',
       onUpdate: () => {
-        this.updateActiveFormatting();
+        this.updateActiveFormattingStates();
       },
       onSelectionUpdate: () => {
-        this.updateActiveFormatting();
+        this.updateActiveFormattingStates();
       },
     });
 
-    this.updateActiveFormatting();
+    this.updateActiveFormattingStates();
   }
 
   ngOnDestroy(): void {
-    this.editor?.destroy();
-    this.editor = null;
+    if (this.editor) {
+      this.editor.destroy();
+      this.editor = null;
+    }
   }
 
-  private getDefaultInitialContent(): string {
-    return `
-      <p>Chào mừng bạn đến với trình soạn thảo bài viết của <strong>Yin Tech</strong>. Hệ thống hỗ trợ định dạng trực quan phong phú, chèn bảng biểu, danh sách, khối mã nguồn và hình ảnh minh họa chất lượng cao.</p>
-      <h2>1. Giới thiệu tổng quan hệ thống</h2>
-      <p>Bài viết hỗ trợ tự động sinh mục lục thông minh dựa theo các tiêu đề H2, H3. Các đề mục lớn giúp người đọc dễ dàng định hướng nội dung và nắm bắt trọng tâm bài viết nhanh chóng.</p>
-      <figure class="article-figure">
-        <img src="/assets/logo/yinkenna.svg" alt="Biểu tượng Yin Tech" class="editor-embedded-image" />
-        <figcaption class="article-figcaption">Biểu tượng thương hiệu Yin Tech — Nền tảng công nghệ và kiến trúc phần mềm cao cấp</figcaption>
-      </figure>
-      <p></p>
-      <h2>2. Trải nghiệm đọc trực quan và phóng to ảnh</h2>
-      <p>Tất cả hình ảnh chèn vào bài viết đều có chú thích (caption) rõ ràng. Khi người đọc xem bài viết trên trang công khai, họ có thể nhấp trực tiếp vào ảnh để mở chế độ phóng to chi tiết (lightbox).</p>
-    `.trim();
-  }
-
-  private updateActiveFormatting(): void {
+  private updateActiveFormattingStates(): void {
     if (!this.editor) return;
 
     this.isBoldActive.set(this.editor.isActive('bold'));
     this.isItalicActive.set(this.editor.isActive('italic'));
     this.isUnderlineActive.set(this.editor.isActive('underline'));
     this.isStrikeActive.set(this.editor.isActive('strike'));
-    this.isCodeActive.set(this.editor.isActive('codeBlock'));
+    this.isCodeActive.set(this.editor.isActive('code') || this.editor.isActive('codeBlock'));
     this.isQuoteActive.set(this.editor.isActive('blockquote'));
     this.isBulletListActive.set(this.editor.isActive('bulletList'));
     this.isOrderedListActive.set(this.editor.isActive('orderedList'));
@@ -333,12 +315,43 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
       this.selectedBlockType.set('h2');
     } else if (this.editor.isActive('heading', { level: 3 })) {
       this.selectedBlockType.set('h3');
+    } else if (this.editor.isActive('blockquote')) {
+      this.selectedBlockType.set('quote');
+    } else if (this.editor.isActive('codeBlock')) {
+      this.selectedBlockType.set('code');
     } else {
       this.selectedBlockType.set('paragraph');
     }
   }
 
-  // Tiptap Commands
+  // Formatting Toolbar Triggers
+  setBlockType(type: string): void {
+    if (!this.editor) return;
+    this.selectedBlockType.set(type);
+
+    switch (type) {
+      case 'h1':
+        this.editor.chain().focus().toggleHeading({ level: 1 }).run();
+        break;
+      case 'h2':
+        this.editor.chain().focus().toggleHeading({ level: 2 }).run();
+        break;
+      case 'h3':
+        this.editor.chain().focus().toggleHeading({ level: 3 }).run();
+        break;
+      case 'quote':
+        this.editor.chain().focus().toggleBlockquote().run();
+        break;
+      case 'code':
+        this.editor.chain().focus().toggleCodeBlock().run();
+        break;
+      case 'paragraph':
+      default:
+        this.editor.chain().focus().setParagraph().run();
+        break;
+    }
+  }
+
   toggleBold(): void {
     this.editor?.chain().focus().toggleBold().run();
   }
@@ -355,12 +368,12 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
     this.editor?.chain().focus().toggleStrike().run();
   }
 
-  toggleBlockquote(): void {
-    this.editor?.chain().focus().toggleBlockquote().run();
-  }
-
   toggleCodeBlock(): void {
     this.editor?.chain().focus().toggleCodeBlock().run();
+  }
+
+  toggleBlockquote(): void {
+    this.editor?.chain().focus().toggleBlockquote().run();
   }
 
   toggleBulletList(): void {
@@ -375,43 +388,21 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
     this.editor?.chain().focus().toggleHighlight().run();
   }
 
-  setBlockType(type: string): void {
-    if (!this.editor) return;
-    this.selectedBlockType.set(type);
-
-    if (type === 'paragraph') {
-      this.editor.chain().focus().setParagraph().run();
-    } else if (type === 'h1') {
-      this.editor.chain().focus().toggleHeading({ level: 1 }).run();
-    } else if (type === 'h2') {
-      this.editor.chain().focus().toggleHeading({ level: 2 }).run();
-    } else if (type === 'h3') {
-      this.editor.chain().focus().toggleHeading({ level: 3 }).run();
-    } else if (type === 'quote') {
-      this.editor.chain().focus().toggleBlockquote().run();
-    } else if (type === 'code') {
-      this.editor.chain().focus().toggleCodeBlock().run();
-    }
-  }
-
   setLink(): void {
     if (!this.editor) return;
     const previousUrl = this.editor.getAttributes('link')['href'] || '';
-    const url = window.prompt('Nhập địa chỉ liên kết (URL):', previousUrl);
+    const url = window.prompt('Nhập địa chỉ URL liên kết:', previousUrl);
 
-    if (url === null) {
-      return;
-    }
-
+    if (url === null) return;
     if (url === '') {
-      this.editor.chain().focus().unsetLink().run();
+      this.editor.chain().focus().extendMarkRange('link').unsetLink().run();
       return;
     }
 
     this.editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }
 
-  // Image Insertion in Tiptap Content (Upload File from Device)
+  // Tiptap Content Image Upload Handlers
   addImage(): void {
     this.editorImageFileInput()?.nativeElement.click();
   }
@@ -425,11 +416,9 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   onEditorDragOver(event: DragEvent): void {
-    if (event.dataTransfer?.types.includes('Files')) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.isEditorDragging.set(true);
-    }
+    event.preventDefault();
+    event.stopPropagation();
+    this.isEditorDragging.set(true);
   }
 
   onEditorDragLeave(event: DragEvent): void {
@@ -439,13 +428,25 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   onEditorDrop(event: DragEvent): void {
-    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-      const file = event.dataTransfer.files[0];
+    event.preventDefault();
+    event.stopPropagation();
+    this.isEditorDragging.set(false);
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (
+        file.name.endsWith('.md') ||
+        file.name.endsWith('.markdown') ||
+        file.type === 'text/markdown' ||
+        (file.type === 'text/plain' && file.name.endsWith('.md'))
+      ) {
+        void this.processMarkdownFile(file);
+        return;
+      }
       if (file.type.startsWith('image/')) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.isEditorDragging.set(false);
         void this.uploadAndInsertImage(file);
+        return;
       }
     }
   }
@@ -460,7 +461,7 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
         if (file) {
           event.preventDefault();
           void this.uploadAndInsertImage(file);
-          break;
+          return;
         }
       }
     }
@@ -469,34 +470,31 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   async uploadAndInsertImage(file: File): Promise<void> {
     if (!this.editor) return;
     this.isUploadingEditorImage.set(true);
+
     try {
-      const url = await this.db.uploadImage(file);
-      const cleanFileName = file.name.replace(/\.[^/.]+$/, '');
-      const inputCaption = window.prompt('Nhập chú thích cho ảnh (bỏ trống nếu muốn chỉnh sửa sau):', cleanFileName);
-      const captionText = (inputCaption !== null ? inputCaption.trim() : '') || cleanFileName;
+      const imageUrl = await this.db.uploadImage(file);
+      const caption = window.prompt('Nhập chú thích hình ảnh (có thể để trống):', file.name) || '';
 
-      const safeCaption = this.escapeHtml(captionText);
-      const safeAlt = this.escapeHtml(cleanFileName);
-
-      this.editor
-        .chain()
-        .focus()
-        .insertContent(`
-          <figure class="article-figure">
-            <img src="${url}" alt="${safeAlt}" class="editor-embedded-image" />
-            <figcaption class="article-figcaption">${safeCaption}</figcaption>
+      if (caption.trim()) {
+        const figureHtml = `
+          <figure>
+            <img src="${imageUrl}" alt="${this.escapeHtml(caption)}" />
+            <figcaption>${this.escapeHtml(caption)}</figcaption>
           </figure>
           <p></p>
-        `)
-        .run();
+        `;
+        this.editor.chain().focus().insertContent(figureHtml).run();
+      } else {
+        this.editor.chain().focus().setImage({ src: imageUrl, alt: file.name }).run();
+      }
     } catch {
-      this.errorMessage.set('Không thể tải hình ảnh lên. Vui lòng thử lại.');
+      this.errorMessage.set('Không thể tải hình ảnh lên máy chủ. Vui lòng thử lại.');
     } finally {
       this.isUploadingEditorImage.set(false);
     }
   }
 
-  escapeHtml(str: string): string {
+  private escapeHtml(str: string): string {
     return str
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -648,73 +646,132 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
     this.isAuthorDropdownOpen.set(false);
   }
 
-  // AI Writer Assistant
-  openAiModal(): void {
-    this.aiTopic.set(
-      this.title() || 'Tối Ưu Hoá Tỷ Lệ Chuyển Đổi Trên Landing Page Với Video Marketing',
-    );
-    this.aiKeywords.set(this.categories().join(', '));
-    this.aiCategory.set(this.categories()[0] || 'Công Nghệ');
-    this.aiGeneratedResult.set(null);
-    this.aiStatusMessage.set('');
-    this.isAiModalOpen.set(true);
+  // =========================================================================
+  // External AI Format & Markdown Import Handlers
+  // =========================================================================
+  openFormatModal(): void {
+    this.isFormatModalOpen.set(true);
   }
 
-  closeAiModal(): void {
-    this.isAiModalOpen.set(false);
+  closeFormatModal(): void {
+    this.isFormatModalOpen.set(false);
   }
 
-  async generateWithAi(): Promise<void> {
-    const topic = this.aiTopic().trim();
-    if (!topic) {
-      this.aiStatusMessage.set('Vui lòng nhập chủ đề bài viết.');
-      return;
+  downloadFormatGuide(): void {
+    const blob = new Blob([ARTICLE_FORMAT_MARKDOWN_TEMPLATE], {
+      type: 'text/markdown;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'quy-chuan-soan-bai-md.md';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async copyAiPrompt(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(ARTICLE_AI_SYSTEM_PROMPT);
+      this.isCopiedPrompt.set(true);
+      setTimeout(() => this.isCopiedPrompt.set(false), 2500);
+    } catch {
+      // Fallback if clipboard API not available
+      const textarea = document.createElement('textarea');
+      textarea.value = ARTICLE_AI_SYSTEM_PROMPT;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      this.isCopiedPrompt.set(true);
+      setTimeout(() => this.isCopiedPrompt.set(false), 2500);
     }
+  }
 
-    this.isAiGenerating.set(true);
-    this.aiStatusMessage.set('Đang kết nối ACP Server và phân tích cấu trúc bài viết…');
+  async copyCoverPrompt(prompt: string): Promise<void> {
+    if (!prompt) return;
+    try {
+      await navigator.clipboard.writeText(prompt);
+      this.isCopiedCoverPrompt.set(true);
+      setTimeout(() => this.isCopiedCoverPrompt.set(false), 2500);
+    } catch {
+      // Fallback
+    }
+  }
+
+  triggerImportMarkdown(): void {
+    this.markdownFileInput()?.nativeElement.click();
+  }
+
+  onMarkdownFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      void this.processMarkdownFile(input.files[0]);
+      input.value = '';
+    }
+  }
+
+  async processMarkdownFile(file: File): Promise<void> {
+    this.isProcessingImport.set(true);
+    this.errorMessage.set('');
 
     try {
-      const result = await this.aiWriterService.generateArticle({
-        topic,
-        keywords: this.aiKeywords(),
-        category: this.aiCategory(),
-        tone: this.aiTone(),
-        targetLength: this.aiLength(),
-      });
-
-      this.aiGeneratedResult.set(result);
-      this.aiStatusMessage.set(
-        result.isMockFallback
-          ? 'Bài viết đã được tạo thành công qua mô hình chuyên sâu!'
-          : 'Bài viết đã được sinh thành công từ máy chủ ACP!',
-      );
+      const rawText = await file.text();
+      const parsed = parseArticleMarkdown(rawText);
+      this.importedArticle.set(parsed);
+      this.previewTab.set('rendered');
+      this.isImportPreviewOpen.set(true);
     } catch {
-      this.aiStatusMessage.set(
-        'Có lỗi xảy ra khi tạo bài viết với AI. Vui lòng kiểm tra lại kết nối.',
+      this.errorMessage.set(
+        'Không thể phân tích file Markdown. Vui lòng kiểm tra lại định dạng file .md.',
       );
     } finally {
-      this.isAiGenerating.set(false);
+      this.isProcessingImport.set(false);
     }
   }
 
-  applyAiResult(): void {
-    const res = this.aiGeneratedResult();
-    if (!res) return;
+  applyImportedArticle(): void {
+    const parsed = this.importedArticle();
+    if (!parsed) return;
 
-    if (res.title) this.title.set(res.title);
-    if (res.slug) this.slug.set(res.slug);
-    if (res.excerpt) this.excerpt.set(res.excerpt);
-    if (res.categories && res.categories.length > 0) {
-      this.categories.set(res.categories);
+    if (parsed.title) {
+      this.title.set(parsed.title);
+      if (!this.slug() || !this.isEditMode()) {
+        this.slug.set(parsed.slug || this.slugify(parsed.title));
+      }
     }
-    if (res.contentHtml && this.editor) {
-      this.editor.commands.setContent(res.contentHtml);
+    if (parsed.slug) {
+      this.slug.set(this.slugify(parsed.slug));
+    }
+    if (parsed.excerpt) {
+      this.excerpt.set(parsed.excerpt);
     }
 
-    this.closeAiModal();
+    const categoriesToAdd: string[] = [];
+    if (parsed.category) {
+      categoriesToAdd.push(parsed.category);
+    }
+    if (parsed.tags && parsed.tags.length > 0) {
+      for (const t of parsed.tags) {
+        if (!categoriesToAdd.includes(t)) {
+          categoriesToAdd.push(t);
+        }
+      }
+    }
+    if (categoriesToAdd.length > 0) {
+      this.categories.set(categoriesToAdd);
+    }
+
+    if (parsed.contentHtml && this.editor) {
+      this.editor.commands.setContent(parsed.contentHtml);
+    }
+
+    this.isImportPreviewOpen.set(false);
     this.isSavedSuccess.set(true);
-    setTimeout(() => this.isSavedSuccess.set(false), 2000);
+    setTimeout(() => this.isSavedSuccess.set(false), 2500);
+  }
+
+  closeImportPreview(): void {
+    this.isImportPreviewOpen.set(false);
   }
 
   // Cancel / Exit
@@ -780,11 +837,14 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
       focusKeyword: this.focusKeyword().trim() || this.categories()[0] || 'Chung',
       thumbnailUrl: this.coverImage().trim() || '/assets/logo/yinkenna.svg',
       authorName: this.authorName().trim() || 'John Doe',
-      publishedAt: this.status() === 'PUBLISHED'
-        ? this.loadedPublishedAt && this.loadedPublishedAt.slice(0, 10) === this.date()
-          ? this.loadedPublishedAt
-          : this.date() ? new Date(this.date()).toISOString() : new Date().toISOString()
-        : undefined,
+      publishedAt:
+        this.status() === 'PUBLISHED'
+          ? this.loadedPublishedAt && this.loadedPublishedAt.slice(0, 10) === this.date()
+            ? this.loadedPublishedAt
+            : this.date()
+              ? new Date(this.date()).toISOString()
+              : new Date().toISOString()
+          : undefined,
       contentHtml,
       contentJson,
       wordCount,
@@ -803,13 +863,17 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
         }
       }, 1500);
     } catch (error: unknown) {
-      const detail = error instanceof HttpErrorResponse && typeof error.error?.message === 'string'
-        ? error.error.message : '';
-      this.errorMessage.set(detail
-        ? `Không thể lưu bài viết: ${detail}`
-        : error instanceof HttpErrorResponse
-          ? `Không thể lưu bài viết (HTTP ${error.status}).`
-          : 'Không thể lưu bài viết. Vui lòng thử lại.');
+      const detail =
+        error instanceof HttpErrorResponse && typeof error.error?.message === 'string'
+          ? error.error.message
+          : '';
+      this.errorMessage.set(
+        detail
+          ? `Không thể lưu bài viết: ${detail}`
+          : error instanceof HttpErrorResponse
+            ? `Không thể lưu bài viết (HTTP ${error.status}).`
+            : 'Không thể lưu bài viết. Vui lòng thử lại.',
+      );
     } finally {
       this.isSaving.set(false);
     }
