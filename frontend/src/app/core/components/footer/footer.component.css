@@ -113,6 +113,29 @@
   gap: 16px;
 }
 
+.copyright-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.copyright-wrap p {
+  margin: 0;
+}
+
+.footer-privacy-link {
+  color: #94A3B8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.footer-privacy-link:hover {
+  color: var(--yin-gold);
+}
+
 .security-tag {
   color: var(--yin-gold);
   font-size: 0.85rem;

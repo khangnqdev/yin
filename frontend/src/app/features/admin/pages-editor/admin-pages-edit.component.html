@@ -165,7 +165,7 @@
         [disabled]="isSaving()" 
         (click)="saveBlocks()">
         <yin-icon [name]="isSaving() ? 'clock' : (isSaved() ? 'check' : 'check-circle')" [size]="16"></yin-icon>
-        <span>{{ isSaving() ? 'Đang lưu…' : (isSaved() ? 'Đã lưu!' : 'Publish') }}</span>
+        <span>{{ isSaving() ? 'Đang lưu…' : (isSaved() ? 'Đã lưu & xuất bản!' : 'Lưu & Xuất Bản') }}</span>
       </button>
 
     </div>
@@ -345,457 +345,720 @@
                   </div>
                 </div>
 
-                <!-- 1. SẮP XẾP VỊ TRÍ & CĂN CHỈNH (Yêu cầu chính của User) -->
+                                <!-- NỘI DUNG VĂN BẢN (Text Editing Only) -->
                 <div class="inspector-section">
                   <h4 class="inspector-title">
-                    <yin-icon name="align-center" [size]="15"></yin-icon>
-                    <span>Sắp Xếp Vị Trí & Căn Chỉnh</span>
+                    <yin-icon name="type" [size]="15"></yin-icon>
+                    <span>Chỉnh Sửa Văn Bản</span>
                   </h4>
 
-                  <!-- Căn lề trái / giữa / phải / đều -->
-                  <div class="inspector-field">
-                    <label class="inspector-label">Căn chỉnh lề văn bản & nội dung:</label>
-                    <div class="segmented-control">
-                      <button 
-                        type="button" 
-                        class="segment-btn" 
-                        [class.active]="block.style?.textAlign === 'left'" 
-                        (click)="setAlignment(block, 'left')">
-                        <yin-icon name="align-left" [size]="14"></yin-icon>
-                        <span>Trái</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="segment-btn" 
-                        [class.active]="!block.style?.textAlign || block.style?.textAlign === 'center'" 
-                        (click)="setAlignment(block, 'center')">
-                        <yin-icon name="align-center" [size]="14"></yin-icon>
-                        <span>Giữa</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="segment-btn" 
-                        [class.active]="block.style?.textAlign === 'right'" 
-                        (click)="setAlignment(block, 'right')">
-                        <yin-icon name="align-right" [size]="14"></yin-icon>
-                        <span>Phải</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="segment-btn" 
-                        [class.active]="block.style?.textAlign === 'justify'" 
-                        (click)="setAlignment(block, 'justify')">
-                        <yin-icon name="align-justify" [size]="14"></yin-icon>
-                        <span>Đều</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Hướng bố cục: Ngang hàng (Row) vs Thẳng hàng (Column) -->
-                  <div class="inspector-field">
-                    <label class="inspector-label">Hướng hiển thị các thành phần:</label>
-                    <div class="segmented-control">
-                      <button 
-                        type="button" 
-                        class="segment-btn" 
-                        [class.active]="block.style?.layoutDirection === 'row'" 
-                        (click)="setDirection(block, 'row')">
-                        <yin-icon name="columns" [size]="14"></yin-icon>
-                        <span>Ngang hàng (Row)</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="segment-btn" 
-                        [class.active]="!block.style?.layoutDirection || block.style?.layoutDirection === 'column'" 
-                        (click)="setDirection(block, 'column')">
-                        <yin-icon name="rows" [size]="14"></yin-icon>
-                        <span>Thẳng hàng (Dọc)</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Độ rộng khối: Thu gọn vs Toàn màn hình -->
-                  <div class="inspector-field-row">
-                    <div class="inspector-field flex-grow">
-                      <label class="inspector-label">Độ rộng khối:</label>
-                      <div class="segmented-control">
-                        <button 
-                          type="button" 
-                          class="segment-btn" 
-                          [class.active]="!block.style?.fullWidth" 
-                          (click)="setFullWidth(block, false)">
-                          <span>Thu gọn (Container)</span>
-                        </button>
-                        <button 
-                          type="button" 
-                          class="segment-btn" 
-                          [class.active]="block.style?.fullWidth" 
-                          (click)="setFullWidth(block, true)">
-                          <span>Toàn màn hình</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 2. KIỂU DÁNG & NỀN (Yêu cầu chính của User: thay đổi kiểu dáng, nền) -->
-                <div class="inspector-section">
-                  <h4 class="inspector-title">
-                    <yin-icon name="sparkles" [size]="15"></yin-icon>
-                    <span>Kiểu Dáng & Màu Nền</span>
-                  </h4>
-
-                  <!-- Tùy chọn Nền -->
-                  <div class="inspector-field">
-                    <label class="inspector-label">Phong cách nền (Background):</label>
-                    <div class="bg-style-picker-grid">
-                      <button 
-                        type="button" 
-                        class="bg-picker-chip" 
-                        [class.active]="!block.style?.backgroundColor || block.style?.backgroundColor === 'transparent'" 
-                        (click)="setBackground(block, 'transparent')">
-                        <span class="swatch-transparent"></span>
-                        <span>Trong suốt</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="bg-picker-chip" 
-                        [class.active]="block.style?.backgroundColor === '#f8fafc'" 
-                        (click)="setBackground(block, 'light')">
-                        <span class="swatch-light"></span>
-                        <span>Trắng xám</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="bg-picker-chip" 
-                        [class.active]="block.style?.backgroundColor === '#0f172a'" 
-                        (click)="setBackground(block, 'dark')">
-                        <span class="swatch-dark"></span>
-                        <span>Tối sẫm</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="bg-picker-chip" 
-                        [class.active]="!!block.style?.backgroundGradient" 
-                        (click)="setBackground(block, 'gradient')">
-                        <span class="swatch-gradient"></span>
-                        <span>Gradient</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Gradient Presets nếu chọn gradient -->
-                  @if (block.style?.backgroundGradient) {
-                    <div class="inspector-field">
-                      <label class="inspector-label">Mẫu Gradient thời thượng:</label>
-                      <div class="gradient-presets-row">
-                        <button 
-                          type="button" 
-                          class="grad-preset-btn grad-obsidian" 
-                          title="Obsidian Dark"
-                          (click)="setBackground(block, 'gradient', 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #ea580c 100%)')">
-                        </button>
-                        <button 
-                          type="button" 
-                          class="grad-preset-btn grad-sunset" 
-                          title="Sunset Ember"
-                          (click)="setBackground(block, 'gradient', 'linear-gradient(135deg, #ea580c 0%, #f97316 50%, #f59e0b 100%)')">
-                        </button>
-                        <button 
-                          type="button" 
-                          class="grad-preset-btn grad-ocean" 
-                          title="Deep Ocean"
-                          (click)="setBackground(block, 'gradient', 'linear-gradient(135deg, #09203f 0%, #537895 100%)')">
-                        </button>
-                        <button 
-                          type="button" 
-                          class="grad-preset-btn grad-emerald" 
-                          title="Forest Emerald"
-                          (click)="setBackground(block, 'gradient', 'linear-gradient(135deg, #064e3b 0%, #059669 100%)')">
-                        </button>
-                      </div>
-                    </div>
-                  }
-
-                  <!-- Tùy chỉnh Ảnh Nền (Background Image) -->
-                  <div class="inspector-field">
-                    <label class="inspector-label">Hình ảnh nền khối (Background Image):</label>
-                    <div class="bg-image-edit-box">
-                      <input 
-                        type="text" 
-                        class="inspector-input" 
-                        placeholder="https://... hoặc tải ảnh lên" 
-                        [ngModel]="block.style?.backgroundImage || ''" 
-                        (ngModelChange)="setBackground(block, 'image', $event)" />
+                  @switch (block.type) {
+                    
+                    <!-- 1. HERO BANNER -->
+                    @case ('hero') {
+                      @let b = asHero(block);
                       
-                      <label class="upload-btn-label">
-                        <yin-icon name="download" [size]="14"></yin-icon>
-                        <span>{{ isUploadingImage() ? 'Đang tải…' : 'Tải ảnh nền' }}</span>
-                        <input type="file" accept="image/*" class="sr-only" (change)="onBgImageSelected(block, $event)" />
-                      </label>
-                    </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu nhỏ (Badge Text):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badgeText" (ngModelChange)="onBlockFieldChange()" placeholder="VD: KIẾN TRÚC SƯ PHẦN MỀM THẾ HỆ MỚI" />
+                      </div>
 
-                    @if (block.style?.backgroundImage) {
-                      <div class="overlay-slider-box">
-                        <div class="slider-header">
-                          <label class="inspector-label mb-0">Độ tối lớp phủ (Overlay):</label>
-                          <span class="slider-value">{{ ((block.style?.backgroundOverlay || 0.4) * 100).toFixed(0) }}%</span>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề chính (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="VD: Thi Công Xây Dựng Phần Mềm" />
+                      </div>
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Chữ nổi bật màu vàng (Highlight Text):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.highlightText" (ngModelChange)="onBlockFieldChange()" placeholder="VD: Chuẩn Mực Tương Lai" />
+                      </div>
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Đoạn văn mô tả (Description):</label>
+                        <textarea class="inspector-textarea" rows="3" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Nhập tóm tắt mô tả..."></textarea>
+                      </div>
+
+                      <div class="inspector-row">
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút chính (Text):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.primaryCtaText" (ngModelChange)="onBlockFieldChange()" placeholder="Khởi Tạo Dự Án" />
                         </div>
-                        <input 
-                          type="range" 
-                          min="0" 
-                          max="0.9" 
-                          step="0.05" 
-                          class="range-slider" 
-                          [value]="block.style?.backgroundOverlay || 0.4" 
-                          (input)="setBackgroundOverlay(block, +$any($event.target).value)" />
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút chính (Link):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.primaryCtaLink" (ngModelChange)="onBlockFieldChange()" placeholder="/contact" />
+                        </div>
+                      </div>
+
+                      <div class="inspector-row">
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút phụ (Text):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.secondaryCtaText" (ngModelChange)="onBlockFieldChange()" placeholder="Hồ Sơ Năng Lực" />
+                        </div>
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút phụ (Link):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.secondaryCtaLink" (ngModelChange)="onBlockFieldChange()" placeholder="/projects" />
+                        </div>
+                      </div>
+
+                      <!-- Sortable Stats Cards List -->
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Các chỉ số thống kê (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (stat of b.statsPreview; track $index; let sIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="sIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Chỉ số #{{ sIdx + 1 }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, sIdx)" title="Xóa thẻ này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <input type="text" class="inspector-input" [(ngModel)]="stat.value" (ngModelChange)="onBlockFieldChange()" placeholder="Giá trị (VD: 99.99%)" />
+                              <input type="text" class="inspector-input" [(ngModel)]="stat.label" (ngModelChange)="onBlockFieldChange()" placeholder="Nhãn chỉ số (VD: Uptime Cam Kết)" />
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm chỉ số</span>
+                      </button>
+                    }
+
+                    <!-- 2. STATS BLOCK -->
+                    @case ('stats') {
+                      @let b = asStats(block);
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách thẻ số liệu (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (item of b.items; track $index; let sIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="sIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Thẻ số #{{ sIdx + 1 }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, sIdx)" title="Xóa thẻ này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <input type="text" class="inspector-input" [(ngModel)]="item.number" (ngModelChange)="onBlockFieldChange()" placeholder="Số liệu (VD: 15,000+)" />
+                              <input type="text" class="inspector-input" [(ngModel)]="item.label" (ngModelChange)="onBlockFieldChange()" placeholder="Tiêu đề chỉ số (VD: TPS)" />
+                              <textarea class="inspector-textarea" rows="2" [(ngModel)]="item.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả chi tiết..."></textarea>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm thẻ số liệu</span>
+                      </button>
+                    }
+
+                    <!-- 3. STEPS BLOCK -->
+                    @case ('steps') {
+                      @let b = asSteps(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Quy Trình Chuẩn Hóa" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề phân đoạn (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="4 Bước Hiện Thực Hóa" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả phân đoạn:</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả quy trình..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Các bước quy trình (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (step of b.steps; track $index; let sIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="sIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Bước {{ step.stepNumber || (sIdx + 1) }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, sIdx)" title="Xóa bước này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <div class="inspector-row">
+                                <div class="inspector-field col-4">
+                                  <label class="mini-label">Số bước:</label>
+                                  <input type="text" class="inspector-input" [(ngModel)]="step.stepNumber" (ngModelChange)="onBlockFieldChange()" placeholder="01" />
+                                </div>
+                                <div class="inspector-field col-8">
+                                  <label class="mini-label">Tiêu đề bước:</label>
+                                  <input type="text" class="inspector-input" [(ngModel)]="step.title" (ngModelChange)="onBlockFieldChange()" placeholder="Tiêu đề bước..." />
+                                </div>
+                              </div>
+                              <textarea class="inspector-textarea" rows="2" [(ngModel)]="step.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả công việc..."></textarea>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm bước quy trình</span>
+                      </button>
+                    }
+
+                    <!-- 4. PROJECTS GRID BLOCK -->
+                    @case ('projects-grid') {
+                      @let b = asProjects(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Hồ Sơ Năng Lực" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Title):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.title" (ngModelChange)="onBlockFieldChange()" placeholder="Dự Án Tiêu Biểu" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Phụ đề (Subtitle):</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.subtitle" (ngModelChange)="onBlockFieldChange()" placeholder="Tóm tắt về các dự án..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách dự án (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (proj of b.projects; track $index; let pIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="pIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Dự án: {{ proj.title || ('#' + (pIdx + 1)) }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, pIdx)" title="Xóa dự án này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <input type="text" class="inspector-input" [(ngModel)]="proj.title" (ngModelChange)="onBlockFieldChange()" placeholder="Tên dự án / công trình" />
+                              <div class="inspector-row">
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="proj.category" (ngModelChange)="onBlockFieldChange()" placeholder="Phân loại / Lĩnh vực" />
+                                </div>
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="proj.metrics" (ngModelChange)="onBlockFieldChange()" placeholder="Chỉ số (VD: +40% Speed)" />
+                                </div>
+                              </div>
+                              <textarea class="inspector-textarea" rows="2" [(ngModel)]="proj.summary" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả tóm tắt..."></textarea>
+                              <div class="inspector-row">
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="proj.client" (ngModelChange)="onBlockFieldChange()" placeholder="Khách hàng / Đối tác" />
+                                </div>
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="proj.link" (ngModelChange)="onBlockFieldChange()" placeholder="Đường dẫn link (/projects)" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm dự án</span>
+                      </button>
+                    }
+
+                    <!-- 5. OPTIONS / PRICING BLOCK -->
+                    @case ('options') {
+                      @let b = asOptions(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Gói & Bảng Giá" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Lựa Chọn Hợp Tác Phù Hợp" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả:</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả gói..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách gói dịch vụ (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (opt of b.options; track $index; let oIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="oIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Gói: {{ opt.title || ('#' + (oIdx + 1)) }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, oIdx)" title="Xóa gói này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <div class="inspector-row">
+                                <div class="inspector-field col-7">
+                                  <input type="text" class="inspector-input" [(ngModel)]="opt.title" (ngModelChange)="onBlockFieldChange()" placeholder="Tên gói" />
+                                </div>
+                                <div class="inspector-field col-5">
+                                  <input type="text" class="inspector-input" [(ngModel)]="opt.price" (ngModelChange)="onBlockFieldChange()" placeholder="Giá (VD: Liên hệ)" />
+                                </div>
+                              </div>
+                              <textarea class="inspector-textarea" rows="2" [(ngModel)]="opt.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả gói..."></textarea>
+                              <div class="inspector-row">
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="opt.buttonText" (ngModelChange)="onBlockFieldChange()" placeholder="Nút bấm (VD: Chọn Gói)" />
+                                </div>
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="opt.buttonLink" (ngModelChange)="onBlockFieldChange()" placeholder="Link (VD: /contact)" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm gói dịch vụ</span>
+                      </button>
+                    }
+
+                    <!-- 6. MULTI COLUMN BLOCK -->
+                    @case ('multi-column') {
+                      @let b = asMultiColumn(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Tính Năng Nổi Bật" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Nền Tảng Đa Nhiệm" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả:</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách các cột (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (col of b.columns; track $index; let cIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="cIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Cột: {{ col.title || ('#' + (cIdx + 1)) }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, cIdx)" title="Xóa cột này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <input type="text" class="inspector-input" [(ngModel)]="col.title" (ngModelChange)="onBlockFieldChange()" placeholder="Tiêu đề cột" />
+                              <textarea class="inspector-textarea" rows="2" [(ngModel)]="col.description" (ngModelChange)="onBlockFieldChange()" placeholder="Nội dung cột..."></textarea>
+                              <div class="inspector-row">
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="col.linkText" (ngModelChange)="onBlockFieldChange()" placeholder="Chữ liên kết" />
+                                </div>
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="col.link" (ngModelChange)="onBlockFieldChange()" placeholder="Đường dẫn (/about)" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm cột nội dung</span>
+                      </button>
+                    }
+
+                    <!-- 7. PROGRAMS BLOCK -->
+                    @case ('programs') {
+                      @let b = asPrograms(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Hệ Thống Chương Trình" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Các Dịch Vụ & Chương Trình" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả:</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách chương trình (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (prog of b.programs; track $index; let pIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="pIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Chương trình: {{ prog.title || ('#' + (pIdx + 1)) }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, pIdx)" title="Xóa thẻ này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <input type="text" class="inspector-input" [(ngModel)]="prog.title" (ngModelChange)="onBlockFieldChange()" placeholder="Tên chương trình / dịch vụ" />
+                              <div class="inspector-row">
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="prog.category" (ngModelChange)="onBlockFieldChange()" placeholder="Thể loại" />
+                                </div>
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="prog.duration" (ngModelChange)="onBlockFieldChange()" placeholder="Thời lượng (VD: 3 tháng)" />
+                                </div>
+                              </div>
+                              <textarea class="inspector-textarea" rows="2" [(ngModel)]="prog.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả chi tiết..."></textarea>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm chương trình</span>
+                      </button>
+                    }
+
+                    <!-- 8. TESTIMONIALS BLOCK -->
+                    @case ('testimonials') {
+                      @let b = asTestimonials(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Title):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.title" (ngModelChange)="onBlockFieldChange()" placeholder="Khách Hàng Nói Gì Về Yin" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Phụ đề (Subtitle):</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.subtitle" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả ngắn..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách đánh giá (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (item of b.items; track $index; let tIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="tIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Đánh giá: {{ item.author || ('#' + (tIdx + 1)) }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, tIdx)" title="Xóa thẻ này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <textarea class="inspector-textarea" rows="2" [(ngModel)]="item.quote" (ngModelChange)="onBlockFieldChange()" placeholder="Lời nhận xét..."></textarea>
+                              <div class="inspector-row">
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="item.author" (ngModelChange)="onBlockFieldChange()" placeholder="Tên tác giả" />
+                                </div>
+                                <div class="inspector-field col-6">
+                                  <input type="text" class="inspector-input" [(ngModel)]="item.position" (ngModelChange)="onBlockFieldChange()" placeholder="Chức vụ" />
+                                </div>
+                              </div>
+                              <input type="text" class="inspector-input" [(ngModel)]="item.company" (ngModelChange)="onBlockFieldChange()" placeholder="Tên công ty / Tổ chức" />
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm đánh giá</span>
+                      </button>
+                    }
+
+                    <!-- 9. FAQ BLOCK -->
+                    @case ('faq') {
+                      @let b = asFaq(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Giải Đáp Thắc Mắc" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Câu Hỏi Thường Gặp" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả:</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách câu hỏi & trả lời (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (faq of b.items; track $index; let fIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="fIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Câu hỏi #{{ fIdx + 1 }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, fIdx)" title="Xóa câu hỏi này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
+                            </div>
+                            <div class="sub-item-inputs">
+                              <input type="text" class="inspector-input font-semibold" [(ngModel)]="faq.question" (ngModelChange)="onBlockFieldChange()" placeholder="Nhập câu hỏi..." />
+                              <textarea class="inspector-textarea" rows="3" [(ngModel)]="faq.answer" (ngModelChange)="onBlockFieldChange()" placeholder="Nhập câu trả lời..."></textarea>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm câu hỏi FAQ</span>
+                      </button>
+                    }
+
+                    <!-- 10. CTA BLOCK -->
+                    @case ('cta') {
+                      @let b = asCta(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Bắt Đầu Ngay" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề kêu gọi (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Sẵn Sàng Kiến Tạo Dự Án Của Bạn?" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả chi tiết:</label>
+                        <textarea class="inspector-textarea" rows="3" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả lời kêu gọi..."></textarea>
+                      </div>
+                      <div class="inspector-row">
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút chính (Text):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.buttonText" (ngModelChange)="onBlockFieldChange()" placeholder="Liên Hệ Tư Vấn" />
+                        </div>
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút chính (Link):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.buttonLink" (ngModelChange)="onBlockFieldChange()" placeholder="/contact" />
+                        </div>
+                      </div>
+                      <div class="inspector-row">
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút phụ (Text):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.secondaryButtonText" (ngModelChange)="onBlockFieldChange()" placeholder="Xem Thêm" />
+                        </div>
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút phụ (Link):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.secondaryButtonLink" (ngModelChange)="onBlockFieldChange()" placeholder="/about" />
+                        </div>
                       </div>
                     }
-                  </div>
 
-                  <!-- Khoảng đệm (Padding) & Bo góc (Border radius) -->
-                  <div class="inspector-field-row">
-                    <div class="inspector-field flex-1">
-                      <label class="inspector-label">Khoảng đệm (Padding):</label>
-                      <select 
-                        class="inspector-select" 
-                        [value]="block.style?.paddingY || 'md'" 
-                        (change)="setPaddingY(block, $any($event.target).value)">
-                        <option value="none">Không có (0)</option>
-                        <option value="sm">Nhỏ (sm)</option>
-                        <option value="md">Vừa (md)</option>
-                        <option value="lg">Lớn (lg)</option>
-                        <option value="xl">Cực lớn (xl)</option>
-                      </select>
-                    </div>
+                    <!-- 11. TEXT BLOCK -->
+                    @case ('text') {
+                      @let b = asText(block);
 
-                    <div class="inspector-field flex-1">
-                      <label class="inspector-label">Bo góc (Radius):</label>
-                      <select 
-                        class="inspector-select" 
-                        [value]="block.style?.borderRadius || 'none'" 
-                        (change)="setBorderRadius(block, $any($event.target).value)">
-                        <option value="none">Vuông (0px)</option>
-                        <option value="sm">Bo nhẹ (8px)</option>
-                        <option value="md">Vừa (16px)</option>
-                        <option value="lg">Lớn (24px)</option>
-                        <option value="full">Tròn viên thuốc</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <!-- Màu chữ & Màu điểm nhấn -->
-                  <div class="inspector-field-row">
-                    <div class="inspector-field flex-1">
-                      <label class="inspector-label">Màu chữ:</label>
-                      <div class="color-picker-input-wrap">
-                        <input 
-                          type="color" 
-                          class="color-picker-native" 
-                          [value]="block.style?.textColor || '#0f172a'" 
-                          (input)="setTextColor(block, $any($event.target).value)" />
-                        <span class="color-hex-label">{{ block.style?.textColor || '#0f172a' }}</span>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Thông Điệp" />
                       </div>
-                    </div>
-                    <div class="inspector-field flex-1">
-                      <label class="inspector-label">Màu nhấn:</label>
-                      <div class="color-picker-input-wrap">
-                        <input 
-                          type="color" 
-                          class="color-picker-native" 
-                          [value]="block.style?.accentColor || '#ea580c'" 
-                          (input)="setAccentColor(block, $any($event.target).value)" />
-                        <span class="color-hex-label">{{ block.style?.accentColor || '#ea580c' }}</span>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề chính (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Tiêu đề thông điệp" />
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 3. NỘI DUNG VĂN BẢN & HÌNH ẢNH CỦA KHỐI (Thành phần cụ thể) -->
-                <div class="inspector-section">
-                  <h4 class="inspector-title">
-                    <yin-icon name="edit-3" [size]="15"></yin-icon>
-                    <span>Nội Dung & Thành Phần Khối</span>
-                  </h4>
-
-                  <!-- Badge (nếu có) -->
-                  @if ('badge' in block || 'badgeText' in block) {
-                    <div class="inspector-field">
-                      <label class="inspector-label">Nhãn huy hiệu (Badge):</label>
-                      <input 
-                        type="text" 
-                        class="inspector-input" 
-                        placeholder="Nhập huy hiệu..." 
-                        [ngModel]="$any(block).badge || $any(block).badgeText || ''" 
-                        (ngModelChange)="'badge' in block ? $any(block).badge = $event : $any(block).badgeText = $event" />
-                    </div>
-                  }
-
-                  <!-- Tiêu đề (Headline / Title) -->
-                  <div class="inspector-field">
-                    <label class="inspector-label">Tiêu đề chính (Headline):</label>
-                    <textarea 
-                      class="inspector-textarea" 
-                      rows="2" 
-                      placeholder="Tiêu đề..." 
-                      [ngModel]="$any(block).headline || $any(block).title || ''" 
-                      (ngModelChange)="'headline' in block ? $any(block).headline = $event : $any(block).title = $event"></textarea>
-                  </div>
-
-                  <!-- Mô tả (Description / Subtitle) -->
-                  @if ('description' in block || 'subtitle' in block) {
-                    <div class="inspector-field">
-                      <label class="inspector-label">Đoạn văn mô tả (Description):</label>
-                      <textarea 
-                        class="inspector-textarea" 
-                        rows="3" 
-                        placeholder="Mô tả..." 
-                        [ngModel]="$any(block).description || $any(block).subtitle || ''" 
-                        (ngModelChange)="'description' in block ? $any(block).description = $event : $any(block).subtitle = $event"></textarea>
-                    </div>
-                  }
-
-                  <!-- Nút bấm (Button Text & Link) nếu có -->
-                  @if ('buttonText' in block || 'primaryCtaText' in block) {
-                    <div class="inspector-field-row">
-                      <div class="inspector-field flex-1">
-                        <label class="inspector-label">Chữ nút bấm:</label>
-                        <input 
-                          type="text" 
-                          class="inspector-input" 
-                          placeholder="Xem ngay..." 
-                          [ngModel]="$any(block).buttonText || $any(block).primaryCtaText || ''" 
-                          (ngModelChange)="'buttonText' in block ? $any(block).buttonText = $event : $any(block).primaryCtaText = $event" />
+                      <div class="inspector-field">
+                        <label class="inspector-label">Nội dung văn bản (Description):</label>
+                        <textarea class="inspector-textarea" rows="4" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Nội dung văn bản..."></textarea>
                       </div>
-                      <div class="inspector-field flex-1">
-                        <label class="inspector-label">Đường dẫn liên kết:</label>
-                        <input 
-                          type="text" 
-                          class="inspector-input" 
-                          placeholder="/contact" 
-                          [ngModel]="$any(block).buttonLink || $any(block).primaryCtaLink || ''" 
-                          (ngModelChange)="'buttonLink' in block ? $any(block).buttonLink = $event : $any(block).primaryCtaLink = $event" />
-                      </div>
-                    </div>
-                  }
-
-                  <!-- Hình ảnh minh họa (Image URL & Upload) nếu khối có ảnh -->
-                  @if ('imageUrl' in block) {
-                    <div class="inspector-field">
-                      <label class="inspector-label">Hình ảnh thành phần:</label>
-                      <div class="image-field-wrap">
-                        <input 
-                          type="text" 
-                          class="inspector-input" 
-                          placeholder="https://..." 
-                          [(ngModel)]="$any(block).imageUrl" />
-                        <label class="upload-btn-label">
-                          <yin-icon name="image" [size]="14"></yin-icon>
-                          <span>Tải ảnh</span>
-                          <input type="file" accept="image/*" class="sr-only" (change)="onImageFileSelected(block, $event, 'imageUrl')" />
-                        </label>
-                      </div>
-                      @if ($any(block).imageUrl) {
-                        <div class="inspector-image-preview">
-                          <img [src]="$any(block).imageUrl" alt="Preview" />
+                      <div class="inspector-row">
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút bấm (Text):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.buttonText" (ngModelChange)="onBlockFieldChange()" placeholder="Khám Phá" />
                         </div>
-                      }
-                    </div>
-                  }
-
-                  <!-- QUẢN LÝ ITEM CON THEO TỪNG LOẠI KHỐI -->
-                  
-                  <!-- Steps Items -->
-                  @if (block.type === 'steps') {
-                    @let stBlock = asSteps(block);
-                    <div class="sub-items-group">
-                      <div class="sub-group-header">
-                        <label class="inspector-label mb-0">Các bước triển khai ({{ stBlock.steps?.length || 0 }}):</label>
-                        <button type="button" class="add-sub-btn" (click)="addStepItem(stBlock)">+ Thêm bước</button>
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút bấm (Link):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.buttonLink" (ngModelChange)="onBlockFieldChange()" placeholder="/about" />
+                        </div>
                       </div>
-                      <div class="sub-items-list">
-                        @for (st of stBlock.steps; track $index; let sIdx = $index) {
-                          <div class="sub-item-card">
-                            <div class="sub-item-top">
-                              <input type="text" class="sub-mini-input font-bold" placeholder="01" [(ngModel)]="st.stepNumber" />
-                              <input type="text" class="sub-mini-input flex-grow" placeholder="Tiêu đề bước..." [(ngModel)]="st.title" />
-                              <button type="button" class="del-sub-btn" (click)="removeStepItem(stBlock, sIdx)">&times;</button>
+                    }
+
+                    <!-- 12. FORM BLOCK -->
+                    @case ('form') {
+                      @let b = asForm(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Liên Hệ" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Gửi Yêu Cầu Tư Vấn" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả form:</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả..."></textarea>
+                      </div>
+                      <div class="inspector-row">
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút gửi form:</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.submitButtonText" (ngModelChange)="onBlockFieldChange()" placeholder="Gửi Thông Tin" />
+                        </div>
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Thông báo thành công:</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.successMessage" (ngModelChange)="onBlockFieldChange()" placeholder="Đã nhận yêu cầu!" />
+                        </div>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách trường nhập (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (field of b.fields; track $index; let fIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="fIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Trường: {{ field.label || ('#' + (fIdx + 1)) }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, fIdx)" title="Xóa trường này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
                             </div>
-                            <textarea class="inspector-textarea mt-1" rows="2" placeholder="Mô tả bước..." [(ngModel)]="st.description"></textarea>
+                            <div class="sub-item-inputs">
+                              <div class="inspector-row">
+                                <div class="inspector-field col-7">
+                                  <input type="text" class="inspector-input" [(ngModel)]="field.label" (ngModelChange)="onBlockFieldChange()" placeholder="Tên trường (Nhãn)" />
+                                </div>
+                                <div class="inspector-field col-5">
+                                  <input type="text" class="inspector-input" [(ngModel)]="field.placeholder" (ngModelChange)="onBlockFieldChange()" placeholder="Gợi ý placeholder" />
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         }
                       </div>
-                    </div>
-                  }
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm trường nhập</span>
+                      </button>
+                    }
 
-                  <!-- Options / Pricing Items -->
-                  @if (block.type === 'options') {
-                    @let optBlock = asOptions(block);
-                    <div class="sub-items-group">
-                      <div class="sub-group-header">
-                        <label class="inspector-label mb-0">Gói lựa chọn & giá ({{ optBlock.options?.length || 0 }}):</label>
-                        <button type="button" class="add-sub-btn" (click)="addOptionItem(optBlock)">+ Thêm gói</button>
+                    <!-- 13. VIDEO BLOCK -->
+                    @case ('video') {
+                      @let b = asVideo(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Video Trực Quan" />
                       </div>
-                      <div class="sub-items-list">
-                        @for (opt of optBlock.options; track $index; let oIdx = $index) {
-                          <div class="sub-item-card" [class.border-accent]="opt.isFeatured">
-                            <div class="sub-item-top">
-                              <input type="text" class="sub-mini-input font-bold flex-grow" placeholder="Tên gói..." [(ngModel)]="opt.title" />
-                              <input type="text" class="sub-mini-input" placeholder="Giá..." [(ngModel)]="opt.price" />
-                              <button type="button" class="del-sub-btn" (click)="removeOptionItem(optBlock, oIdx)">&times;</button>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Trải Nghiệm Công Nghệ" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Mô tả:</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả video..."></textarea>
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">URL Video (Youtube / MP4):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.videoUrl" (ngModelChange)="onBlockFieldChange()" placeholder="https://..." />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Chú thích (Caption):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.caption" (ngModelChange)="onBlockFieldChange()" placeholder="Chú thích video..." />
+                      </div>
+                    }
+
+                    <!-- 14. SECTION BLOCK -->
+                    @case ('section') {
+                      @let b = asSection(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Huy hiệu (Badge):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.badge" (ngModelChange)="onBlockFieldChange()" placeholder="Phân Đoạn" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề (Headline):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.headline" (ngModelChange)="onBlockFieldChange()" placeholder="Tiêu đề phân đoạn" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Nội dung mô tả:</label>
+                        <textarea class="inspector-textarea" rows="3" [(ngModel)]="b.description" (ngModelChange)="onBlockFieldChange()" placeholder="Mô tả..."></textarea>
+                      </div>
+                      <div class="inspector-row">
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút bấm (Text):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.buttonText" (ngModelChange)="onBlockFieldChange()" placeholder="Tìm Hiểu Thêm" />
+                        </div>
+                        <div class="inspector-field col-6">
+                          <label class="inspector-label">Nút bấm (Link):</label>
+                          <input type="text" class="inspector-input" [(ngModel)]="b.buttonLink" (ngModelChange)="onBlockFieldChange()" placeholder="/about" />
+                        </div>
+                      </div>
+                    }
+
+                    <!-- 15. RICH CONTENT BLOCK -->
+                    @case ('rich-content') {
+                      @let b = asRich(block);
+
+                      <div class="inspector-field">
+                        <label class="inspector-label">Tiêu đề khối (Title):</label>
+                        <input type="text" class="inspector-input" [(ngModel)]="b.title" (ngModelChange)="onBlockFieldChange()" placeholder="Nội Dung Chuyên Sâu" />
+                      </div>
+                      <div class="inspector-field">
+                        <label class="inspector-label">Phụ đề (Subtitle):</label>
+                        <textarea class="inspector-textarea" rows="2" [(ngModel)]="b.subtitle" (ngModelChange)="onBlockFieldChange()" placeholder="Tóm tắt..."></textarea>
+                      </div>
+
+                      <div class="sub-items-header">
+                        <label class="inspector-label">Danh sách các phần nội dung (Kéo thả sắp xếp):</label>
+                      </div>
+                      <div class="sub-items-sortable-list">
+                        @for (item of b.items; track $index; let rIdx = $index) {
+                          <div class="sub-item-card" [attr.data-sub-index]="rIdx">
+                            <div class="sub-item-header">
+                              <div class="sub-item-drag-handle" title="Kéo để đổi thứ tự thẻ này">
+                                <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                                <span>Mục #{{ rIdx + 1 }}</span>
+                              </div>
+                              <button type="button" class="mini-del-btn" (click)="removeSubItem(block, rIdx)" title="Xóa mục này">
+                                <yin-icon name="trash" [size]="13"></yin-icon>
+                              </button>
                             </div>
-                            <label class="checkbox-label mt-1">
-                              <input type="checkbox" [(ngModel)]="opt.isFeatured" />
-                              <span>Gói đề xuất (Nổi bật)</span>
-                            </label>
+                            <div class="sub-item-inputs">
+                              <input type="text" class="inspector-input font-semibold" [(ngModel)]="item.heading" (ngModelChange)="onBlockFieldChange()" placeholder="Tiêu đề mục" />
+                              <textarea class="inspector-textarea" rows="3" [(ngModel)]="item.body" (ngModelChange)="onBlockFieldChange()" placeholder="Nội dung chi tiết..."></textarea>
+                            </div>
                           </div>
                         }
                       </div>
-                    </div>
-                  }
+                      <button type="button" class="add-sub-item-btn" (click)="addSubItem(block)">
+                        <yin-icon name="plus" [size]="14"></yin-icon>
+                        <span>+ Thêm mục nội dung</span>
+                      </button>
+                    }
 
-                  <!-- Multi Column Items -->
-                  @if (block.type === 'multi-column') {
-                    @let mcBlock = asMultiColumn(block);
-                    <div class="sub-items-group">
-                      <div class="sub-group-header">
-                        <label class="inspector-label mb-0">Các cột nội dung ({{ mcBlock.columns?.length || 0 }}):</label>
-                        <button type="button" class="add-sub-btn" (click)="addColumnItem(mcBlock)">+ Thêm cột</button>
-                      </div>
-                      <div class="sub-items-list">
-                        @for (col of mcBlock.columns; track $index; let cIdx = $index) {
-                          <div class="sub-item-card">
-                            <div class="sub-item-top">
-                              <input type="text" class="sub-mini-input font-bold flex-grow" placeholder="Tiêu đề cột..." [(ngModel)]="col.title" />
-                              <button type="button" class="del-sub-btn" (click)="removeColumnItem(mcBlock, cIdx)">&times;</button>
-                            </div>
-                            <textarea class="inspector-textarea mt-1" rows="2" placeholder="Mô tả cột..." [(ngModel)]="col.description"></textarea>
-                          </div>
-                        }
-                      </div>
-                    </div>
-                  }
-
-                  <!-- FAQ Items -->
-                  @if (block.type === 'faq') {
-                    @let faqBlock = asFaq(block);
-                    <div class="sub-items-group">
-                      <div class="sub-group-header">
-                        <label class="inspector-label mb-0">Câu hỏi FAQ ({{ faqBlock.items?.length || 0 }}):</label>
-                        <button type="button" class="add-sub-btn" (click)="addFaqItem(faqBlock)">+ Thêm câu hỏi</button>
-                      </div>
-                      <div class="sub-items-list">
-                        @for (faq of faqBlock.items; track $index; let fIdx = $index) {
-                          <div class="sub-item-card">
-                            <div class="sub-item-top">
-                              <input type="text" class="sub-mini-input font-bold flex-grow" placeholder="Câu hỏi..." [(ngModel)]="faq.question" />
-                              <button type="button" class="del-sub-btn" (click)="removeFaqItem(faqBlock, fIdx)">&times;</button>
-                            </div>
-                            <textarea class="inspector-textarea mt-1" rows="2" placeholder="Câu trả lời..." [(ngModel)]="faq.answer"></textarea>
-                          </div>
-                        }
-                      </div>
-                    </div>
                   }
 
                 </div>
@@ -890,8 +1153,8 @@
           </div>
         </div>
 
-        <!-- Dynamic Page Stream Rendering -->
-        <div class="canvas-blocks-stream">
+        <!-- Dynamic Page Stream with SortableJS -->
+        <div class="canvas-blocks-stream" #sortableContainer>
           
           @for (block of pageBlocks(); track block.id; let idx = $index) {
             
@@ -902,395 +1165,47 @@
               [class.is-selected]="selectedBlockId() === block.id" 
               (click)="selectBlock(block.id, $event)">
 
-              <!-- FLOATING BOUNDING BADGE (Khớp ảnh mẫu: 'Multi column' tag màu cam trên viền đứt nét) -->
-              @if (selectedBlockId() === block.id) {
-                <div class="block-bounding-tag">
-                  <yin-icon [name]="paletteItems[idx % paletteItems.length].icon" [size]="12"></yin-icon>
-                  <span>{{ getBlockLabel(block.type) }}</span>
+              <!-- CARD ADMIN HEADER: DRAG HANDLE, EDIT BUTTON, ACTION BUTTONS -->
+              <div class="card-admin-header" (click)="$event.stopPropagation()">
+                
+                <!-- SortableJS Drag Handle -->
+                <div class="drag-handle-btn" title="Kéo thả để sắp xếp vị trí khối (SortableJS)">
+                  <yin-icon name="grip-vertical" [size]="14"></yin-icon>
+                  <span class="card-type-label">{{ getBlockLabel(block.type) }}</span>
                 </div>
 
-                <!-- FLOATING QUICK TOOLBAR -->
-                <div class="floating-quick-toolbar" (click)="$event.stopPropagation()">
-                  
-                  <!-- Drag Handle to re-order -->
-                  <div 
-                    class="quick-tool-drag-handle" 
-                    draggable="true" 
-                    (dragstart)="onBlockDragStart($event, block.id)" 
-                    (dragend)="onDragEnd()"
-                    title="Kéo để đổi thứ tự khối">
-                    <yin-icon name="grip-vertical" [size]="14"></yin-icon>
-                  </div>
-
-                  <!-- Quick Alignments -->
-                  <button 
-                    type="button" 
-                    class="quick-tool-btn" 
-                    [class.active]="block.style?.textAlign === 'left'" 
-                    (click)="setAlignment(block, 'left')" 
-                    title="Căn trái">
-                    <yin-icon name="align-left" [size]="13"></yin-icon>
+                <!-- Card Header Actions -->
+                <div class="card-header-actions">
+                  <button type="button" class="mini-tool-btn edit-btn" (click)="selectBlock(block.id, $event)" title="Chỉnh sửa văn bản">
+                    <yin-icon name="edit-3" [size]="13"></yin-icon>
+                    <span>Sửa Chữ</span>
                   </button>
-                  <button 
-                    type="button" 
-                    class="quick-tool-btn" 
-                    [class.active]="!block.style?.textAlign || block.style?.textAlign === 'center'" 
-                    (click)="setAlignment(block, 'center')" 
-                    title="Căn giữa">
-                    <yin-icon name="align-center" [size]="13"></yin-icon>
-                  </button>
-                  <button 
-                    type="button" 
-                    class="quick-tool-btn" 
-                    [class.active]="block.style?.textAlign === 'right'" 
-                    (click)="setAlignment(block, 'right')" 
-                    title="Căn phải">
-                    <yin-icon name="align-right" [size]="13"></yin-icon>
-                  </button>
-
-                  <div class="quick-tool-divider"></div>
-
-                  <!-- Quick Direction -->
-                  <button 
-                    type="button" 
-                    class="quick-tool-btn" 
-                    [class.active]="block.style?.layoutDirection === 'row'" 
-                    (click)="setDirection(block, 'row')" 
-                    title="Ngang hàng (Row)">
-                    <yin-icon name="columns" [size]="13"></yin-icon>
-                  </button>
-                  <button 
-                    type="button" 
-                    class="quick-tool-btn" 
-                    [class.active]="!block.style?.layoutDirection || block.style?.layoutDirection === 'column'" 
-                    (click)="setDirection(block, 'column')" 
-                    title="Thẳng hàng (Dọc)">
-                    <yin-icon name="rows" [size]="13"></yin-icon>
-                  </button>
-
-                  <div class="quick-tool-divider"></div>
-
-                  <!-- Up, Down, Copy, Delete -->
-                  <button type="button" class="quick-tool-btn" (click)="moveBlock(block.id, 'up')" title="Lên trên">
+                  <button type="button" class="mini-tool-btn" (click)="moveBlock(block.id, 'up', $event)" title="Di chuyển lên">
                     <yin-icon name="arrow-up" [size]="13"></yin-icon>
                   </button>
-                  <button type="button" class="quick-tool-btn" (click)="moveBlock(block.id, 'down')" title="Xuống dưới">
+                  <button type="button" class="mini-tool-btn" (click)="moveBlock(block.id, 'down', $event)" title="Di chuyển xuống">
                     <yin-icon name="arrow-down" [size]="13"></yin-icon>
                   </button>
-                  <button type="button" class="quick-tool-btn" (click)="duplicateBlock(block.id)" title="Nhân bản">
+                  <button type="button" class="mini-tool-btn" (click)="duplicateBlock(block.id, $event)" title="Nhân bản khối này">
                     <yin-icon name="copy" [size]="13"></yin-icon>
                   </button>
-                  <button type="button" class="quick-tool-btn btn-danger" (click)="removeBlock(block.id)" title="Xóa khối">
+                  <button type="button" class="mini-tool-btn btn-danger" (click)="removeBlock(block.id, $event)" title="Xóa khối này">
                     <yin-icon name="trash" [size]="13"></yin-icon>
                   </button>
                 </div>
+              </div>
+
+              <!-- FLOATING BOUNDING BADGE NẾU ĐƯỢC CHỌN -->
+              @if (selectedBlockId() === block.id) {
+                <div class="block-bounding-tag">
+                  <yin-icon [name]="paletteItems[idx % paletteItems.length].icon" [size]="12"></yin-icon>
+                  <span>{{ getBlockLabel(block.type) }} (Đang chọn)</span>
+                </div>
               }
 
-              <!-- LIVE BLOCK CONTENT RENDERER WITH INLINE EDITING -->
-              <div 
-                class="block-inner-content" 
-                [class.pad-none]="block.style?.paddingY === 'none'"
-                [class.pad-sm]="block.style?.paddingY === 'sm'"
-                [class.pad-md]="block.style?.paddingY === 'md'"
-                [class.pad-lg]="block.style?.paddingY === 'lg'"
-                [class.pad-xl]="block.style?.paddingY === 'xl'"
-                [class.align-left]="block.style?.textAlign === 'left'"
-                [class.align-center]="block.style?.textAlign === 'center'"
-                [class.align-right]="block.style?.textAlign === 'right'"
-                [class.layout-row]="block.style?.layoutDirection === 'row'"
-                [class.layout-col]="block.style?.layoutDirection === 'column'"
-                [style]="getBlockWrapperStyles(block)">
-
-                <!-- Background Overlay for images -->
-                @if (block.style?.backgroundImage) {
-                  <div class="canvas-bg-overlay" [style.opacity]="block.style?.backgroundOverlay || 0.4"></div>
-                }
-
-                <div class="block-content-container" [class.is-contained]="!block.style?.fullWidth">
-                  
-                  @switch (block.type) {
-                    
-                    <!-- 1. TEXT BLOCK -->
-                    @case ('text') {
-                      @let b = asText(block);
-                      <div class="live-text-component">
-                        @if (b.badge) {
-                          <span class="live-badge-chip">{{ b.badge }}</span>
-                        }
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        <p class="live-desc-text">{{ b.description }}</p>
-                        @if (b.buttonText) {
-                          <div class="live-btn-row">
-                            <span class="yin-btn yin-btn-primary">{{ b.buttonText }}</span>
-                          </div>
-                        }
-                      </div>
-                    }
-
-                    <!-- 2. STEPS BLOCK -->
-                    @case ('steps') {
-                      @let b = asSteps(block);
-                      <div class="live-steps-component">
-                        @if (b.badge) { <span class="live-badge-chip">{{ b.badge }}</span> }
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        @if (b.description) { <p class="live-desc-text">{{ b.description }}</p> }
-                        <div class="live-steps-grid" [class.flex-col]="b.style?.layoutDirection === 'column'">
-                          @for (st of b.steps; track $index) {
-                            <div class="live-step-card yin-card">
-                              <span class="live-step-num">{{ st.stepNumber }}</span>
-                              <h4 class="live-step-title">{{ st.title }}</h4>
-                              <p class="live-step-desc">{{ st.description }}</p>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 3. CALL TO ACTION BLOCK -->
-                    @case ('cta') {
-                      @let b = asCta(block);
-                      <div class="live-cta-component">
-                        @if (b.badge) { <span class="live-badge-chip">{{ b.badge }}</span> }
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        <p class="live-desc-text">{{ b.description }}</p>
-                        <div class="live-btn-row">
-                          <span class="yin-btn yin-btn-primary">{{ b.buttonText }}</span>
-                          @if (b.secondaryButtonText) {
-                            <span class="yin-btn yin-btn-secondary">{{ b.secondaryButtonText }}</span>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 4. OPTIONS BLOCK -->
-                    @case ('options') {
-                      @let b = asOptions(block);
-                      <div class="live-options-component">
-                        @if (b.badge) { <span class="live-badge-chip">{{ b.badge }}</span> }
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        @if (b.description) { <p class="live-desc-text">{{ b.description }}</p> }
-                        <div class="live-options-grid" [class.flex-col]="b.style?.layoutDirection === 'column'">
-                          @for (opt of b.options; track $index) {
-                            <div class="live-option-card yin-card" [class.featured]="opt.isFeatured">
-                              @if (opt.isFeatured) { <div class="opt-badge-pill">Đề xuất</div> }
-                              <h3 class="opt-title">{{ opt.title }}</h3>
-                              <div class="opt-price">{{ opt.price }}</div>
-                              <p class="opt-desc">{{ opt.description }}</p>
-                              <ul class="opt-feats">
-                                @for (feat of opt.features; track $index) {
-                                  <li>✓ {{ feat }}</li>
-                                }
-                              </ul>
-                              <span class="yin-btn w-full" [class.yin-btn-primary]="opt.isFeatured" [class.yin-btn-secondary]="!opt.isFeatured">
-                                {{ opt.buttonText || 'Chọn gói' }}
-                              </span>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 5. MULTI COLUMN BLOCK (Khớp ảnh mẫu!) -->
-                    @case ('multi-column') {
-                      @let b = asMultiColumn(block);
-                      <div class="live-multicolumn-component">
-                        @if (b.badge) { <span class="live-badge-chip">{{ b.badge }}</span> }
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        @if (b.description) { <p class="live-desc-text">{{ b.description }}</p> }
-                        <div class="live-multicolumn-grid">
-                          @for (col of b.columns; track $index) {
-                            <div class="live-col-card yin-card">
-                              <h4 class="col-title">{{ col.title }}</h4>
-                              <p class="col-desc">{{ col.description }}</p>
-                              <span class="col-link-preview">{{ col.linkText || 'Xem thêm' }} &rarr;</span>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 6. HERO BANNER BLOCK -->
-                    @case ('hero') {
-                      @let b = asHero(block);
-                      <div class="live-hero-component">
-                        <div class="live-badge-chip">
-                          <yin-icon name="sparkles" [size]="13"></yin-icon>
-                          <span>{{ b.badgeText }}</span>
-                        </div>
-                        <h1 class="live-headline-hero" [style.color]="b.style?.textColor">{{ b.headline }}</h1>
-                        <p class="live-desc-text">{{ b.description }}</p>
-                        <div class="live-btn-row">
-                          <span class="yin-btn yin-btn-primary">{{ b.primaryCtaText }}</span>
-                          <span class="yin-btn yin-btn-secondary">{{ b.secondaryCtaText }}</span>
-                        </div>
-                        @if (b.statsPreview?.length) {
-                          <div class="live-hero-stats">
-                            @for (st of b.statsPreview; track $index) {
-                              <div class="hero-stat-item">
-                                <span class="stat-val">{{ st.value }}</span>
-                                <span class="stat-lbl">{{ st.label }}</span>
-                              </div>
-                            }
-                          </div>
-                        }
-                      </div>
-                    }
-
-                    <!-- 7. STATS BLOCK -->
-                    @case ('stats') {
-                      @let b = asStats(block);
-                      <div class="live-stats-component">
-                        <div class="live-stats-grid">
-                          @for (st of b.items; track $index) {
-                            <div class="live-stat-card">
-                              <div class="stat-num">{{ st.number }}</div>
-                              <div class="stat-lbl-bold">{{ st.label }}</div>
-                              <div class="stat-sub-desc">{{ st.description }}</div>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 8. PROGRAMS BLOCK -->
-                    @case ('programs') {
-                      @let b = asPrograms(block);
-                      <div class="live-programs-component">
-                        @if (b.badge) { <span class="live-badge-chip">{{ b.badge }}</span> }
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        <div class="live-programs-grid">
-                          @for (prog of b.programs; track $index) {
-                            <div class="prog-card yin-card">
-                              <span class="prog-cat-tag">{{ prog.category }}</span>
-                              <h4 class="prog-name">{{ prog.title }}</h4>
-                              <p class="prog-info">{{ prog.description }}</p>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 9. VIDEO BLOCK -->
-                    @case ('video') {
-                      @let b = asVideo(block);
-                      <div class="live-video-component">
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        <div class="video-preview-shell">
-                          <yin-icon name="video" [size]="48" className="video-play-icon"></yin-icon>
-                          <span class="video-preview-url">{{ b.videoUrl }}</span>
-                        </div>
-                        <p class="video-caption-text">{{ b.caption }}</p>
-                      </div>
-                    }
-
-                    <!-- 10. FORM BLOCK -->
-                    @case ('form') {
-                      @let b = asForm(block);
-                      <div class="live-form-component yin-card">
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        <p class="live-desc-text">{{ b.description }}</p>
-                        <div class="live-form-fields">
-                          @for (fld of b.fields; track $index) {
-                            <div class="dummy-field">
-                              <label>{{ fld.label }}</label>
-                              <input type="text" disabled [placeholder]="fld.placeholder" class="dummy-input" />
-                            </div>
-                          }
-                        </div>
-                        <div class="dummy-form-submit">
-                          <span class="yin-btn yin-btn-primary">{{ b.submitButtonText || 'Gửi yêu cầu' }}</span>
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 11. SECTION BLOCK -->
-                    @case ('section') {
-                      @let b = asSection(block);
-                      <div class="live-split-component" [class.img-left]="b.imagePosition === 'left'">
-                        <div class="split-col-text">
-                          @if (b.badge) { <span class="live-badge-chip">{{ b.badge }}</span> }
-                          <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                          <p class="live-desc-text">{{ b.description }}</p>
-                          @if (b.buttonText) {
-                            <span class="yin-btn yin-btn-primary">{{ b.buttonText }}</span>
-                          }
-                        </div>
-                        @if (b.imageUrl) {
-                          <div class="split-col-media">
-                            <img [src]="b.imageUrl" alt="Section" />
-                          </div>
-                        }
-                      </div>
-                    }
-
-                    <!-- 12. FAQ BLOCK -->
-                    @case ('faq') {
-                      @let b = asFaq(block);
-                      <div class="live-faq-component">
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.headline }}</h2>
-                        <div class="live-faq-list">
-                          @for (faq of b.items; track $index) {
-                            <div class="live-faq-card yin-card">
-                              <strong>{{ faq.question }}</strong>
-                              <p>{{ faq.answer }}</p>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 13. PROJECTS GRID BLOCK -->
-                    @case ('projects-grid') {
-                      @let b = asProjects(block);
-                      <div class="live-projects-component">
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.title || 'Dự Án Tiêu Biểu' }}</h2>
-                        <div class="live-projects-grid">
-                          @for (prj of b.projects; track $index) {
-                            <div class="live-prj-card yin-card">
-                              <h4 class="prj-title">{{ prj.title }}</h4>
-                              <span class="prj-cat">{{ prj.category }}</span>
-                              <p class="prj-summary">{{ prj.summary }}</p>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 14. TESTIMONIALS BLOCK -->
-                    @case ('testimonials') {
-                      @let b = asTestimonials(block);
-                      <div class="live-testi-component">
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.title || 'Ý Kiến Khách Hàng' }}</h2>
-                        <div class="live-testi-grid">
-                          @for (t of b.items; track $index) {
-                            <div class="live-testi-card yin-card">
-                              <p class="testi-q">"{{ t.quote }}"</p>
-                              <strong class="testi-author-name">{{ t.author }}</strong>
-                              <span class="testi-sub">{{ t.position }} • {{ t.company }}</span>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-
-                    <!-- 15. RICH CONTENT BLOCK -->
-                    @case ('rich-content') {
-                      @let b = asRich(block);
-                      <div class="live-rich-component">
-                        <h2 class="live-headline-text" [style.color]="b.style?.textColor">{{ b.title || 'Nội Dung Chi Tiết' }}</h2>
-                        @for (it of b.items; track $index) {
-                          <div class="rich-item-row">
-                            <strong>{{ it.heading }}</strong>
-                            <p>{{ it.body }}</p>
-                          </div>
-                        }
-                      </div>
-                    }
-
-                  }
-
-                </div>
-
+              <!-- LIVE REAL TIME PREVIEW MATCHING PUBLIC WEBSITE 100% -->
+              <div class="canvas-live-preview-wrap">
+                <yin-dynamic-page-host [blocks]="[block]" />
               </div>
 
             </div>

@@ -27,13 +27,13 @@ describe('AdminArticleEditComponent', () => {
     authorName: 'John Doe',
     createdAt: '2026-11-01T08:00:00Z',
     publishedAt: '2024-10-01T08:00:00Z',
-    updatedAt: '2026-11-02T10:30:00Z'
+    updatedAt: '2026-11-02T10:30:00Z',
   };
 
   const mockDbService = {
     fetchAdminArticleById: vi.fn().mockResolvedValue(mockArticle),
     saveArticle: vi.fn().mockResolvedValue(mockArticle),
-    uploadImage: vi.fn().mockResolvedValue('/assets/uploads/test.png')
+    uploadImage: vi.fn().mockResolvedValue('/assets/uploads/test.png'),
   };
 
   beforeEach(async () => {
@@ -49,12 +49,12 @@ describe('AdminArticleEditComponent', () => {
           useValue: {
             snapshot: {
               paramMap: {
-                get: (key: string) => (key === 'id' ? 'art_2' : null)
-              }
-            }
-          }
-        }
-      ]
+                get: (key: string) => (key === 'id' ? 'art_2' : null),
+              },
+            },
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminArticleEditComponent);
@@ -65,7 +65,9 @@ describe('AdminArticleEditComponent', () => {
     expect(component).toBeTruthy();
     await component.ngOnInit();
     expect(mockDbService.fetchAdminArticleById).toHaveBeenCalledWith('art_2');
-    expect(component['title']()).toBe('Tối Ưu Change Detection Trong Angular v22 Với Signals & Fine-Grained Reactivity');
+    expect(component['title']()).toBe(
+      'Tối Ưu Change Detection Trong Angular v22 Với Signals & Fine-Grained Reactivity',
+    );
     expect(component['slug']()).toBe('toi-uu-change-detection-angular-v22-signals');
     expect(component['categories']()).toEqual(['Health', 'Gym', 'High-Converting']);
     expect(component['authorName']()).toBe('John Doe');
@@ -88,7 +90,7 @@ describe('AdminArticleEditComponent', () => {
     component['selectAuthor']({
       name: 'Khang (Founder)',
       role: 'Chief Architect & Founder',
-      avatar: 'https://images.unsplash.com/test.jpg'
+      avatar: 'https://images.unsplash.com/test.jpg',
     });
     expect(component['authorName']()).toBe('Khang (Founder)');
     expect(component['authorRole']()).toBe('Chief Architect & Founder');
@@ -154,7 +156,7 @@ Nội dung chi tiết được soạn thảo bởi AI bên ngoài.
 
   it('should support quick action saveDraft and publishArticle', async () => {
     await component.ngOnInit();
-    
+
     // Quick action: saveDraft
     await component.saveDraft();
     expect(mockDbService.saveArticle).toHaveBeenCalled();
@@ -166,10 +168,12 @@ Nội dung chi tiết được soạn thảo bởi AI bên ngoài.
   });
 
   it('shows the backend reason when saving fails', async () => {
-    mockDbService.saveArticle.mockRejectedValueOnce(new HttpErrorResponse({
-      status: 400,
-      error: { message: 'contentJson is too long' }
-    }));
+    mockDbService.saveArticle.mockRejectedValueOnce(
+      new HttpErrorResponse({
+        status: 400,
+        error: { message: 'contentJson is too long' },
+      }),
+    );
     await component.ngOnInit();
     await component.saveArticle();
     expect(component['errorMessage']()).toContain('contentJson is too long');

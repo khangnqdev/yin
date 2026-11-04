@@ -1,0 +1,494 @@
+<main class="privacy-page-root">
+  <!-- Hero Section -->
+  <header class="privacy-hero">
+    <div class="yin-container hero-container">
+      <div class="hero-badge-wrap">
+        <div class="yin-badge hero-badge">
+          <yin-icon name="shield" [size]="15"></yin-icon>
+          <span>Nghị Định 13/2023/NĐ-CP • Quản Trị Dữ Liệu End-to-End</span>
+        </div>
+      </div>
+
+      <h1 class="hero-title">Chính Sách Bảo Mật & Quản Trị Dữ Liệu Cá Nhân</h1>
+      <p class="hero-subtitle">
+        Tại Yin (Yin Kenna), chúng tôi áp dụng nguyên tắc kiểm soát dữ liệu toàn diện <strong>“End-to-End”</strong> xuyên suốt 5 giai đoạn vòng đời dữ liệu. Toàn bộ thông tin cá nhân của quý khách hàng, đối tác được bảo vệ ở cấp độ cao nhất theo tiêu chuẩn Zero-Trust và pháp luật Việt Nam.
+      </p>
+
+      <div class="hero-meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Phiên bản ban hành</span>
+          <span class="meta-value">v2.4 (Chính thức)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Ngày hiệu lực</span>
+          <span class="meta-value">04/11/2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Phê duyệt bởi</span>
+          <span class="meta-value">Founder Khang</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Phạm vi áp dụng</span>
+          <span class="meta-value">Cổng Khách Hàng (Portal) & Dịch Vụ Thi Công Phần Mềm</span>
+        </div>
+      </div>
+
+      <!-- Quick Actions Header -->
+      <div class="hero-actions">
+        <a routerLink="/register" class="yin-btn yin-btn-primary action-btn">
+          <yin-icon name="user" [size]="16"></yin-icon>
+          <span>Quay Về Trang Đăng Ký</span>
+        </a>
+        <button type="button" class="yin-btn yin-btn-secondary action-btn" (click)="scrollToStage('stage-collection')">
+          <yin-icon name="arrow-down" [size]="16"></yin-icon>
+          <span>Xem 5 Giai Đoạn End-to-End</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content Container -->
+  <div class="yin-container content-container">
+    
+    <!-- Acceptance Banner if user clicked Accept -->
+    @if (acceptedNotice()) {
+      <div class="alert-box alert-success sticky-notice" role="status">
+        <yin-icon name="check-circle" [size]="20"></yin-icon>
+        <div>
+          <strong>Xác nhận thành công:</strong> Quý khách đã đọc và ghi nhận đồng ý với toàn văn Chính Sách Bảo Mật & Quản Trị Dữ Liệu của Yin.
+        </div>
+      </div>
+    }
+
+    <!-- Quick Navigation Anchor Bar -->
+    <nav class="stages-nav" aria-label="Điều hướng các giai đoạn quản trị dữ liệu">
+      <div class="nav-title">Mô hình 5 giai đoạn End-to-End:</div>
+      <div class="nav-pills">
+        <button type="button" class="nav-pill" (click)="scrollToStage('stage-collection')">
+          <span class="step-num">1</span>
+          <span>Thu Thập</span>
+        </button>
+        <button type="button" class="nav-pill" (click)="scrollToStage('stage-storage')">
+          <span class="step-num">2</span>
+          <span>Lưu Trữ</span>
+        </button>
+        <button type="button" class="nav-pill" (click)="scrollToStage('stage-usage')">
+          <span class="step-num">3</span>
+          <span>Sử Dụng</span>
+        </button>
+        <button type="button" class="nav-pill" (click)="scrollToStage('stage-transfer')">
+          <span class="step-num">4</span>
+          <span>Chia Sẻ / Chuyển Giao</span>
+        </button>
+        <button type="button" class="nav-pill" (click)="scrollToStage('stage-deletion')">
+          <span class="step-num">5</span>
+          <span>Xóa Bỏ / Hủy Dữ Liệu</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- SECTION: Tổng quan nguyên tắc cốt lõi -->
+    <section class="principles-section">
+      <h2 class="section-title">Nguyên Tắc Quản Trị Dữ Liệu Cốt Lõi Tại Yin</h2>
+      <div class="principles-grid">
+        <div class="principle-card">
+          <div class="principle-icon-wrap">
+            <yin-icon name="shield" [size]="22"></yin-icon>
+          </div>
+          <h3 class="principle-title">Bảo Mật Theo Thiết Kế (Privacy by Design)</h3>
+          <p class="principle-desc">
+            Bảo mật và an toàn dữ liệu không phải là lớp bọc bên ngoài mà được tích hợp trực tiếp vào kiến trúc cơ sở dữ liệu và mã nguồn ngay từ dòng code đầu tiên.
+          </p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-icon-wrap">
+            <yin-icon name="check-circle" [size]="22"></yin-icon>
+          </div>
+          <h3 class="principle-title">Tối Thiểu Hóa Dữ Liệu (Data Minimization)</h3>
+          <p class="principle-desc">
+            Chỉ yêu cầu và thu thập đúng những dữ liệu tối cần thiết để kích hoạt tài khoản đối tác và phục vụ tiến độ thi công phần mềm, không thu thập dư thừa.
+          </p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-icon-wrap">
+            <yin-icon name="eye" [size]="22"></yin-icon>
+          </div>
+          <h3 class="principle-title">Minh Bạch & Hợp Pháp (Transparency)</h3>
+          <p class="principle-desc">
+            Khách hàng luôn biết rõ thông tin nào được thu thập, phục vụ mục đích gì và có toàn quyền kiểm tra, chỉnh sửa hoặc yêu cầu xóa bỏ bất kỳ lúc nào.
+          </p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-icon-wrap">
+            <yin-icon name="sparkles" [size]="22"></yin-icon>
+          </div>
+          <h3 class="principle-title">Kiểm Soát Vòng Đời End-to-End</h3>
+          <p class="principle-desc">
+            Kiểm soát chặt chẽ từng điểm chạm của dữ liệu: từ thời điểm người dùng nhập vào form đăng ký, lưu trữ trong cơ sở dữ liệu, cho đến khi tiêu hủy an toàn.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: 5 GIAI ĐOẠN QUẢN TRỊ END-TO-END -->
+    <section class="stages-section">
+      <h2 class="section-title">Chi Tiết Kiểm Soát Xuyên Suốt 5 Giai Đoạn Vòng Đời Dữ Liệu</h2>
+
+      <!-- GIAI ĐOẠN 1: THU THẬP -->
+      <article class="stage-card" id="stage-collection">
+        <div class="stage-header">
+          <div class="stage-badge">Giai Đoạn 1</div>
+          <h3 class="stage-title">Thu Thập: Hợp Pháp, Mục Đích Rõ Ràng, Tối Thiểu Hóa Dữ Liệu</h3>
+        </div>
+
+        <div class="stage-content">
+          <p class="stage-intro">
+            Yin chỉ thu thập dữ liệu cá nhân khi có sự đồng ý tự nguyện (explicit opt-in consent) của chủ thể dữ liệu tại biểu mẫu đăng ký, hoặc khi cần thiết để ký kết và thực hiện hợp đồng dịch vụ thi công phần mềm.
+          </p>
+
+          <h4 class="sub-heading">Danh mục thông tin thu thập tại trang đăng ký & mục đích cụ thể:</h4>
+          
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Thông tin thu thập</th>
+                  <th>Bắt buộc?</th>
+                  <th>Mục đích sử dụng chính danh</th>
+                  <th>Cơ sở pháp lý & Chuẩn bảo vệ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Địa chỉ Email</strong></td>
+                  <td><span class="tag-required">Bắt buộc</span></td>
+                  <td>Định danh tài khoản, nhận thông báo tiến độ thi công phần mềm, gửi báo cáo bảo mật và mã xác thực 2FA.</td>
+                  <td>Khoản 1 Điều 17 Nghị định 13/2023/NĐ-CP (Thực hiện hợp đồng dịch vụ).</td>
+                </tr>
+                <tr>
+                  <td><strong>Tên đăng nhập (Username)</strong></td>
+                  <td><span class="tag-required">Bắt buộc</span></td>
+                  <td>Tên định danh tài khoản nội bộ trên Yin Client Portal (3–50 ký tự ASCII).</td>
+                  <td>Tối thiểu hóa dữ liệu (không bắt buộc dùng tên thật nếu khách hàng muốn ẩn danh kỹ thuật).</td>
+                </tr>
+                <tr>
+                  <td><strong>Mật khẩu bảo mật</strong></td>
+                  <td><span class="tag-required">Bắt buộc</span></td>
+                  <td>Xác thực đăng nhập và bảo vệ tài khoản khỏi truy cập trái phép.</td>
+                  <td>Mã hóa băm 1 chiều bằng thuật toán <strong>Bcrypt/Argon2</strong> kèm Salt ngẫu nhiên, độ dài tối thiểu 12 ký tự.</td>
+                </tr>
+                <tr>
+                  <td><strong>Số điện thoại</strong></td>
+                  <td><span class="tag-required">Bắt buộc</span></td>
+                  <td>Kênh liên lạc khẩn cấp khi triển khai phát hành hệ thống (Release), hỗ trợ sự cố kỹ thuật 24/7 và gửi OTP qua SMS khi cần.</td>
+                  <td>Phục vụ liên lạc trực tiếp giữa kỹ sư Yin và đại diện kỹ thuật của khách hàng.</td>
+                </tr>
+                <tr>
+                  <td><strong>Ngày sinh</strong></td>
+                  <td><span class="tag-required">Bắt buộc</span></td>
+                  <td>Xác minh năng lực hành vi dân sự và năng lực giao kết hợp đồng thi công phần mềm theo Luật Giao Dịch Điện Tử.</td>
+                  <td>Quy chuẩn định danh đối tác doanh nghiệp và người đại diện ủy quyền.</td>
+                </tr>
+                <tr>
+                  <td><strong>Tùy chọn nhận bản tin công nghệ</strong></td>
+                  <td><span class="tag-optional">Tùy chọn</span></td>
+                  <td>Gửi định kỳ các báo cáo kiến trúc hệ thống mới, kinh nghiệm tối ưu tải cao và thông cáo an ninh mạng từ Yin Kenna.</td>
+                  <td>Khách hàng có thể bật/tắt bất kỳ lúc nào trong trang cài đặt tài khoản.</td>
+                </tr>
+                <tr>
+                  <td><strong>Địa chỉ IP & Logs truy cập</strong></td>
+                  <td><span class="tag-auto">Tự động</span></td>
+                  <td>Ghi nhận địa chỉ IP khi đăng ký/đăng nhập để ngăn chặn tấn công từ chối dịch vụ (DDoS) và Brute-force mật khẩu.</td>
+                  <td>Bảo vệ an ninh mạng hệ sinh thái Yin (Zero-Trust Security).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="policy-callout">
+            <yin-icon name="check-circle" [size]="18"></yin-icon>
+            <div>
+              <strong>Cam kết không thu thập dữ liệu nhạy cảm dư thừa:</strong> Yin tuyệt đối không thu thập số thẻ ngân hàng/CVV trên biểu mẫu, không ghi âm cuộc gọi trái phép, không thu thập dữ liệu sinh trắc học hoặc thông tin vị trí GPS thời gian thực.
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- GIAI ĐOẠN 2: LƯU TRỮ -->
+      <article class="stage-card" id="stage-storage">
+        <div class="stage-header">
+          <div class="stage-badge">Giai Đoạn 2</div>
+          <h3 class="stage-title">Lưu Trữ: Bảo Mật Đa Tầng, Phân Quyền Truy Cập Nghiêm Ngặt, Mã Hóa Khi Cần Thiết</h3>
+        </div>
+
+        <div class="stage-content">
+          <p class="stage-intro">
+            Dữ liệu cá nhân được lưu trữ trên hạ tầng máy chủ cô lập, được bảo vệ bằng nhiều lớp tường lửa mạng và cơ chế phòng thủ chuyên sâu (Defense-in-Depth).
+          </p>
+
+          <div class="grid-2-cols">
+            <div class="feature-box">
+              <div class="box-icon"><yin-icon name="shield" [size]="20"></yin-icon></div>
+              <h4>Mã Hóa Dữ Liệu Tiêu Chuẩn (Encryption)</h4>
+              <ul>
+                <li><strong>Dữ liệu truyền tải (In-Transit):</strong> 100% lưu lượng truy cập qua giao thức HTTPS bảo mật bằng TLS 1.3 và chứng chỉ bảo mật cấp cao.</li>
+                <li><strong>Dữ liệu lưu trữ (At-Rest):</strong> Hệ thống cơ sở dữ liệu Microsoft SQL Server áp dụng mã hóa <strong>AES-256</strong> đối với các trường thông tin danh tính; mật khẩu băm một chiều không thể đảo ngược.</li>
+                <li><strong>Khóa mã hóa (Key Management):</strong> Quản lý khóa riêng biệt trên dịch vụ quản trị khóa chuyên dụng, phân tách hoàn toàn khỏi database.</li>
+              </ul>
+            </div>
+
+            <div class="feature-box">
+              <div class="box-icon"><yin-icon name="users" [size]="20"></yin-icon></div>
+              <h4>Phân Quyền Truy Cập (Access Control)</h4>
+              <ul>
+                <li><strong>Nguyên tắc đặc quyền tối thiểu (Least Privilege):</strong> Nhân sự kỹ thuật chỉ được truy cập dữ liệu khi được phân công trực tiếp vào dự án liên quan.</li>
+                <li><strong>Phân quyền theo vai trò (Role-Based Access Control - RBAC):</strong> Phân chia rành mạch giữa các cấp Quản trị viên (Admin), Quản lý dự án (Manager) và Khách hàng (Client).</li>
+                <li><strong>Xác thực đa yếu tố (MFA):</strong> Bắt buộc xác thực hai bước đối với tất cả tài khoản quản trị nội bộ trước khi truy cập vào hệ quản trị.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="policy-callout">
+            <yin-icon name="globe" [size]="18"></yin-icon>
+            <div>
+              <strong>Chủ quyền dữ liệu tại Việt Nam:</strong> Cơ sở dữ liệu và hệ thống sao lưu của Yin được đặt tại các Data Center đạt tiêu chuẩn quốc tế Tier III tại Việt Nam, đáp ứng hoàn toàn quy định về an ninh mạng và lưu trữ dữ liệu tại Việt Nam.
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- GIAI ĐOẠN 3: SỬ DỤNG -->
+      <article class="stage-card" id="stage-usage">
+        <div class="stage-header">
+          <div class="stage-badge">Giai Đoạn 3</div>
+          <h3 class="stage-title">Sử Dụng: Đúng Mục Đích Đã Được Đồng Ý, Có Kiểm Soát Nội Bộ Tuyệt Đối</h3>
+        </div>
+
+        <div class="stage-content">
+          <p class="stage-intro">
+            Dữ liệu cá nhân của khách hàng chỉ được xử lý trong phạm vi các mục đích mà khách hàng đã đồng ý rõ ràng khi đăng ký tài khoản hoặc trong hợp đồng dịch vụ thi công phần mềm.
+          </p>
+
+          <div class="usage-rules-grid">
+            <div class="usage-card allow">
+              <div class="usage-card-header">
+                <yin-icon name="check-circle" [size]="18"></yin-icon>
+                <h4>Các Trường Hợp Sử Dụng Hợp Pháp</h4>
+              </div>
+              <ul>
+                <li>Cung cấp và duy trì tài khoản trên Yin Client Portal.</li>
+                <li>Thông báo trạng thái hoàn thành các Sprint thi công phần mềm.</li>
+                <li>Tiếp nhận, xử lý và phản hồi các yêu cầu hỗ trợ kỹ thuật (Ticket SLA).</li>
+                <li>Gửi hóa đơn điện tử, đối soát công nợ và biên bản nghiệm thu phần mềm.</li>
+                <li>Cảnh báo khẩn cấp khi phát hiện dấu hiệu truy cập bất thường vào tài khoản.</li>
+              </ul>
+            </div>
+
+            <div class="usage-card deny">
+              <div class="usage-card-header">
+                <yin-icon name="alert-circle" [size]="18"></yin-icon>
+                <h4>Hành Vi Nghiêm Cấm Tuyệt Đối Tại Yin</h4>
+              </div>
+              <ul>
+                <li>Sử dụng thông tin khách hàng cho mục đích cá nhân của nhân sự.</li>
+                <li>Tự ý gửi quảng cáo rác (Spam) hoặc chia sẻ danh bạ khách hàng.</li>
+                <li>Sao chép, lưu trữ dữ liệu khách hàng trên thiết bị cá nhân không quản lý.</li>
+                <li>Sử dụng dữ liệu khách hàng để huấn luyện AI mà không có sự đồng ý bằng văn bản.</li>
+                <li>Truy cập cơ sở dữ liệu khách hàng mà không có lý do công việc chính đáng.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="audit-box">
+            <h4>Hệ Thống Kiểm Toán Nội Bộ & Nhật Ký Truy Vết (Audit Trail):</h4>
+            <p>
+              Mọi hành động đọc, ghi, chỉnh sửa hoặc xuất báo cáo liên quan đến dữ liệu cá nhân đều được hệ thống tự động ghi lại trong nhật ký kiểm toán không thể sửa đổi (Immutable Audit Log) với đầy đủ thông tin: ID nhân sự, thời điểm chính xác, địa chỉ IP và hành động thực hiện.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- GIAI ĐOẠN 4: CHIA SẺ / CHUYỂN GIAO -->
+      <article class="stage-card" id="stage-transfer">
+        <div class="stage-header">
+          <div class="stage-badge">Giai Đoạn 4</div>
+          <h3 class="stage-title">Chia Sẻ & Chuyển Giao: Đánh Giá Rủi Ro Bên Thứ Ba, Có Thỏa Thuận Ràng Buộc</h3>
+        </div>
+
+        <div class="stage-content">
+          <p class="stage-intro">
+            Yin áp dụng nguyên tắc nghiêm ngặt: <strong>“Không bán, không cho thuê và không chia sẻ thông tin cá nhân của khách hàng cho bất kỳ bên thứ ba vì mục đích tiếp thị hoặc thương mại.”</strong>
+          </p>
+
+          <h4 class="sub-heading">Quy trình kiểm soát khi cần chuyển giao hoặc tích hợp với bên thứ ba:</h4>
+
+          <div class="transfer-steps">
+            <div class="transfer-step">
+              <div class="step-circle">A</div>
+              <div class="step-info">
+                <strong>Thẩm Định & Đánh Giá Rủi Ro Bên Thứ Ba (Vendor Risk Assessment)</strong>
+                <p>Trước khi kết nối API hoặc thuê dịch vụ hạ tầng (ví dụ cổng thanh toán, dịch vụ gửi SMS OTP), Yin tiến hành đánh giá năng lực bảo mật, chứng chỉ ISO 27001 và chính sách tuân thủ của nhà cung cấp.</p>
+              </div>
+            </div>
+
+            <div class="transfer-step">
+              <div class="step-circle">B</div>
+              <div class="step-info">
+                <strong>Ký Kết Thỏa Thuận Xử Lý Dữ Liệu Ràng Buộc (DPA & NDA)</strong>
+                <p>Mọi bên thứ ba cung cấp dịch vụ bắt buộc phải ký kết Thỏa thuận Xử lý Dữ liệu (Data Processing Agreement) và Thỏa thuận Bảo mật (NDA), cam kết chỉ xử lý dữ liệu theo chỉ thị của Yin và phải tiêu hủy ngay khi hoàn thành nhiệm vụ.</p>
+              </div>
+            </div>
+
+            <div class="transfer-step">
+              <div class="step-circle">C</div>
+              <div class="step-info">
+                <strong>Yêu Cầu Cơ Quan Nhà Nước Có Thẩm Quyền</strong>
+                <p>Yin chỉ cung cấp thông tin cho cơ quan thực thi pháp luật khi có văn bản yêu cầu chính thức theo đúng trình tự tố tụng luật định và luôn thực hiện các biện pháp giới hạn phạm vi cung cấp ở mức tối thiểu.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- GIAI ĐOẠN 5: XÓA BỎ / HỦY DỮ LIỆU -->
+      <article class="stage-card" id="stage-deletion">
+        <div class="stage-header">
+          <div class="stage-badge">Giai Đoạn 5</div>
+          <h3 class="stage-title">Xóa Bỏ & Hủy Dữ Liệu: Đúng Thời Hạn, Bảo Đảm Không Thể Khôi Phục Trái Phép</h3>
+        </div>
+
+        <div class="stage-content">
+          <p class="stage-intro">
+            Dữ liệu cá nhân không được lưu giữ vô thời hạn. Khi hết mục đích sử dụng, hết thời hạn cam kết hoặc khi khách hàng rút lại sự đồng ý, quy trình tiêu hủy dữ liệu số an toàn sẽ được kích hoạt ngay lập tức.
+          </p>
+
+          <div class="grid-2-cols">
+            <div class="feature-box">
+              <div class="box-icon"><yin-icon name="clock" [size]="20"></yin-icon></div>
+              <h4>Thời Hạn Lưu Trữ & Kích Hoạt Xóa</h4>
+              <ul>
+                <li><strong>Tài khoản hoạt động:</strong> Lưu trữ trong suốt thời gian khách hàng duy trì hợp tác cùng Yin.</li>
+                <li><strong>Yêu cầu xóa tài khoản:</strong> Xử lý và hoàn tất việc xóa dữ liệu trong vòng <strong>tối đa 7 ngày làm việc</strong> kể từ khi tiếp nhận yêu cầu hợp lệ.</li>
+                <li><strong>Thời hiệu lưu trữ pháp lý:</strong> Đối với các chứng từ kế toán, hóa đơn và hợp đồng thi công phần mềm, dữ liệu được lưu trữ theo thời hạn bắt buộc của Luật Kế toán và pháp luật liên quan.</li>
+              </ul>
+            </div>
+
+            <div class="feature-box">
+              <div class="box-icon"><yin-icon name="trash" [size]="20"></yin-icon></div>
+              <h4>Quy Chuẩn Tiêu Hủy An Toàn (Sanitization)</h4>
+              <ul>
+                <li><strong>Xóa vĩnh viễn khóa giải mã (Cryptographic Erasure):</strong> Tiêu hủy khóa mã hóa dữ liệu nhạy cảm khiến dữ liệu còn lại trở thành chuỗi nhị phân vô nghĩa không thể giải mã.</li>
+                <li><strong>Ghi đè vật lý (Data Overwrite):</strong> Áp dụng chuẩn ghi đè nhiều lượt đối với dữ liệu sao lưu trước khi giải phóng không gian lưu trữ vật lý.</li>
+                <li><strong>Cam kết chống khôi phục:</strong> Bảo đảm không một bên thứ ba hay kỹ thuật phục hồi dữ liệu số nào có thể khôi phục lại dữ liệu đã xóa.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- SECTION: Quyền Của Khách Hàng (Data Subject Rights) -->
+    <section class="rights-section">
+      <h2 class="section-title">Quyền Của Quý Khách Hàng Đối Với Dữ Liệu Cá Nhân</h2>
+      <p class="section-desc">
+        Theo quy định tại Nghị định số 13/2023/NĐ-CP về Bảo vệ dữ liệu cá nhân, khách hàng tại Yin sở hữu đầy đủ các quyền hợp pháp sau:
+      </p>
+
+      <div class="rights-grid">
+        <div class="right-card">
+          <div class="right-number">01</div>
+          <h4>Quyền Được Biết</h4>
+          <p>Được thông báo rõ ràng về hoạt động xử lý dữ liệu cá nhân thông qua văn bản chính sách này.</p>
+        </div>
+
+        <div class="right-card">
+          <div class="right-number">02</div>
+          <h4>Quyền Đồng Ý & Rút Lại</h4>
+          <p>Có quyền đồng ý, không đồng ý hoặc rút lại sự đồng ý đã cấp trước đó bất cứ lúc nào.</p>
+        </div>
+
+        <div class="right-card">
+          <div class="right-number">03</div>
+          <h4>Quyền Truy Cập & Chỉnh Sửa</h4>
+          <p>Xem trực tiếp và cập nhật thông tin cá nhân (SĐT, Email, Mật khẩu) trong trang Quản lý tài khoản.</p>
+        </div>
+
+        <div class="right-card">
+          <div class="right-number">04</div>
+          <h4>Quyền Xóa Dữ Liệu</h4>
+          <p>Yêu cầu xóa toàn bộ dữ liệu cá nhân khi không còn nhu cầu sử dụng dịch vụ hoặc chấm dứt hợp tác.</p>
+        </div>
+
+        <div class="right-card">
+          <div class="right-number">05</div>
+          <h4>Quyền Hạn Chế Xử Lý</h4>
+          <p>Yêu cầu hạn chế xử lý dữ liệu cá nhân trong một số trường hợp cụ thể theo quy định pháp luật.</p>
+        </div>
+
+        <div class="right-card">
+          <div class="right-number">06</div>
+          <h4>Quyền Khiếu Nại & Bồi Thường</h4>
+          <p>Gửi khiếu nại đến Cơ quan bảo vệ dữ liệu nếu phát hiện dấu hiệu vi phạm quyền riêng tư.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Kênh Tiếp Nhận & Cán Bộ Bảo Vệ Dữ Liệu (DPO) -->
+    <section class="dpo-section">
+      <div class="dpo-card">
+        <div class="dpo-header">
+          <div class="dpo-icon"><yin-icon name="shield" [size]="28"></yin-icon></div>
+          <div>
+            <h3 class="dpo-title">Bộ Phận Bảo Vệ Dữ Liệu & Hỗ Trợ Khách Hàng (DPO Yin)</h3>
+            <p class="dpo-subtitle">Mọi yêu cầu truy cập, chỉnh sửa, xóa dữ liệu hoặc thắc mắc về chính sách này, quý khách vui lòng liên hệ:</p>
+          </div>
+        </div>
+
+        <div class="dpo-info-grid">
+          <div class="dpo-info-item">
+            <span class="dpo-label">Email Chuyên Trách Bảo Mật:</span>
+            <span class="dpo-value"><a href="mailto:privacy@yin.vn">privacy&#64;yin.vn</a> (cc: contact&#64;yin.vn)</span>
+          </div>
+
+          <div class="dpo-info-item">
+            <span class="dpo-label">Hotline Kỹ Thuật (Founder Khang):</span>
+            <span class="dpo-value">+84 900 123 456</span>
+          </div>
+
+          <div class="dpo-info-item">
+            <span class="dpo-label">Địa Chỉ Tiếp Nhận Trực Tiếp:</span>
+            <span class="dpo-value">Khu Công Nghệ Cao, TP. Thủ Đức, TP. Hồ Chí Minh</span>
+          </div>
+
+          <div class="dpo-info-item">
+            <span class="dpo-label">Thời Hạn Phản Hồi Cam Kết:</span>
+            <span class="dpo-value">Trong vòng tối đa 24 giờ làm việc</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Box at the bottom -->
+    <div class="bottom-action-box">
+      <div class="bottom-action-content">
+        <h3>Quý khách đã nắm rõ quy chuẩn bảo mật và quản trị dữ liệu của Yin?</h3>
+        <p>Bằng việc bấm xác nhận hoặc tạo tài khoản trên trang đăng ký, quý khách xác nhận chấp thuận mô hình quản trị dữ liệu End-to-End.</p>
+      </div>
+      <div class="bottom-action-buttons">
+        <button type="button" class="yin-btn yin-btn-primary" (click)="confirmAcceptance()">
+          <yin-icon name="check-circle" [size]="16"></yin-icon>
+          <span>Tôi Đã Đọc & Chấp Nhận Chính Sách</span>
+        </button>
+        <a routerLink="/register" class="yin-btn yin-btn-secondary">
+          <span>Tiến Hành Đăng Ký Tài Khoản &rarr;</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+

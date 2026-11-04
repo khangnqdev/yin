@@ -64,6 +64,24 @@ export const routes: Routes = [
     },
     loadComponent: () => import('./features/public/contact/contact.component').then(m => m.ContactComponent)
   },
+  {
+    path: 'privacy',
+    title: 'Chính Sách Bảo Mật & Quản Trị Dữ Liệu',
+    data: {
+      title: 'Chính Sách Bảo Mật & Quản Trị Dữ Liệu Cá Nhân | Yin',
+      description: 'Chính sách bảo mật thông tin và mô hình quản trị dữ liệu end-to-end theo tiêu chuẩn quốc tế và Nghị định 13/2023/NĐ-CP tại Yin Kenna.',
+      keywords: 'chính sách bảo mật, quản trị dữ liệu, bảo vệ dữ liệu cá nhân, Nghị định 13, end-to-end data governance, Yin'
+    },
+    loadComponent: () => import('./features/public/privacy/privacy.component').then(m => m.PrivacyComponent)
+  },
+  {
+    path: 'terms',
+    redirectTo: 'privacy'
+  },
+  {
+    path: 'chinh-sach-bao-mat',
+    redirectTo: 'privacy'
+  },
 
   // 2. CLIENT AUTHENTICATION & PORTAL
   {

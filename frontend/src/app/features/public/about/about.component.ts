@@ -16,9 +16,10 @@ export class AboutComponent implements OnInit {
   protected readonly pageDoc = computed(() => this.db.getPageDocument('about'));
   protected readonly blocks = computed(() => this.pageDoc()?.blocks || []);
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.db.recordPageView('/about', 'direct');
     this.tracker.initTargetTracking('page_about', 'Giới Thiệu Yin');
+    await this.db.fetchPageByKey('about');
   }
 }
 

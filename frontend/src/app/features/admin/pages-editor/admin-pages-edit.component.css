@@ -1095,37 +1095,216 @@
   color: #ffffff;
 }
 
-/* Stream of Blocks */
-.canvas-blocks-stream {
+/* Natural Stream of Blocks with SortableJS */
+.canvas-blocks-stream,
+.canvas-blocks-grid {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
   width: 100%;
+  align-items: stretch;
+  min-height: 250px;
 }
 
-/* BLOCK WRAPPER WITH SELECTION BOUNDING BOX (Khớp ảnh mẫu: viền cam đứt nét) */
+/* BLOCK WRAPPER WITH SELECTION BOUNDING BOX */
 .canvas-block-wrapper {
   position: relative;
   width: 100%;
   box-sizing: border-box;
   cursor: pointer;
-  transition: outline 0.15s ease;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: visible;
+  min-width: 0;
+}
+
+.canvas-live-preview-wrap {
+  width: 100%;
+  pointer-events: auto;
+  border-radius: 0 0 14px 14px;
+  overflow: hidden;
+}
+
+.canvas-live-preview-wrap a,
+.canvas-live-preview-wrap button {
+  pointer-events: none !important;
 }
 
 .canvas-block-wrapper:hover {
-  outline: 1.5px dashed rgba(234, 88, 12, 0.4);
-  outline-offset: -2px;
+  border-color: rgba(234, 88, 12, 0.5);
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.08);
 }
 
 .canvas-block-wrapper.is-selected {
-  outline: 2px dashed var(--builder-accent) !important;
-  outline-offset: -2px;
+  outline: 2.5px solid var(--builder-accent) !important;
+  outline-offset: 2px;
+  box-shadow: 0 12px 32px rgba(234, 88, 12, 0.12);
+}
+
+/* Card Admin Control Bar on top of each block */
+.card-admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.85rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 14px 14px 0 0;
+  gap: 0.75rem;
+}
+
+.drag-handle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: grab;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.drag-handle-btn:hover {
+  background: #f1f5f9;
+  color: var(--builder-accent);
+  border-color: var(--builder-accent);
+}
+
+.drag-handle-btn:active {
+  cursor: grabbing;
+}
+
+.card-type-label {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Grid Span Toggle Pills (1 Ô vs 2 Ô) */
+.grid-span-pill {
+  display: inline-flex;
+  align-items: center;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.grid-span-btn {
+  padding: 0.2rem 0.55rem;
+  border: none;
+  background: transparent;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.grid-span-btn.active {
+  background: #ffffff;
+  color: var(--builder-accent);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mini-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #64748b;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mini-tool-btn:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.mini-tool-btn.btn-danger:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #ef4444;
+}
+
+/* Card Resize Handle on right edge */
+.card-resize-handle {
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid var(--builder-accent);
+  color: var(--builder-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 20;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.canvas-block-wrapper:hover .card-resize-handle {
+  opacity: 1;
+}
+
+.card-resize-handle:hover {
+  background: var(--builder-accent);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* SortableJS Drag & Drop Animations & Classes */
+.sortable-ghost-card {
+  opacity: 0.3 !important;
+  background: #ffedd5 !important;
+  border: 2px dashed #ea580c !important;
+  box-shadow: none !important;
+}
+
+.sortable-chosen-card {
+  cursor: grabbing !important;
+  box-shadow: 0 16px 32px rgba(234, 88, 12, 0.2) !important;
+}
+
+.sortable-drag-card {
+  opacity: 0.95 !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.25) !important;
+  z-index: 1000 !important;
 }
 
 /* Bounding Tag (Top-right pill khớp ảnh mẫu: 'Multi column' tag cam) */
 .block-bounding-tag {
   position: absolute;
   top: -24px;
-  right: 0;
+  right: 12px;
   background: var(--builder-accent);
   color: #ffffff;
   font-size: 0.75rem;
@@ -1604,4 +1783,152 @@
 .picker-desc {
   font-size: 0.725rem;
   color: var(--builder-text-muted);
+}
+
+/* =========================================================
+   TEXT-ONLY INSPECTOR & SUB-ITEMS SORTABLE DRAG & DROP
+   ========================================================= */
+
+.mini-tool-btn.edit-btn {
+  background: rgba(234, 88, 12, 0.1);
+  color: #ea580c;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  gap: 0.35rem;
+}
+
+.mini-tool-btn.edit-btn:hover {
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.sub-items-header {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sub-items-sortable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  width: 100%;
+}
+
+.sub-item-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.sub-item-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.sub-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sub-item-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: grab;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  user-select: none;
+}
+
+.sub-item-drag-handle:active {
+  cursor: grabbing;
+}
+
+.sub-item-drag-handle:hover {
+  color: #ea580c;
+}
+
+.mini-del-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #ef4444;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mini-del-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.sub-item-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mini-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.2rem;
+}
+
+.add-sub-item-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ea580c;
+  background: rgba(234, 88, 12, 0.06);
+  border: 1.5px dashed rgba(234, 88, 12, 0.35);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-sub-item-btn:hover {
+  background: rgba(234, 88, 12, 0.12);
+  border-color: #ea580c;
+  color: #c2410c;
+  transform: translateY(-1px);
+}
+
+/* SortableJS Ghost & Drag states for Sub Items */
+.sortable-ghost-sub {
+  opacity: 0.35 !important;
+  background: #ffedd5 !important;
+  border: 2px dashed #ea580c !important;
+  box-shadow: none !important;
+}
+
+.sortable-chosen-sub {
+  cursor: grabbing !important;
+  background: #f8fafc !important;
+  box-shadow: 0 8px 20px rgba(234, 88, 12, 0.15) !important;
 }

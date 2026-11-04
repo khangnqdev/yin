@@ -31,6 +31,7 @@ export interface BlockStyle {
   borderStyle?: 'none' | 'subtle' | 'solid';
   fullWidth?: boolean;
   gap?: 'sm' | 'md' | 'lg';
+  gridColumns?: 1 | 2; // 1 ô (50% trên màn hình lớn) hoặc 2 ô (100% toàn chiều rộng)
 }
 
 export interface BaseBlock {

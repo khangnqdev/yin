@@ -1,12 +1,14 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import Sortable from 'sortablejs';
 import { LocalDbService } from '../../../core/services/local-db.service';
 import { FooterService } from '../../../core/services/footer.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { FooterConfig } from '../../../core/models/footer-config.model';
 import { 
   PageKey, 
+  PageDocument,
   BlockType,
   DynamicBlock, 
   HeroBlock, 
@@ -28,6 +30,7 @@ import {
   BlockStyle
 } from '../../../core/models/page-block.model';
 import { YinIconComponent } from '../../../core/components/icon/icon.component';
+import { DynamicPageHostComponent } from '../../../shared/components/dynamic-page-host/dynamic-page-host.component';
 
 export interface PaletteItem {
   type: BlockType;
@@ -42,12 +45,18 @@ export interface PaletteItem {
   selector: 'yin-admin-pages-edit',
   templateUrl: './admin-pages-edit.component.html',
   styleUrls: ['./admin-pages-edit.component.css'],
-  imports: [FormsModule, RouterLink, YinIconComponent]
+  imports: [FormsModule, RouterLink, YinIconComponent, DynamicPageHostComponent]
 })
-export class AdminPagesEditComponent implements OnInit {
+export class AdminPagesEditComponent implements OnInit, AfterViewInit, OnDestroy {
   protected readonly db = inject(LocalDbService);
   private readonly footerService = inject(FooterService);
   private readonly notificationService = inject(NotificationService);
+
+  @ViewChild('sortableContainer', { static: false })
+  private sortableContainerRef?: ElementRef<HTMLElement>;
+
+  private sortableInstance: Sortable | null = null;
+  private subSortableInstance: Sortable | null = null;
 
   // Active Page & State
   protected readonly selectedPageKey = signal<PageKey>('home');
@@ -146,6 +155,304 @@ export class AdminPagesEditComponent implements OnInit {
     await this.selectPage('home');
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => this.initSortable(), 200);
+  }
+
+  ngOnDestroy(): void {
+    if (this.sortableInstance) {
+      this.sortableInstance.destroy();
+      this.sortableInstance = null;
+    }
+    if (this.subSortableInstance) {
+      this.subSortableInstance.destroy();
+      this.subSortableInstance = null;
+    }
+  }
+
+  /**
+   * Khởi tạo SortableJS cho luồng khối chính trên canvas
+   */
+  initSortable(): void {
+    if (typeof window === 'undefined') return;
+    if (this.sortableInstance) {
+      this.sortableInstance.destroy();
+      this.sortableInstance = null;
+    }
+    const el = this.sortableContainerRef?.nativeElement;
+    if (!el) return;
+
+    this.sortableInstance = new Sortable(el, {
+      animation: 200,
+      handle: '.drag-handle-btn, .block-bounding-tag, .card-admin-header',
+      ghostClass: 'sortable-ghost-card',
+      chosenClass: 'sortable-chosen-card',
+      dragClass: 'sortable-drag-card',
+      filter: 'button, input, textarea, a, .card-header-actions',
+      preventOnFilter: false,
+      onEnd: (evt) => {
+        if (evt.oldIndex !== undefined && evt.newIndex !== undefined && evt.oldIndex !== evt.newIndex) {
+          this.reorderBlocks(evt.oldIndex, evt.newIndex);
+        }
+      }
+    });
+  }
+
+  /**
+   * Khởi tạo SortableJS cho danh sách các thẻ lặp lại (sub-items) trong Inspector
+   */
+  initSubSortable(): void {
+    if (typeof window === 'undefined') return;
+    if (this.subSortableInstance) {
+      this.subSortableInstance.destroy();
+      this.subSortableInstance = null;
+    }
+    const el = document.querySelector('.sub-items-sortable-list') as HTMLElement | null;
+    if (!el) return;
+
+    this.subSortableInstance = new Sortable(el, {
+      animation: 180,
+      handle: '.sub-item-drag-handle',
+      ghostClass: 'sortable-ghost-sub',
+      chosenClass: 'sortable-chosen-sub',
+      filter: 'input, textarea, button, select, a',
+      preventOnFilter: false,
+      onEnd: (evt) => {
+        if (evt.oldIndex !== undefined && evt.newIndex !== undefined && evt.oldIndex !== evt.newIndex) {
+          this.reorderSubItems(evt.oldIndex, evt.newIndex);
+        }
+      }
+    });
+  }
+
+  /**
+   * Đồng bộ cập nhật mảng khối và phát tín hiệu signal cho Angular OnPush canvas
+   */
+  updateDocBlocks(blocks: DynamicBlock[]): void {
+    const key = this.selectedPageKey();
+    const doc = this.currentPageDoc();
+    if (!doc) return;
+
+    const cloned = JSON.parse(JSON.stringify(blocks)) as DynamicBlock[];
+    const updatedDoc: PageDocument = {
+      ...doc,
+      blocks: cloned,
+      updatedAt: new Date().toISOString()
+    };
+
+    this.db.pages.update(pages => ({ ...pages, [key]: updatedDoc }));
+    setTimeout(() => {
+      this.initSortable();
+      this.initSubSortable();
+    }, 60);
+  }
+
+  /**
+   * Kích hoạt cập nhật tức thì khi chỉnh sửa bất kỳ trường nào trong Inspector
+   */
+  onBlockFieldChange(): void {
+    const doc = this.currentPageDoc();
+    if (!doc) return;
+    this.pushHistory();
+    this.updateDocBlocks(doc.blocks);
+  }
+
+  /**
+   * Lấy danh sách sub-items của khối
+   */
+  getSubItems(block: DynamicBlock): any[] | null {
+    if (!block) return null;
+    switch (block.type) {
+      case 'hero': return (block as HeroBlock).statsPreview || null;
+      case 'stats': return (block as StatsBlock).items || null;
+      case 'steps': return (block as StepsBlock).steps || null;
+      case 'projects-grid': return (block as ProjectsGridBlock).projects || null;
+      case 'options': return (block as OptionsBlock).options || null;
+      case 'multi-column': return (block as MultiColumnBlock).columns || null;
+      case 'programs': return (block as ProgramsBlock).programs || null;
+      case 'testimonials': return (block as TestimonialsBlock).items || null;
+      case 'faq': return (block as FaqBlock).items || null;
+      case 'form': return (block as FormBlock).fields || null;
+      case 'rich-content': return (block as RichContentBlock).items || null;
+      default: return null;
+    }
+  }
+
+  /**
+   * Kéo thả đổi vị trí đối tượng/thẻ con trong danh sách
+   */
+  reorderSubItems(fromIndex: number, toIndex: number): void {
+    const block = this.selectedBlock();
+    if (!block) return;
+    const list = this.getSubItems(block);
+    if (!list || fromIndex < 0 || toIndex < 0 || fromIndex >= list.length || toIndex >= list.length) return;
+
+    const [moved] = list.splice(fromIndex, 1);
+    list.splice(toIndex, 0, moved);
+    this.onBlockFieldChange();
+    setTimeout(() => this.initSubSortable(), 60);
+  }
+
+  /**
+   * Thêm đối tượng mới vào danh sách (Dynamic Addition)
+   */
+  addSubItem(block: DynamicBlock): void {
+    if (!block) return;
+    this.pushHistory();
+    switch (block.type) {
+      case 'hero': {
+        const b = block as HeroBlock;
+        if (!b.statsPreview) b.statsPreview = [];
+        b.statsPreview.push({ label: 'Chỉ số mới', value: '100+' });
+        break;
+      }
+      case 'stats': {
+        const b = block as StatsBlock;
+        if (!b.items) b.items = [];
+        b.items.push({ number: '100+', label: 'Chỉ số mới', description: 'Mô tả ngắn gọn về chỉ số đạt được' });
+        break;
+      }
+      case 'steps': {
+        const b = block as StepsBlock;
+        if (!b.steps) b.steps = [];
+        const nextNum = String(b.steps.length + 1).padStart(2, '0');
+        b.steps.push({ stepNumber: nextNum, title: `Bước ${nextNum}: Tiêu đề bước`, description: 'Mô tả chi tiết nội dung của bước này' });
+        break;
+      }
+      case 'projects-grid': {
+        const b = block as ProjectsGridBlock;
+        if (!b.projects) b.projects = [];
+        b.projects.push({
+          id: 'proj_' + Date.now(),
+          title: 'Dự án mới',
+          category: 'Công nghệ cao',
+          summary: 'Tóm tắt giải pháp và giá trị mang lại cho khách hàng.',
+          client: 'Khách hàng đối tác',
+          technologies: ['Angular', 'Spring Boot'],
+          metrics: '+50% Hiệu suất',
+          link: '/projects'
+        });
+        break;
+      }
+      case 'options': {
+        const b = block as OptionsBlock;
+        if (!b.options) b.options = [];
+        b.options.push({
+          title: 'Gói dịch vụ mới',
+          price: 'Liên hệ',
+          description: 'Mô tả gói dịch vụ và phạm vi áp dụng.',
+          features: ['Hỗ trợ kỹ thuật 24/7', 'Bảo trì trọn đời', 'Báo cáo định kỳ'],
+          buttonText: 'Chọn Gói Này',
+          buttonLink: '/contact'
+        });
+        break;
+      }
+      case 'multi-column': {
+        const b = block as MultiColumnBlock;
+        if (!b.columns) b.columns = [];
+        b.columns.push({
+          title: 'Cột tính năng mới',
+          description: 'Mô tả chi tiết tính năng hoặc dịch vụ nổi bật.',
+          linkText: 'Tìm hiểu thêm',
+          link: '/about'
+        });
+        b.columnsCount = b.columns.length;
+        break;
+      }
+      case 'programs': {
+        const b = block as ProgramsBlock;
+        if (!b.programs) b.programs = [];
+        b.programs.push({
+          title: 'Chương trình / Dịch vụ mới',
+          category: 'Phát triển chuyên sâu',
+          description: 'Mô tả tổng quan về chương trình và giá trị cốt lõi.',
+          duration: '3 tháng',
+          badge: 'Mới'
+        });
+        break;
+      }
+      case 'testimonials': {
+        const b = block as TestimonialsBlock;
+        if (!b.items) b.items = [];
+        b.items.push({
+          quote: 'Dịch vụ và chất lượng công nghệ vượt trội, mang lại hiệu quả to lớn.',
+          author: 'Nguyễn Văn A',
+          position: 'Giám đốc Công nghệ (CTO)',
+          company: 'Tập đoàn Doanh nghiệp',
+          rating: 5
+        });
+        break;
+      }
+      case 'faq': {
+        const b = block as FaqBlock;
+        if (!b.items) b.items = [];
+        b.items.push({
+          question: 'Câu hỏi thường gặp mới là gì?',
+          answer: 'Câu trả lời giải thích chi tiết và rõ ràng cho khách hàng.'
+        });
+        break;
+      }
+      case 'form': {
+        const b = block as FormBlock;
+        if (!b.fields) b.fields = [];
+        b.fields.push({
+          label: 'Trường thông tin mới',
+          placeholder: 'Nhập thông tin...',
+          fieldType: 'text',
+          required: true
+        });
+        break;
+      }
+      case 'rich-content': {
+        const b = block as RichContentBlock;
+        if (!b.items) b.items = [];
+        b.items.push({
+          heading: 'Mục nội dung mới',
+          body: 'Nội dung chi tiết diễn giải cho phần này.'
+        });
+        break;
+      }
+    }
+    this.onBlockFieldChange();
+    setTimeout(() => this.initSubSortable(), 80);
+  }
+
+  /**
+   * Xóa đối tượng con khỏi danh sách
+   */
+  removeSubItem(block: DynamicBlock, index: number): void {
+    if (!block) return;
+    const list = this.getSubItems(block);
+    if (!list || index < 0 || index >= list.length) return;
+    this.pushHistory();
+    list.splice(index, 1);
+    if (block.type === 'multi-column') {
+      (block as MultiColumnBlock).columnsCount = (block as MultiColumnBlock).columns.length;
+    }
+    this.onBlockFieldChange();
+    setTimeout(() => this.initSubSortable(), 80);
+  }
+
+  /**
+   * Thiết lập độ rộng ô lưới (tương thích ngược)
+   */
+  setGridColumns(block: DynamicBlock, cols: 1 | 2, event?: MouseEvent): void {
+    if (event) event.stopPropagation();
+    this.ensureBlockStyle(block);
+    block.style!.gridColumns = cols;
+    const doc = this.currentPageDoc();
+    if (doc) {
+      this.pushHistory();
+      this.updateDocBlocks(doc.blocks);
+    }
+  }
+
+  toggleGridColumns(block: DynamicBlock, event?: MouseEvent): void {
+    if (event) event.stopPropagation();
+    const current = block.style?.gridColumns === 1 ? 2 : 1;
+    this.setGridColumns(block, current);
+  }
+
   // Page selection
   async selectPage(key: PageKey): Promise<void> {
     this.isFooterActive.set(false);
@@ -157,6 +464,7 @@ export class AdminPagesEditComponent implements OnInit {
       await this.db.fetchPageByKey(key);
     }
     this.initHistory();
+    setTimeout(() => this.initSortable(), 200);
   }
 
   selectFooter(): void {
@@ -195,6 +503,7 @@ export class AdminPagesEditComponent implements OnInit {
     this.selectedBlockId.set(blockId);
     this.sidebarTab.set('edit');
     this.inspectorMode.set('block');
+    setTimeout(() => this.initSubSortable(), 120);
   }
 
   deselectBlock(): void {
@@ -313,7 +622,7 @@ export class AdminPagesEditComponent implements OnInit {
     const newBlock = this.createDefaultBlock(type);
     const updatedBlocks = [...doc.blocks];
     updatedBlocks.splice(index, 0, newBlock);
-    doc.blocks = updatedBlocks;
+    this.updateDocBlocks(updatedBlocks);
 
     this.selectedBlockId.set(newBlock.id);
     this.sidebarTab.set('edit');
@@ -342,7 +651,7 @@ export class AdminPagesEditComponent implements OnInit {
 
     const updated = [...doc.blocks];
     updated.splice(idx + 1, 0, clone);
-    doc.blocks = updated;
+    this.updateDocBlocks(updated);
 
     this.selectedBlockId.set(clone.id);
   }
@@ -353,7 +662,8 @@ export class AdminPagesEditComponent implements OnInit {
     if (!doc) return;
 
     this.pushHistory();
-    doc.blocks = doc.blocks.filter(b => b.id !== blockId);
+    const updated = doc.blocks.filter(b => b.id !== blockId);
+    this.updateDocBlocks(updated);
     if (this.selectedBlockId() === blockId) {
       this.selectedBlockId.set(null);
     }
@@ -381,7 +691,7 @@ export class AdminPagesEditComponent implements OnInit {
     const updated = [...doc.blocks];
     const [moved] = updated.splice(fromIndex, 1);
     updated.splice(toIndex, 0, moved);
-    doc.blocks = updated;
+    this.updateDocBlocks(updated);
   }
 
   // Alignment and Style Controls
@@ -389,22 +699,26 @@ export class AdminPagesEditComponent implements OnInit {
     if (event) event.stopPropagation();
     this.ensureBlockStyle(block);
     block.style!.textAlign = align;
+    this.onBlockFieldChange();
   }
 
   setDirection(block: DynamicBlock, dir: 'row' | 'column', event?: MouseEvent): void {
     if (event) event.stopPropagation();
     this.ensureBlockStyle(block);
     block.style!.layoutDirection = dir;
+    this.onBlockFieldChange();
   }
 
   setGap(block: DynamicBlock, gap: 'sm' | 'md' | 'lg'): void {
     this.ensureBlockStyle(block);
     block.style!.gap = gap;
+    this.onBlockFieldChange();
   }
 
   setFullWidth(block: DynamicBlock, fullWidth: boolean): void {
     this.ensureBlockStyle(block);
     block.style!.fullWidth = fullWidth;
+    this.onBlockFieldChange();
   }
 
   setBackground(block: DynamicBlock, type: 'transparent' | 'light' | 'dark' | 'gradient' | 'image', value?: string): void {
@@ -441,31 +755,37 @@ export class AdminPagesEditComponent implements OnInit {
         s.textColor = '#ffffff';
         break;
     }
+    this.onBlockFieldChange();
   }
 
   setBackgroundOverlay(block: DynamicBlock, overlay: number): void {
     this.ensureBlockStyle(block);
     block.style!.backgroundOverlay = overlay;
+    this.onBlockFieldChange();
   }
 
   setPaddingY(block: DynamicBlock, pad: 'none' | 'sm' | 'md' | 'lg' | 'xl'): void {
     this.ensureBlockStyle(block);
     block.style!.paddingY = pad;
+    this.onBlockFieldChange();
   }
 
   setBorderRadius(block: DynamicBlock, r: 'none' | 'sm' | 'md' | 'lg' | 'full'): void {
     this.ensureBlockStyle(block);
     block.style!.borderRadius = r;
+    this.onBlockFieldChange();
   }
 
   setTextColor(block: DynamicBlock, color: string): void {
     this.ensureBlockStyle(block);
     block.style!.textColor = color;
+    this.onBlockFieldChange();
   }
 
   setAccentColor(block: DynamicBlock, color: string): void {
     this.ensureBlockStyle(block);
     block.style!.accentColor = color;
+    this.onBlockFieldChange();
   }
 
   // Image Uploading
@@ -580,10 +900,7 @@ export class AdminPagesEditComponent implements OnInit {
     if (this.historyIndex > 0) {
       this.historyIndex--;
       const snapshot = this.historySnapshots[this.historyIndex];
-      const doc = this.currentPageDoc();
-      if (doc) {
-        doc.blocks = JSON.parse(snapshot);
-      }
+      this.updateDocBlocks(JSON.parse(snapshot));
       this.updateHistoryButtons();
     }
   }
@@ -592,10 +909,7 @@ export class AdminPagesEditComponent implements OnInit {
     if (this.historyIndex < this.historySnapshots.length - 1) {
       this.historyIndex++;
       const snapshot = this.historySnapshots[this.historyIndex];
-      const doc = this.currentPageDoc();
-      if (doc) {
-        doc.blocks = JSON.parse(snapshot);
-      }
+      this.updateDocBlocks(JSON.parse(snapshot));
       this.updateHistoryButtons();
     }
   }

@@ -35,17 +35,23 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
-/* Card Header: Back Link and Logo on the SAME HORIZONTAL ROW */
+/* Card Header: Back Link (left) and Logo (center) */
 .card-header-top-row {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  min-height: 36px;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--yin-border);
 }
 
 .back-link {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -54,6 +60,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .back-link:hover {
@@ -63,6 +70,7 @@
 .brand-logo-wrap {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .auth-logo {
@@ -266,5 +274,11 @@
   }
   .auth-title {
     font-size: 1.45rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-link span {
+    display: none;
   }
 }

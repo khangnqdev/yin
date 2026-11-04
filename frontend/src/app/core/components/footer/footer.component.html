@@ -60,7 +60,10 @@
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; {{ currentYear }} {{ config().copyrightText }}</p>
+      <div class="copyright-wrap">
+        <p>&copy; {{ currentYear }} {{ config().copyrightText }}</p>
+        <a routerLink="/privacy" class="footer-privacy-link">Chính Sách Bảo Mật & Dữ Liệu</a>
+      </div>
       @if (config().securityBadge) {
         <div class="security-tag">
           <span>{{ config().securityBadge }}</span>

@@ -12,7 +12,8 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
     { id: 'lnk_2', label: 'Về Công Ty Yin', url: '/about' },
     { id: 'lnk_3', label: 'Dự Án Đã Thi Công', url: '/projects' },
     { id: 'lnk_4', label: 'Kho Tri Thức & Báo Chí', url: '/blog' },
-    { id: 'lnk_5', label: 'Liên Hệ Khảo Sát Dự Án', url: '/contact' }
+    { id: 'lnk_5', label: 'Liên Hệ Khảo Sát Dự Án', url: '/contact' },
+    { id: 'lnk_6', label: 'Chính Sách Bảo Mật & Dữ Liệu', url: '/privacy' }
   ],
 
   col2Title: 'Năng Lực Kỹ Nghệ',

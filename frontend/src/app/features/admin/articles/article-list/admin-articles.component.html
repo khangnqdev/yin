@@ -1,161 +1,133 @@
 <div class="articles-admin-root">
-  <div class="page-header">
+  
+  <!-- Page Header -->
+  <header class="page-header">
     <div>
-      <h1 class="page-title">Quản Lý Bài Báo</h1>
-      <p class="page-subtitle">Hệ thống quản lý bài viết trực quan và đo lường tỷ lệ đọc.</p>
-    </div>
-    @if (canEdit()) {
-    <a routerLink="/admin/articles/create" class="yin-btn yin-btn-primary">
-      <yin-icon name="plus" [size]="16"></yin-icon>
-      <span>Viết bài mới</span>
-    </a>
-    }
-  </div>
-
-  <!-- Filter & Search Toolbar -->
-  <div class="filters-bar yin-card">
-    <div class="search-input-wrap">
-      <yin-icon name="search" [size]="16" className="filter-search-icon"></yin-icon>
-      <input 
-        type="text" 
-        class="yin-input search-field" 
-        placeholder="Tìm kiếm bài viết theo tiêu đề, slug, từ khóa..."
-        [ngModel]="searchQuery()"
-        (ngModelChange)="onSearchChange($event)" />
-    </div>
-
-    <div class="status-tabs">
-      <button 
-        type="button" 
-        class="tab-btn" 
-        [class.active]="selectedStatus() === 'ALL'" 
-        (click)="setStatus('ALL')">
-        Tất Cả
-      </button>
-      <button 
-        type="button" 
-        class="tab-btn" 
-        [class.active]="selectedStatus() === 'PUBLISHED'" 
-        (click)="setStatus('PUBLISHED')">
-        Đã Xuất Bản
-      </button>
-      <button 
-        type="button" 
-        class="tab-btn" 
-        [class.active]="selectedStatus() === 'DRAFT'" 
-        (click)="setStatus('DRAFT')">
-        Bản Nháp
-      </button>
-      <button type="button" class="tab-btn" [class.active]="selectedStatus() === 'ARCHIVED'"
-        (click)="setStatus('ARCHIVED')">Lưu Trữ</button>
-      <button type="button" class="tab-btn" [class.active]="selectedStatus() === 'TRASH'"
-        (click)="setStatus('TRASH')">Thùng Rác</button>
-    </div>
-  </div>
-
-  <!-- Articles Table -->
-  <div class="table-card yin-card">
-    <div class="table-responsive">
-      <table class="admin-articles-table">
-        <thead>
-          <tr>
-            <th>Tiêu Đề & Thông Tin SEO</th>
-            <th>Chuyên Mục</th>
-            <th>Trạng Thái</th>
-            <th>Thời Gian Đọc</th>
-            <th>Lượt Xem</th>
-            <th>Ngày Tạo</th>
-            <th>Thao Tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if (loading()) {
-            <tr>
-              <td colspan="7" class="loading-cell">Đang tải danh sách bài viết…</td>
-            </tr>
-          } @else if (articles().length === 0) {
-            <tr>
-              <td colspan="7" class="empty-cell">{{ selectedStatus() === 'TRASH' ? 'Thùng rác trống.' : 'Chưa có bài viết nào phù hợp.' }}</td>
-            </tr>
-          } @else {
-            @for (art of articles(); track art.id) {
-              <tr>
-                <td>
-                  <div class="art-title">
-                    @if (canEdit() && selectedStatus() !== 'TRASH') {
-                    <a [routerLink]="['/admin/articles/edit', art.id]" class="art-link">
-                      {{ art.title }}
-                    </a>
-                    } @else { <span>{{ art.title }}</span> }
-                  </div>
-                  <div class="art-meta-sub">
-                    <span>Slug: /blog/{{ art.slug }}</span>
-                    @if (art.focusKeyword) {
-                      <span class="kw-tag">Từ khóa: {{ art.focusKeyword }}</span>
-                    }
-                  </div>
-                </td>
-                <td>
-                  <span class="category-badge">{{ art.category }}</span>
-                </td>
-                <td>
-                  <span class="status-badge" [class]="art.status.toLowerCase()">
-                    {{ selectedStatus() === 'TRASH' ? 'Đã xóa' : art.status }}
-                  </span>
-                </td>
-                <td>
-                  <span class="read-time-cell">
-                    {{ art.readingTimeMinutes }} phút ({{ art.wordCount }} từ)
-                  </span>
-                </td>
-                <td>
-                  <span class="views-cell">{{ art.viewCount }}</span>
-                </td>
-                <td>
-                  <span class="date-cell">{{ art.createdAt ? (art.createdAt | slice:0:10) : '—' }}</span>
-                </td>
-                <td>
-                  <div class="actions-cell">
-                    @if (canEdit() && selectedStatus() === 'TRASH') {
-                    <button type="button" class="action-btn edit-btn" (click)="restoreArticle(art.id)"
-                      [attr.aria-label]="'Khôi phục bài viết ' + art.title" title="Khôi phục bài viết">
-                      <yin-icon name="undo" [size]="15"></yin-icon>
-                    </button>
-                    }
-                    @if (canEdit() && selectedStatus() !== 'TRASH') {
-                    <a [routerLink]="['/admin/articles/edit', art.id]" class="action-btn edit-btn" title="Chỉnh sửa">
-                      <yin-icon name="edit" [size]="15"></yin-icon>
-                    </a>
-                    <button type="button" class="action-btn delete-btn" (click)="deleteArticle(art.id, art.title)" title="Xóa bài viết">
-                      <yin-icon name="trash" [size]="15"></yin-icon>
-                    </button>
-                    }
-                  </div>
-                </td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Keyset Cursor Load More Button (Xem Thêm) -->
-    @if (hasMore()) {
-      <div class="load-more-footer">
-        <button 
-          type="button" 
-          class="yin-btn yin-btn-secondary load-more-btn"
-          [disabled]="loadingMore()"
-          (click)="loadMore()">
-          @if (loadingMore()) {
-            <span>Đang tải thêm…</span>
-          } @else {
-            <span>Xem Thêm Bài Viết</span>
-            <yin-icon name="chevron-down" [size]="16"></yin-icon>
-          }
-        </button>
+      <div class="breadcrumb-tag">
+        <yin-icon name="file-text" [size]="14"></yin-icon>
+        <span>Quản Trị Nội Dung Tri Thức</span>
       </div>
+      <h1 class="page-title">Quản Lý Bài Viết</h1>
+      <p class="page-subtitle">Hệ thống đo lường tỷ lệ đọc, quản lý bài viết công nghệ và kiểm soát từ khóa chuẩn SEO.</p>
+    </div>
+
+    @if (canEdit()) {
+      <a routerLink="/admin/articles/create" class="yin-btn yin-btn-primary create-article-btn">
+        <yin-icon name="plus" [size]="16"></yin-icon>
+        <span>Viết bài mới</span>
+      </a>
     }
-  </div>
+  </header>
+
+  <!-- Reusable Enterprise Data Table -->
+  <yin-data-table
+    [columns]="columns"
+    [data]="filteredArticles()"
+    [loading]="loading()"
+    [searchQuery]="searchQuery()"
+    [searchPlaceholder]="'Tìm kiếm bài viết theo tiêu đề, từ khóa, chuyên mục…'"
+    [filterPills]="filterPills()"
+    [pageSize]="pageSize()"
+    [currentPage]="currentPage()"
+    [primaryActionLabel]="'Viết bài mới'"
+    [primaryActionIcon]="'plus'"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
+    (pageChange)="currentPage.set($event)"
+    (pageSizeChange)="pageSize.set($event)"
+    (primaryActionClick)="navigateToCreate()"
+    (exportClick)="onExportCsv()">
+
+    <!-- COLUMN 1: Tiêu đề (Chỉ 1 dòng, ... ở cuối, hover đọc đầy đủ) -->
+    <ng-template yinCell="title" let-art>
+      <div class="table-cell-title-wrap" [title]="art.title">
+        @if (canEdit() && selectedStatus() !== 'TRASH') {
+          <a [routerLink]="['/admin/articles/edit', art.id]" class="art-cell-link font-bold single-line-ellipsis" [title]="art.title">
+            {{ art.title }}
+          </a>
+        } @else {
+          <span class="font-bold single-line-ellipsis" [title]="art.title">{{ art.title }}</span>
+        }
+      </div>
+    </ng-template>
+
+    <!-- COLUMN 2: Từ khóa (Chỉ 1 dòng, ... ở cuối, hover đọc đầy đủ) -->
+    <ng-template yinCell="focusKeyword" let-art>
+      <span class="kw-cell-pill single-line-ellipsis" [title]="art.focusKeyword || 'Chưa thiết lập từ khóa'">
+        {{ art.focusKeyword || '—' }}
+      </span>
+    </ng-template>
+
+    <!-- COLUMN 3: Mục (Chuyên mục) (Chỉ 1 dòng, ... ở cuối, hover đọc đầy đủ) -->
+    <ng-template yinCell="category" let-art>
+      <span class="category-pill single-line-ellipsis" [title]="art.category">
+        {{ art.category }}
+      </span>
+    </ng-template>
+
+    <!-- COLUMN 4: Trạng thái (Pill with dot indicator) -->
+    <ng-template yinCell="status" let-art>
+      <span class="status-pill-modern" 
+        [class.published]="art.status === 'PUBLISHED'" 
+        [class.draft]="art.status === 'DRAFT'"
+        [class.archived]="art.status === 'ARCHIVED'"
+        [class.trash]="selectedStatus() === 'TRASH'">
+        <span class="status-dot"></span>
+        <span class="single-line-ellipsis" [title]="getStatusLabel(art.status)">
+          {{ getStatusLabel(art.status) }}
+        </span>
+      </span>
+    </ng-template>
+
+    <!-- COLUMN 5: Thời gian đọc ước tính (Chỉ 1 dòng, ... ở cuối, hover đọc đầy đủ) -->
+    <ng-template yinCell="readingTimeMinutes" let-art>
+      <span class="read-time-pill single-line-ellipsis" [title]="(art.readingTimeMinutes || 1) + ' phút đọc (' + (art.wordCount || 0) + ' từ)'">
+        {{ art.readingTimeMinutes || 1 }} phút
+      </span>
+    </ng-template>
+
+    <!-- COLUMN 6: Lượt xem -->
+    <ng-template yinCell="viewCount" let-art>
+      <span class="views-cell font-mono single-line-ellipsis" [title]="art.viewCount + ' lượt đọc thực tế'">
+        {{ art.viewCount }}
+      </span>
+    </ng-template>
+
+    <!-- COLUMN 7: Ngày tạo -->
+    <ng-template yinCell="createdAt" let-art>
+      <span class="date-cell font-mono single-line-ellipsis" [title]="art.createdAt | date:'dd/MM/yyyy HH:mm:ss'">
+        {{ art.createdAt | date:'dd/MM/yyyy' }}
+      </span>
+    </ng-template>
+
+    <!-- COLUMN 8: Thao tác -->
+    <ng-template yinCell="actions" let-art>
+      <div class="actions-buttons-row">
+        @if (selectedStatus() === 'TRASH') {
+          <button type="button" class="tbl-btn restore-btn" (click)="restoreArticle(art.id)" title="Khôi phục bài viết">
+            <yin-icon name="undo" [size]="14"></yin-icon>
+            <span>Khôi phục</span>
+          </button>
+        } @else {
+          @if (canEdit()) {
+            <a [routerLink]="['/admin/articles/edit', art.id]" class="tbl-btn edit-btn" title="Chỉnh sửa bài viết">
+              <yin-icon name="edit" [size]="14"></yin-icon>
+              <span>Sửa</span>
+            </a>
+          }
+          <a [routerLink]="['/blog', art.slug]" target="_blank" class="tbl-btn view-btn" title="Xem trên website (tab mới)">
+            <yin-icon name="eye" [size]="14"></yin-icon>
+            <span>Xem</span>
+          </a>
+          @if (canEdit()) {
+            <button type="button" class="tbl-btn delete-btn" (click)="deleteArticle(art.id, art.title)" title="Chuyển vào thùng rác">
+              <yin-icon name="trash" [size]="14"></yin-icon>
+            </button>
+          }
+        }
+      </div>
+    </ng-template>
+
+  </yin-data-table>
 
 </div>

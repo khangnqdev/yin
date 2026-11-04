@@ -1,30 +1,28 @@
 <main class="auth-page-root">
-  <div class="yin-container auth-wrapper">
+  <div class="auth-wrapper">
     <div class="auth-card yin-card">
       
-      <!-- Card Header -->
-      <div class="card-header">
-        <a routerLink="/" class="back-link" title="Quay lại trang chủ Yin">
-          <span>&larr; Trang chủ Yin</span>
+      <!-- Card Header: Back link on left, Logo in center -->
+      <div class="card-header-top-row">
+        <a routerLink="/" class="back-link" title="Quay lại trang chủ Yin" aria-label="Quay lại trang chủ Yin">
+          <yin-icon name="arrow-left" [size]="15"></yin-icon>
+          <span>Trang chủ Yin</span>
         </a>
         <div class="brand-logo-wrap">
           <img src="/assets/logo/yin.svg" alt="Yin" class="auth-logo light-logo" width="115" height="32" />
           <img src="/assets/logo/yin-w.svg" alt="Yin" class="auth-logo dark-logo" width="115" height="32" />
         </div>
-        <div class="yin-badge">
-          <yin-icon name="user" [size]="14"></yin-icon>
-          <span>Cổng Khách Hàng Doanh Nghiệp</span>
-        </div>
-        <h1 class="auth-title">Đăng Ký Tài Khoản Client</h1>
-        <p class="auth-subtitle">
-          Tạo tài khoản đối tác để quản lý tiến độ thi công kiến trúc phần mềm, yêu cầu tư vấn kỹ thuật và nhận cập nhật công nghệ chuyên sâu.
-        </p>
+      </div>
+
+      <!-- Compact Title Box: Just "Đăng ký" -->
+      <div class="card-title-box">
+        <h1 class="auth-title">Đăng ký</h1>
       </div>
 
       <!-- Global Error Alert -->
       @if (errorMessage()) {
         <div class="alert-box alert-error" role="alert">
-          <yin-icon name="alert-circle" [size]="18"></yin-icon>
+          <yin-icon name="alert-circle" [size]="16"></yin-icon>
           <span>{{ errorMessage() }}</span>
         </div>
       }
@@ -170,6 +168,69 @@
           </label>
         </div>
 
+        <!-- Field: Data Policy Consent (Bắt buộc) & Transparency Disclosure -->
+        <div class="form-group consent-group" [class.has-error]="fieldErrors()['agreeDataPolicy']">
+          <label class="custom-checkbox-label consent-checkbox-label">
+            <input 
+              id="agree-data-policy"
+              type="checkbox" 
+              name="agreeDataPolicy"
+              class="custom-checkbox-input"
+              [checked]="agreeDataPolicy()" 
+              (change)="agreeDataPolicy.set(!agreeDataPolicy())"
+              required />
+            <div class="checkbox-text-wrap">
+              <span class="checkbox-title">
+                <span>Chấp nhận cho phép sử dụng thông tin cá nhân</span>
+                <span class="required-star">*</span>
+              </span>
+              <span class="checkbox-desc">
+                Tôi đồng ý cho phép Yin thu thập và sử dụng thông tin cá nhân cung cấp theo mô hình quản trị dữ liệu End-to-End quy định tại 
+                <a routerLink="/privacy" target="_blank" class="policy-link" (click)="$event.stopPropagation()">
+                  Chính Sách Bảo Mật & Quản Trị Dữ Liệu
+                </a>.
+              </span>
+            </div>
+          </label>
+
+          <!-- Toggle Summary of Collected Data -->
+          <div class="disclosure-toggle-wrap">
+            <button 
+              type="button" 
+              class="toggle-disclosure-btn" 
+              (click)="toggleDataPolicyDetails()"
+              [attr.aria-expanded]="showDataPolicyDetails()">
+              <yin-icon [name]="showDataPolicyDetails() ? 'chevron-up' : 'chevron-down'" [size]="14"></yin-icon>
+              <span>{{ showDataPolicyDetails() ? 'Thu gọn chi tiết' : 'Yin sử dụng những thông tin gì & mục đích ra sao?' }}</span>
+            </button>
+          </div>
+
+          <!-- Expandable Details of Collected Data -->
+          @if (showDataPolicyDetails()) {
+            <div class="data-disclosure-panel" role="region" aria-label="Chi tiết thông tin thu thập">
+              <div class="disclosure-header">
+                <yin-icon name="shield" [size]="14"></yin-icon>
+                <span>Minh bạch thông tin theo nguyên tắc tối thiểu hóa:</span>
+              </div>
+              <ul class="disclosure-list">
+                <li><strong>Email & SĐT:</strong> Định danh, xác thực 2FA, trao đổi tiến độ thi công và xử lý khẩn cấp 24/7.</li>
+                <li><strong>Tên đăng nhập & Mật khẩu:</strong> Đăng nhập cổng Client Portal; mật khẩu mã hóa băm 1 chiều (Bcrypt).</li>
+                <li><strong>Ngày sinh:</strong> Xác minh năng lực pháp lý khi giao kết hợp đồng thi công phần mềm.</li>
+                <li><strong>Quản trị End-to-End:</strong> Dữ liệu lưu trữ mã hóa AES-256, không chia sẻ cho bên thứ ba vì quảng cáo, và tiêu hủy vĩnh viễn khi xóa tài khoản.</li>
+              </ul>
+              <div class="disclosure-footer">
+                <a routerLink="/privacy" target="_blank" class="read-full-link">
+                  <span>Đọc toàn văn chính sách bảo mật 5 giai đoạn &rarr;</span>
+                </a>
+              </div>
+            </div>
+          }
+
+          @if (fieldErrors()['agreeDataPolicy']) {
+            <p class="field-error-msg" role="alert">{{ fieldErrors()['agreeDataPolicy'] }}</p>
+          }
+        </div>
+
         <!-- Submit Button -->
         <button 
           type="submit" 
@@ -178,7 +239,7 @@
           @if (submitting()) {
             <span>Đang khởi tạo tài khoản…</span>
           } @else {
-            <span>Đăng Ký Tài Khoản Client</span>
+            <span>Đăng ký</span>
           }
         </button>
 
@@ -193,4 +254,3 @@
     </div>
   </div>
 </main>
-

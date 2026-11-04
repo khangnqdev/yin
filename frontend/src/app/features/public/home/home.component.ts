@@ -16,9 +16,10 @@ export class HomeComponent implements OnInit {
   protected readonly pageDoc = computed(() => this.db.getPageDocument('home'));
   protected readonly blocks = computed(() => this.pageDoc()?.blocks || []);
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.db.recordPageView('/', 'direct');
     this.tracker.initTargetTracking('page_home', 'Trang Chủ Yin');
+    await this.db.fetchPageByKey('home');
   }
 }
 

@@ -16,9 +16,10 @@ export class ProjectsComponent implements OnInit {
   protected readonly pageDoc = computed(() => this.db.getPageDocument('projects'));
   protected readonly blocks = computed(() => this.pageDoc()?.blocks || []);
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.db.recordPageView('/projects', 'direct');
     this.tracker.initTargetTracking('page_projects', 'Dự Án Yin');
+    await this.db.fetchPageByKey('projects');
   }
 }
 

@@ -22,6 +22,8 @@ export class ClientRegisterComponent {
   protected readonly phone = signal('');
   protected readonly dateOfBirth = signal('');
   protected readonly receiveUpdates = signal(false);
+  protected readonly agreeDataPolicy = signal(false);
+  protected readonly showDataPolicyDetails = signal(false);
 
   protected readonly showPassword = signal(false);
   protected readonly submitting = signal(false);
@@ -30,6 +32,10 @@ export class ClientRegisterComponent {
 
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
+  }
+
+  toggleDataPolicyDetails(): void {
+    this.showDataPolicyDetails.update(v => !v);
   }
 
   validateForm(): boolean {
@@ -84,6 +90,11 @@ export class ClientRegisterComponent {
       if (isNaN(selectedDate.getTime()) || selectedDate > today) {
         errors['dateOfBirth'] = 'Ngày sinh không hợp lệ hoặc ở tương lai.';
       }
+    }
+
+    // 6. Chấp thuận Chính sách Bảo mật & Quản trị Dữ liệu (Bắt buộc)
+    if (!this.agreeDataPolicy()) {
+      errors['agreeDataPolicy'] = 'Vui lòng đọc và tích chọn đồng ý cho phép sử dụng thông tin cá nhân theo Chính sách Bảo mật.';
     }
 
     this.fieldErrors.set(errors);

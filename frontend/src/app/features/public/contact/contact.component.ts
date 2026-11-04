@@ -61,10 +61,11 @@ export class ContactComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.formOpenTimestamp = Date.now();
     this.db.recordPageView('/contact', 'direct');
     this.tracker.initTargetTracking('page_contact', 'Trang Liên Hệ');
+    await this.db.fetchPageByKey('contact');
   }
 
   async copyAddress(): Promise<void> {
