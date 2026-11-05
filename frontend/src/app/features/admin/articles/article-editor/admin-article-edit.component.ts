@@ -160,7 +160,7 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
     {
       name: 'Yin Tech Team',
       role: 'Đội Ngũ Kỹ Thuật Yin',
-      avatar: '/assets/logo/yinkenna.svg',
+      avatar: '/assets/logo/yin.svg',
     },
   ];
 
@@ -835,7 +835,7 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
       category: this.categories().length > 0 ? this.categories().join(', ') : 'Cong-Nghe',
       status: this.status(),
       focusKeyword: this.focusKeyword().trim() || this.categories()[0] || 'Chung',
-      thumbnailUrl: this.coverImage().trim() || '/assets/logo/yinkenna.svg',
+      thumbnailUrl: this.coverImage().trim() || '/assets/logo/yin.svg',
       authorName: this.authorName().trim() || 'John Doe',
       publishedAt:
         this.status() === 'PUBLISHED'

@@ -256,9 +256,49 @@ export const routes: Routes = [
     ]
   },
 
-  // 4. FALLBACK
+  // 4. ERROR PAGES (403, 404, 510) & FALLBACK
+  {
+    path: '403',
+    title: '403 - Truy Cập Bị Từ Chối | Yin',
+    data: {
+      statusCode: 403,
+      title: '403 - Truy Cập Bị Từ Chối | Yin',
+      description: 'Bạn không có quyền truy cập vào tài nguyên hoặc khu vực này.',
+      robots: 'noindex, nofollow'
+    },
+    loadComponent: () => import('./features/public/not-found/not-found.component').then(m => m.NotFoundComponent)
+  },
+  {
+    path: '404',
+    title: '404 - Không Tìm Thấy Trang | Yin',
+    data: {
+      statusCode: 404,
+      title: '404 - Không Tìm Thấy Trang | Yin',
+      description: 'Trang bạn đang truy cập không tồn tại hoặc đã được thay đổi đường dẫn.',
+      robots: 'noindex, nofollow'
+    },
+    loadComponent: () => import('./features/public/not-found/not-found.component').then(m => m.NotFoundComponent)
+  },
+  {
+    path: '510',
+    title: '510 - Yêu Cầu Không Được Hỗ Trợ | Yin',
+    data: {
+      statusCode: 510,
+      title: '510 - Yêu Cầu Không Được Hỗ Trợ | Yin',
+      description: 'Chính sách mở rộng hoặc cấu hình tài nguyên yêu cầu chưa được hỗ trợ.',
+      robots: 'noindex, nofollow'
+    },
+    loadComponent: () => import('./features/public/not-found/not-found.component').then(m => m.NotFoundComponent)
+  },
   {
     path: '**',
-    redirectTo: ''
+    title: '404 - Không Tìm Thấy Trang | Yin',
+    data: {
+      statusCode: 404,
+      title: '404 - Không Tìm Thấy Trang | Yin',
+      description: 'Trang bạn đang truy cập không tồn tại hoặc đã được thay đổi đường dẫn.',
+      robots: 'noindex, nofollow'
+    },
+    loadComponent: () => import('./features/public/not-found/not-found.component').then(m => m.NotFoundComponent)
   }
 ];

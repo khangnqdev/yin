@@ -19,6 +19,7 @@ export class LocalDbService {
   private readonly adminUserKey = 'yin_admin_user';
 
   // Signals reactive state
+  readonly isNavbarHidden = signal<boolean>(false);
   readonly articles = signal<Article[]>([]);
   readonly contacts = this.contactService.contacts;
   readonly pages = signal<Record<PageKey, PageDocument>>({} as Record<PageKey, PageDocument>);

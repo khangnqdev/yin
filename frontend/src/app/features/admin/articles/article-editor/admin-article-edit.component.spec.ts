@@ -16,7 +16,7 @@ describe('AdminArticleEditComponent', () => {
     slug: 'toi-uu-change-detection-angular-v22-signals',
     summary: 'Khám phá cách mạng Signals trong Angular...',
     category: 'Health, Gym, High-Converting',
-    thumbnailUrl: '/assets/logo/yinkenna.svg',
+    thumbnailUrl: '/assets/logo/yin.svg',
     status: 'PUBLISHED',
     focusKeyword: 'Angular Signals',
     contentHtml: '<h2>Kỷ nguyên Zoneless và Signals</h2><p>Angular đã bước sang trang mới...</p>',

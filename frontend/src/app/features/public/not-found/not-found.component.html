@@ -1,0 +1,62 @@
+<section class="yin-notfound-page">
+  <div class="notfound-layout">
+    
+    <!-- MENU BÊN TRÁI HÀNG DỌC ĐÚNG HÌNH MẪU -->
+    <aside class="notfound-sidebar" aria-label="Menu điều hướng">
+      <h2 class="menu-heading">Menu</h2>
+      <nav class="menu-nav-list">
+        @for (item of menuItems; track item.path) {
+          <a 
+            [routerLink]="item.path" 
+            class="menu-nav-btn"
+            routerLinkActive="active" 
+            [routerLinkActiveOptions]="{ exact: item.path === '/' }">
+            {{ item.title }}
+          </a>
+        }
+      </nav>
+    </aside>
+
+    <!-- KHU VỰC NỘI DUNG BÊN PHẢI (TIÊU ĐỀ + HÌNH HỘP CHỮ NHẬT 3 CỘT CUỘN SỐ 404 NGHIÊNG PHẢI) -->
+    <main class="notfound-content">
+      <div class="content-header">
+        <h1 class="notfound-title">{{ errorInfo().title }}</h1>
+      </div>
+
+      <!-- 3 CỘT CUỘN SỐ 404 (MỖI CỘT TỐI ĐA 6 DIV, CHẠY KHÁC NHAU, DỪNG LẠI 4 0 4) -->
+      <div class="slot-roller-box" aria-hidden="true">
+        <div class="reels-grid" [class.is-locked]="isLocked()">
+          
+          <!-- CỘT 1 (Tối đa 6 div) -->
+          <div class="reel-col">
+            <div #reelCol1 class="reel-strip">
+              @for (digit of reel1(); track $index) {
+                <div class="reel-digit">{{ digit }}</div>
+              }
+            </div>
+          </div>
+
+          <!-- CỘT 2 (Tối đa 6 div) -->
+          <div class="reel-col">
+            <div #reelCol2 class="reel-strip">
+              @for (digit of reel2(); track $index) {
+                <div class="reel-digit">{{ digit }}</div>
+              }
+            </div>
+          </div>
+
+          <!-- CỘT 3 (Tối đa 6 div) -->
+          <div class="reel-col">
+            <div #reelCol3 class="reel-strip">
+              @for (digit of reel3(); track $index) {
+                <div class="reel-digit">{{ digit }}</div>
+              }
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+</section>

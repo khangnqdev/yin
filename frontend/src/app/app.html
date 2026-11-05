@@ -1,10 +1,10 @@
 <div class="yin-app-container" yinTranslateContent [class.admin-route-active]="isAdminRoute()">
   @if (db.loadError()) { <div role="alert" class="api-error">{{ db.loadError() }}</div> }
-  @if (!isAdminRoute()) {
+  @if (!isAdminRoute() && !db.isNavbarHidden()) {
     <yin-header />
   }
 
-  <main class="app-main-viewport" [class.with-fixed-header]="!isAdminRoute()" [class.admin-viewport]="isAdminRoute()">
+  <main class="app-main-viewport" [class.with-fixed-header]="!isAdminRoute() && !db.isNavbarHidden()" [class.admin-viewport]="isAdminRoute()">
     <router-outlet />
   </main>
 

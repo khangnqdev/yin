@@ -1,0 +1,278 @@
+/* ==============================================================================
+   YIN 404 NOT FOUND - 3 REELS SLOT ROLLER (75 DEGREE SKEW / ROTATE)
+   Brand Palette:
+     --yin-main: #0B1849 | --yin-gold: #E4B028 | --yin-green: #124D1C | --yin-cream: #EBEDE3
+   ============================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.yin-notfound-page {
+  width: 100%;
+  min-height: 82vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px 80px;
+  background: var(--yin-bg, #ffffff);
+  color: var(--yin-text, #27272a);
+}
+
+.notfound-layout {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+}
+
+/* ------------------------------------------------------------------------------
+   1. MENU BÊN TRÁI HÀNG DỌC (ĐÚNG NHƯ HÌNH MẪU)
+   ------------------------------------------------------------------------------ */
+.notfound-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-right: 1.5px solid #ececec;
+  padding-right: 32px;
+  min-height: 380px;
+}
+
+[data-theme="dark"] .notfound-sidebar {
+  border-right-color: rgba(255, 255, 255, 0.12);
+}
+
+.menu-heading {
+  font-family: var(--yin-font-sans, 'Montserrat', sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="dark"] .menu-heading {
+  color: #f4f4f5;
+}
+
+.menu-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Button menu: không có dấu đầu dòng, hover không cần border đúng theo hình mẫu */
+.menu-nav-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: transparent;
+  border: none;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.menu-nav-btn:hover {
+  color: #111827;
+  background: #fdf5f5;
+  border: none;
+  transform: translateX(3px);
+}
+
+.menu-nav-btn.active {
+  color: #111827;
+  background: #fdf2f4;
+  font-weight: 700;
+  border: none;
+}
+
+[data-theme="dark"] .menu-nav-btn {
+  color: #e4e4e7;
+  border: none;
+}
+
+[data-theme="dark"] .menu-nav-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+}
+
+[data-theme="dark"] .menu-nav-btn.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+}
+
+/* ------------------------------------------------------------------------------
+   2. KHU VỰC NỘI DUNG BÊN PHẢI (TIÊU ĐỀ + 3 CỘT CUỘN SỐ 404)
+   ------------------------------------------------------------------------------ */
+.notfound-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  min-width: 0;
+}
+
+.content-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notfound-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #0b1849;
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+[data-theme="dark"] .notfound-title {
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------------------------------
+   3. KHU VỰC 3 CỘT SLOT ROLLER 404 (SỐ NGHIÊNG -30 ĐỘ ĐÚNG HÌNH MẪU)
+   ------------------------------------------------------------------------------ */
+.slot-roller-box {
+  position: relative;
+  width: 100%;
+  max-width: 480px; /* Bằng đúng chiều rộng tiêu đề Không Tìm Thấy Trang */
+  height: 250px; /* Hiển thị hàng giữa trọn vẹn 150px + 2 vệt trên/dưới 50px */
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  user-select: none;
+}
+
+/* 3 cột cuộn số dọc thẳng hàng ngang với gap 15px */
+.reels-grid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px; /* Gap mỗi div khoảng 15px */
+  padding: 0;
+  /* Gradient mask: Hàng giữa 100% đen đậm rõ, 2 vệt trên và dưới mờ xám tự nhiên đúng hình mẫu */
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.45) 19%,
+    rgba(0, 0, 0, 1) 22%,
+    rgba(0, 0, 0, 1) 78%,
+    rgba(0, 0, 0, 0.45) 81%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.45) 19%,
+    rgba(0, 0, 0, 1) 22%,
+    rgba(0, 0, 0, 1) 78%,
+    rgba(0, 0, 0, 0.45) 81%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+
+.reel-col {
+  width: 100%;
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.reel-strip {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  transform: translateY(-100px);
+  will-change: transform;
+}
+
+/* Chữ số: size to hơn đáng kể, font dày cực đậm và nghiêng khoảng -30 độ */
+.reel-digit {
+  width: 100%;
+  height: 150px;
+  line-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--yin-font-sans, 'Montserrat', sans-serif);
+  font-size: clamp(12rem, 12vw, 12rem);
+  font-weight: 900;
+  -webkit-text-stroke: 2px currentColor;
+  color: #111827;
+  letter-spacing: -0.02em;
+  transform: rotate(30deg);
+  transform-origin: center center;
+  transition: color 0.25s ease;
+}
+
+[data-theme="dark"] .reel-digit {
+  color: #ffffff;
+}
+
+/* Khi đã dừng khóa tại 404 */
+.reels-grid.is-locked {
+  filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.08));
+}
+
+[data-theme="dark"] .reels-grid.is-locked {
+  filter: drop-shadow(0 2px 20px rgba(228, 176, 40, 0.3));
+}
+
+/* ------------------------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------------------------ */
+@media (max-width: 760px) {
+  .notfound-layout {
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .notfound-sidebar {
+    width: 100%;
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1.5px solid #ececec;
+    padding-right: 0;
+    padding-bottom: 20px;
+  }
+
+  .menu-nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .slot-roller-box {
+    max-width: 100%;
+  }
+
+  .reels-grid {
+    gap: 8px;
+  }
+
+  .reel-digit {
+    font-size: clamp(3.4rem, 11vw, 4.6rem);
+  }
+}
