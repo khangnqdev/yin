@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import vn.yin.backend.config.SecurityConfig;
 import vn.yin.backend.repository.AccountRepository;
+import vn.yin.backend.service.TokenRegistry;
 import static org.mockito.Mockito.*;
 import java.util.Map;
 
@@ -55,5 +56,19 @@ class JwtValidationTest {
         assertThrows(InvalidBearerTokenException.class, () -> converter.convert(token));
         when(accounts.activePrincipal("account-id")).thenReturn(null);
         assertThrows(InvalidBearerTokenException.class, () -> converter.convert(token));
+    }
+
+    @Test
+    void blacklistedTokenIsRejectedEvenBeforeExpiry() {
+        var accounts = mock(AccountRepository.class);
+        var registry = mock(TokenRegistry.class);
+        var token = org.springframework.security.oauth2.jwt.Jwt.withTokenValue("test")
+                .header("alg", "HS256").subject("account-id").jti("issued-token")
+                .claim("role", "MANAGER").claim("scope", "ADMIN").claim("tokenVersion", 0).build();
+        when(accounts.activePrincipal("account-id")).thenReturn(Map.of("role", "MANAGER", "token_version", 0));
+        when(registry.isDenied("issued-token")).thenReturn(true);
+        var converter = new SecurityConfig().jwtAuthenticationConverter(accounts, registry);
+        assertThrows(InvalidBearerTokenException.class, () -> converter.convert(token));
+        verify(registry).isDenied("issued-token");
     }
 }

@@ -11,7 +11,7 @@
 
       <h1 class="hero-title">Chính Sách Bảo Mật & Quản Trị Dữ Liệu Cá Nhân</h1>
       <p class="hero-subtitle">
-        Tại Yin (Yin Kenna), chúng tôi áp dụng nguyên tắc kiểm soát dữ liệu toàn diện <strong>“End-to-End”</strong> xuyên suốt 5 giai đoạn vòng đời dữ liệu. Toàn bộ thông tin cá nhân của quý khách hàng, đối tác được bảo vệ ở cấp độ cao nhất theo tiêu chuẩn Zero-Trust và pháp luật Việt Nam.
+        Tại Yin, chúng tôi áp dụng nguyên tắc kiểm soát dữ liệu toàn diện <strong>“End-to-End”</strong> xuyên suốt 5 giai đoạn vòng đời dữ liệu. Toàn bộ thông tin cá nhân của quý khách hàng, đối tác được bảo vệ ở cấp độ cao nhất theo tiêu chuẩn Zero-Trust và pháp luật Việt Nam.
       </p>
 
       <div class="hero-meta-grid">
@@ -25,7 +25,7 @@
         </div>
         <div class="meta-item">
           <span class="meta-label">Phê duyệt bởi</span>
-          <span class="meta-value">Founder Khang</span>
+          <span class="meta-value">{{ appVars.founder.titleVi }}</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Phạm vi áp dụng</span>
@@ -195,7 +195,7 @@
                 <tr>
                   <td><strong>Tùy chọn nhận bản tin công nghệ</strong></td>
                   <td><span class="tag-optional">Tùy chọn</span></td>
-                  <td>Gửi định kỳ các báo cáo kiến trúc hệ thống mới, kinh nghiệm tối ưu tải cao và thông cáo an ninh mạng từ Yin Kenna.</td>
+                  <td>Gửi định kỳ các báo cáo kiến trúc hệ thống mới, kinh nghiệm tối ưu tải cao và thông cáo an ninh mạng từ Yin.</td>
                   <td>Khách hàng có thể bật/tắt bất kỳ lúc nào trong trang cài đặt tài khoản.</td>
                 </tr>
                 <tr>
@@ -455,8 +455,8 @@
           </div>
 
           <div class="dpo-info-item">
-            <span class="dpo-label">Hotline Kỹ Thuật (Founder Khang):</span>
-            <span class="dpo-value">+84 900 123 456</span>
+            <span class="dpo-label">{{ appVars.contact.hotlineLabel }}:</span>
+            <span class="dpo-value">{{ appVars.contact.hotline }}</span>
           </div>
 
           <div class="dpo-info-item">

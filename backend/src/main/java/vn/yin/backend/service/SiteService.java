@@ -301,7 +301,7 @@ public class SiteService {
         a.put("wordCount", number(body, "wordCount", 0, 1_000_000));
         a.put("viewCount", current == null ? 0 : current.get("viewCount"));
         String author = field(body, "authorName", 200);
-        a.put("authorName", author.isEmpty() ? (current == null ? "Khang (Founder)" : current.get("authorName")) : author);
+        a.put("authorName", author.isEmpty() ? (current == null ? "Yin" : current.get("authorName")) : author);
         String authorRole = field(body, "authorRole", 200);
         a.put("authorRole", authorRole.isEmpty() ? (current == null ? "" : current.get("authorRole")) : authorRole);
         String previousPublication = current == null ? null : (String) current.get("publishedAt");

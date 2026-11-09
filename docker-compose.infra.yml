@@ -1,4 +1,20 @@
 services:
+  yin-redis:
+    image: redis:7-alpine
+    container_name: yin-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - yin_redis_data:/data
+    networks:
+      - yin-network
+    mem_limit: 192m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
   yin-postgres-db:
     image: postgres:17-alpine
     container_name: yin-postgres-db
@@ -33,6 +49,8 @@ services:
       start_period: 20s
 
 volumes:
+  yin_redis_data:
+    name: yin_redis_data
   yin_postgres_data:
     name: yin_postgres_data
 

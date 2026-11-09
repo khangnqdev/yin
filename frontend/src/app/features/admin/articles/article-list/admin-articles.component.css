@@ -251,3 +251,195 @@
   background: #DBEAFE;
   border-color: #93C5FD;
 }
+
+/* Header Actions */
+.header-action-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Format Modal */
+.format-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.format-modal-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.format-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.format-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.format-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(228, 176, 40, 0.15);
+  color: var(--yin-gold, #E4B028);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.format-modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.format-modal-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 0.82rem;
+  color: #64748B;
+}
+
+.format-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.format-close-btn:hover {
+  color: #0F172A;
+  background: #F1F5F9;
+}
+
+.format-modal-body {
+  padding: 24px;
+}
+
+.guide-section-title {
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #0F172A;
+}
+
+.workflow-steps-list {
+  margin: 0 0 20px 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #334155;
+  font-size: 0.88rem;
+}
+
+.workflow-steps-list p {
+  margin: 2px 0 0 0;
+  color: #64748B;
+  font-size: 0.82rem;
+}
+
+.format-actions-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-download-format,
+.btn-copy-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-download-format {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #1E293B;
+}
+
+.btn-download-format:hover {
+  background: #F1F5F9;
+  border-color: #94A3B8;
+}
+
+.btn-copy-prompt {
+  background: var(--yin-main, #0B1849);
+  color: #FFFFFF;
+  border: none;
+}
+
+.btn-copy-prompt:hover {
+  background: #152466;
+}
+
+.format-modal-footer {
+  padding: 16px 24px;
+  background: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  border-radius: 0 0 16px 16px;
+}
+
+.btn-modal-close {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-modal-import {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--yin-gold, #E4B028);
+  color: #0F172A;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}

@@ -20,12 +20,14 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-yin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_POOL_SIZE: ${POSTGRES_POOL_SIZE:-5}
+      REDIS_HOST: yin-redis
+      REDIS_PORT: 6379
       JAVA_TOOL_OPTIONS: -Duser.timezone=UTC -Xms128m -Xmx320m -XX:MaxMetaspaceSize=192m
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-true}
       JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-604800000}
       MEDIA_STORAGE_DIR: /app/media
     volumes:
       - yin_media:/app/media
@@ -45,8 +47,6 @@ services:
       - "${FRONTEND_BIND_ADDRESS:-127.0.0.1}:${FRONTEND_PORT:-4200}:80"
     networks:
       - yin-network
-    depends_on:
-      - yin-backend-api
     mem_limit: 96m
 
 networks:

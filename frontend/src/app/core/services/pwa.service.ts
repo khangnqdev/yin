@@ -7,7 +7,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PwaService {
   private readonly notification = inject(NotificationService);
@@ -28,10 +28,12 @@ export class PwaService {
     }
 
     // 1. Kiểm tra xem web có đang mở dưới dạng In-App (Standalone) không
-    const isStandaloneDisplay = typeof window.matchMedia === 'function' 
-      ? window.matchMedia('(display-mode: standalone)').matches 
-      : false;
-    const isIosStandalone = (window.navigator as unknown as { standalone?: boolean })?.standalone === true;
+    const isStandaloneDisplay =
+      typeof window.matchMedia === 'function'
+        ? window.matchMedia('(display-mode: standalone)').matches
+        : false;
+    const isIosStandalone =
+      (window.navigator as unknown as { standalone?: boolean })?.standalone === true;
     this.isStandalone.set(isStandaloneDisplay || isIosStandalone);
 
     // 2. Nhận diện thiết bị iOS
@@ -64,7 +66,7 @@ export class PwaService {
       this.isStandalone.set(true);
       this.notification.success(
         'Đã cài đặt ứng dụng Yin!',
-        'Biểu tượng Yin Kenna đã xuất hiện trên màn hình điện thoại của bạn. Bạn có thể mở trực tiếp dưới dạng in-app bất cứ lúc nào.'
+        'Biểu tượng Yin đã xuất hiện trên màn hình điện thoại của bạn. Bạn có thể mở trực tiếp dưới dạng in-app bất cứ lúc nào.',
       );
     });
   }
@@ -80,12 +82,13 @@ export class PwaService {
         'Website Yin hiện đang chạy trực tiếp dưới dạng ứng dụng độc lập (In-App) trên thiết bị của bạn.',
         {
           detailTitle: 'Trạng Thái In-App Hoạt Động',
-          detailContent: 'Ứng dụng Yin Kenna đã được cấu hình toàn màn hình không thanh địa chỉ, tối ưu tài nguyên và hiệu năng cao nhất.',
+          detailContent:
+            'Ứng dụng Yin đã được cấu hình toàn màn hình không thanh địa chỉ, tối ưu tài nguyên và hiệu năng cao nhất.',
           detailItems: [
             { label: 'Chế độ hiển thị', value: 'Standalone (In-App)' },
-            { label: 'Nền tảng', value: 'Yin Platform Progressive Web App' }
-          ]
-        }
+            { label: 'Nền tảng', value: 'Yin Platform Progressive Web App' },
+          ],
+        },
       );
       return;
     }
@@ -108,13 +111,25 @@ export class PwaService {
         'Để mở Yin dưới dạng ứng dụng in-app không có thanh địa chỉ trình duyệt:',
         {
           detailTitle: 'Hướng Dẫn Thêm Vào Màn Hình Chính (iOS Safari)',
-          detailContent: 'Hệ điều hành iOS hỗ trợ lưu website thành ứng dụng native mượt mà thông qua Safari:',
+          detailContent:
+            'Hệ điều hành iOS hỗ trợ lưu website thành ứng dụng native mượt mà thông qua Safari:',
           detailItems: [
-            { label: 'Bước 1', value: 'Nhấn vào biểu tượng Chia sẻ (ô vuông có mũi tên trỏ lên) ở thanh dưới cùng Safari.' },
-            { label: 'Bước 2', value: 'Kéo danh sách xuống và chọn "Thêm vào MH chính" (Add to Home Screen).' },
-            { label: 'Bước 3', value: 'Nhấn "Thêm" (Add) ở góc trên bên phải. Icon Yin sẽ xuất hiện ngoài màn hình chính của bạn.' }
-          ]
-        }
+            {
+              label: 'Bước 1',
+              value:
+                'Nhấn vào biểu tượng Chia sẻ (ô vuông có mũi tên trỏ lên) ở thanh dưới cùng Safari.',
+            },
+            {
+              label: 'Bước 2',
+              value: 'Kéo danh sách xuống và chọn "Thêm vào MH chính" (Add to Home Screen).',
+            },
+            {
+              label: 'Bước 3',
+              value:
+                'Nhấn "Thêm" (Add) ở góc trên bên phải. Icon Yin sẽ xuất hiện ngoài màn hình chính của bạn.',
+            },
+          ],
+        },
       );
       return;
     }
@@ -125,12 +140,16 @@ export class PwaService {
       'Bạn có thể lưu Yin vào màn hình chính điện thoại bằng cách bấm vào menu (dấu 3 chấm) của trình duyệt và chọn "Cài đặt ứng dụng" hoặc "Thêm vào màn hình chính".',
       {
         detailTitle: 'Lưu Điểm Truy Cập In-App',
-        detailContent: 'Web app Yin hỗ trợ chuẩn PWA Standalone. Khi lưu ra màn hình chính, web sẽ chạy độc lập như app cài từ store.',
+        detailContent:
+          'Web app Yin hỗ trợ chuẩn PWA Standalone. Khi lưu ra màn hình chính, web sẽ chạy độc lập như app cài từ store.',
         detailItems: [
-          { label: 'Chrome / Edge Android', value: 'Bấm menu 3 chấm (⋮) > Chọn "Cài đặt ứng dụng" hoặc "Thêm vào màn hình chính"' },
-          { label: 'Safari iOS', value: 'Bấm nút Chia sẻ > Chọn "Thêm vào MH chính"' }
-        ]
-      }
+          {
+            label: 'Chrome / Edge Android',
+            value: 'Bấm menu 3 chấm (⋮) > Chọn "Cài đặt ứng dụng" hoặc "Thêm vào màn hình chính"',
+          },
+          { label: 'Safari iOS', value: 'Bấm nút Chia sẻ > Chọn "Thêm vào MH chính"' },
+        ],
+      },
     );
   }
 }

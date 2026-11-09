@@ -15,14 +15,16 @@ export interface SeoMetadata {
 
 const DEFAULT_SEO: SeoMetadata = {
   title: 'Yin | Thi Công Phần Mềm & Giải Pháp Công Nghệ Cao Cấp',
-  description: 'Yin (Yin Kenna) - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và phát triển kiến trúc công nghệ cao cấp. Kiến trúc vững chắc, chịu tải lớn, bảo mật tuyệt đối.',
-  keywords: 'Yin, yin.vn, Yin Kenna, thi công phần mềm, làm phần mềm, xây dựng phần mềm, lập trình phần mềm, thiết kế phần mềm, gia công phần mềm, công ty phần mềm, kiến trúc phần mềm, phát triển web app',
+  description:
+    'Yin - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và phát triển kiến trúc công nghệ cao cấp. Kiến trúc vững chắc, chịu tải lớn, bảo mật tuyệt đối.',
+  keywords:
+    'Yin, yin.vn, thi công phần mềm, làm phần mềm, xây dựng phần mềm, lập trình phần mềm, thiết kế phần mềm, gia công phần mềm, công ty phần mềm, kiến trúc phần mềm, phát triển web app',
   ogImage: 'https://yin.vn/assets/logo/icon-512.png',
-  type: 'website'
+  type: 'website',
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SeoService {
   private readonly titleService = inject(Title);
@@ -54,13 +56,11 @@ export class SeoService {
     this.updateFromRoute(this.activatedRoute);
 
     // Lắng nghe sự kiện chuyển trang để cập nhật Title và Meta Description tự động
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        // RouterTitleStrategy also writes the document title during navigation.
-        // Run after it so the selected language remains reflected in the tab title.
-        setTimeout(() => this.updateFromRoute(this.activatedRoute), 0);
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      // RouterTitleStrategy also writes the document title during navigation.
+      // Run after it so the selected language remains reflected in the tab title.
+      setTimeout(() => this.updateFromRoute(this.activatedRoute), 0);
+    });
   }
 
   /**
@@ -73,7 +73,11 @@ export class SeoService {
     let formattedTitle: string;
     if (rawTitle.startsWith('Yin |')) {
       formattedTitle = rawTitle;
-    } else if (rawTitle.toLowerCase() === 'yin' || rawTitle === 'Trang Chủ' || rawTitle === 'Home') {
+    } else if (
+      rawTitle.toLowerCase() === 'yin' ||
+      rawTitle === 'Trang Chủ' ||
+      rawTitle === 'Home'
+    ) {
       formattedTitle = this.language.text(DEFAULT_SEO.title);
     } else {
       formattedTitle = `Yin | ${rawTitle}`;
@@ -111,7 +115,10 @@ export class SeoService {
     if (type) {
       this.metaService.updateTag({ property: 'og:type', content: type });
     }
-    this.metaService.updateTag({ property: 'og:locale', content: this.language.language() === 'en' ? 'en_US' : 'vi_VN' });
+    this.metaService.updateTag({
+      property: 'og:locale',
+      content: this.language.language() === 'en' ? 'en_US' : 'vi_VN',
+    });
   }
 
   /**
@@ -135,8 +142,7 @@ export class SeoService {
       title: routeTitle || DEFAULT_SEO.title,
       description,
       keywords,
-      ogImage
+      ogImage,
     });
   }
 }
-

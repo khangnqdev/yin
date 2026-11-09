@@ -6,6 +6,7 @@ import { LocalDbService } from '../../../core/services/local-db.service';
 import { FooterService } from '../../../core/services/footer.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { FooterConfig } from '../../../core/models/footer-config.model';
+import { APP_VARIABLES } from '../../../core/constants/app.variables';
 import { 
   PageKey, 
   PageDocument,
@@ -488,7 +489,7 @@ export class AdminPagesEditComponent implements OnInit, AfterViewInit, OnDestroy
   getPageLabel(key: PageKey): string {
     switch (key) {
       case 'home': return 'Trang chủ (Home)';
-      case 'about': return 'Về Yin & Khang (About)';
+      case 'about': return `Về ${APP_VARIABLES.brand.name} (About)`;
       case 'projects': return 'Dự án thi công (Projects)';
       case 'blog': return 'Bài viết & Báo chí (Blog)';
       case 'contact': return 'Liên hệ (Contact)';
@@ -1275,7 +1276,7 @@ export class AdminPagesEditComponent implements OnInit, AfterViewInit, OnDestroy
           id,
           type: 'cta',
           badge: 'Sẵn Sàng Hợp Tác',
-          headline: 'Bắt Đầu Dự Án Mới Cùng Yin & Khang Ngay Hôm Nay',
+          headline: `Bắt Đầu Dự Án Mới Cùng ${APP_VARIABLES.brand.name} Ngay Hôm Nay`,
           description: 'Liên hệ ngay để nhận tư vấn kỹ thuật chuyên sâu và dự toán công trình minh bạch không phát sinh.',
           buttonText: 'Liên Hệ Ngay',
           buttonLink: '/contact',
@@ -1366,7 +1367,7 @@ export class AdminPagesEditComponent implements OnInit, AfterViewInit, OnDestroy
           headline: 'Gửi Yêu Cầu Khảo Sát Thực Địa',
           description: 'Để lại thông tin để kỹ sư trưởng liên hệ khảo sát thực địa trong vòng 24 giờ.',
           submitButtonText: 'Gửi Yêu Cầu Khảo Sát',
-          successMessage: 'Cảm ơn bạn! Kỹ sư của Yin & Khang sẽ liên hệ lại ngay.',
+          successMessage: `Cảm ơn bạn! Kỹ sư của ${APP_VARIABLES.brand.name} sẽ liên hệ lại ngay.`,
           fields: [
             { label: 'Họ và tên', placeholder: 'Nguyễn Văn A', fieldType: 'text', required: true },
             { label: 'Số điện thoại', placeholder: '0900 123 456', fieldType: 'tel', required: true },
@@ -1481,10 +1482,10 @@ export class AdminPagesEditComponent implements OnInit, AfterViewInit, OnDestroy
           subtitle: 'Lắng nghe phản hồi từ những chủ đầu tư đã tin tưởng lựa chọn chúng tôi',
           items: [
             {
-              quote: 'Đội ngũ Yin & Khang làm việc cực kỳ chuyên nghiệp và tận tâm. Công trình bàn giao đúng hạn với chất lượng vượt mong đợi.',
+              quote: `Đội ngũ ${APP_VARIABLES.brand.name} làm việc cực kỳ chuyên nghiệp và tận tâm. Công trình bàn giao đúng hạn với chất lượng vượt mong đợi.`,
               author: 'Nguyễn Minh Tuấn',
               position: 'Tổng Giám Đốc',
-              company: 'Tuấn Khang Corp',
+              company: 'Tập đoàn Công nghệ Đối tác',
               rating: 5
             }
           ],

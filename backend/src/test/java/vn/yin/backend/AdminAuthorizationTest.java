@@ -17,6 +17,7 @@ import vn.yin.backend.config.SecurityConfig;
 import vn.yin.backend.controller.ApiController;
 import vn.yin.backend.repository.AccountRepository;
 import vn.yin.backend.service.SiteService;
+import vn.yin.backend.service.TokenRegistry;
 
 @WebMvcTest(controllers = ApiController.class, properties = {
         "app.jwt.secret=0123456789abcdef0123456789abcdef",
@@ -28,24 +29,25 @@ class AdminAuthorizationTest {
     @MockitoBean SiteService site;
     @MockitoBean AccountRepository accounts;
     @MockitoBean JdbcTemplate jdbc;
+    @MockitoBean TokenRegistry tokenRegistry;
 
     @Test
     void fixerCanReadButCannotWriteCmsOrManageAccounts() throws Exception {
-        mvc.perform(get("/api/admin/articles").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_FIXER"))))
+        mvc.perform(get("/api/admin/articles").with(jwt().authorities(new SimpleGrantedAuthority("PERM_articles:READ"))))
                 .andExpect(status().isOk());
-        mvc.perform(post("/api/admin/articles").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_FIXER")))
+        mvc.perform(post("/api/admin/articles").with(jwt().authorities(new SimpleGrantedAuthority("PERM_articles:READ")))
                 .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isForbidden());
-        mvc.perform(get("/api/admin/accounts").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_FIXER"))))
+        mvc.perform(get("/api/admin/accounts").with(jwt().authorities(new SimpleGrantedAuthority("PERM_articles:READ"))))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void managerCanWriteCmsAndReachAccountManagement() throws Exception {
-        mvc.perform(post("/api/admin/articles").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_MANAGER")))
+        mvc.perform(post("/api/admin/articles").with(jwt().authorities(new SimpleGrantedAuthority("PERM_articles:WRITE")))
                 .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isOk());
-        mvc.perform(get("/api/admin/accounts").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_MANAGER"))))
+        mvc.perform(get("/api/admin/accounts").with(jwt().authorities(new SimpleGrantedAuthority("PERM_accounts:READ"))))
                 .andExpect(status().isNotFound());
     }
 }

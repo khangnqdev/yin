@@ -5,7 +5,7 @@ import { LocalDbService } from '../services/local-db.service';
 export const adminRoleGuard: CanActivateFn = route => {
   const db = inject(LocalDbService);
   const router = inject(Router);
-  const allowed = route.data['roles'] as string[] | undefined;
-  return !allowed || allowed.includes(db.adminUser()?.role || '')
-    ? true : router.createUrlTree(['/admin']);
+  const permission = route.data['permission'] as string | undefined;
+  return db.loadError() || !permission || db.hasPermission(permission)
+    ? true : router.createUrlTree(['/403']);
 };

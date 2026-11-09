@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
     id varchar(64) PRIMARY KEY,
     username varchar(100) NOT NULL UNIQUE,
     password_hash varchar(255) NOT NULL,
-    role varchar(30) NOT NULL CHECK (role IN ('CLIENT', 'MANAGER', 'ADMIN', 'FIXER')),
+    role varchar(30) NOT NULL,
     is_active boolean NOT NULL DEFAULT true,
     created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
     email varchar(255),
@@ -10,6 +10,65 @@ CREATE TABLE IF NOT EXISTS users (
     date_of_birth date,
     receive_updates boolean NOT NULL DEFAULT false,
     token_version integer NOT NULL DEFAULT 0
+);
+ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;
+CREATE TABLE IF NOT EXISTS roles (
+    code varchar(30) PRIMARY KEY,
+    name varchar(100) NOT NULL,
+    description varchar(500) NOT NULL DEFAULT '',
+    rank integer NOT NULL CHECK (rank BETWEEN 0 AND 999),
+    scope varchar(10) NOT NULL CHECK (scope IN ('ADMIN', 'CLIENT')),
+    is_active boolean NOT NULL DEFAULT true,
+    is_system boolean NOT NULL DEFAULT false,
+    permissions_seeded boolean NOT NULL DEFAULT false
+);
+ALTER TABLE roles ADD COLUMN IF NOT EXISTS permissions_seeded boolean NOT NULL DEFAULT false;
+INSERT INTO roles(code,name,rank,scope,is_system) VALUES
+    ('CLIENT','Khách hàng',0,'CLIENT',true),
+    ('FIXER','Kỹ thuật viên',100,'ADMIN',false),
+    ('MANAGER','Quản lý',200,'ADMIN',false),
+    ('ADMIN','Quản trị cấp cao',300,'ADMIN',true)
+ON CONFLICT (code) DO NOTHING;
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='users_role_fkey') THEN
+        ALTER TABLE users ADD CONSTRAINT users_role_fkey FOREIGN KEY(role) REFERENCES roles(code);
+    END IF;
+END $$;
+CREATE TABLE IF NOT EXISTS role_permissions (
+    role_code varchar(30) NOT NULL REFERENCES roles(code) ON DELETE CASCADE,
+    feature varchar(40) NOT NULL,
+    action varchar(10) NOT NULL CHECK (action IN ('READ','WRITE','EXECUTE','DELETE')),
+    PRIMARY KEY(role_code,feature,action)
+);
+INSERT INTO role_permissions(role_code,feature,action)
+SELECT 'ADMIN', feature, action FROM (VALUES
+    ('dashboard','READ'),('analytics','READ'),('articles','READ'),('articles','WRITE'),('articles','EXECUTE'),('articles','DELETE'),
+    ('pages','READ'),('pages','WRITE'),('contacts','READ'),('contacts','WRITE'),('clients','READ'),
+    ('support','READ'),('support','EXECUTE'),('accounts','READ'),('accounts','WRITE'),('accounts','EXECUTE'),
+    ('roles','READ'),('roles','WRITE'),('roles','EXECUTE'),('profile','READ'),('profile','WRITE'),('upload','WRITE')
+) AS p(feature,action) WHERE (SELECT NOT permissions_seeded FROM roles WHERE code='ADMIN') ON CONFLICT DO NOTHING;
+UPDATE roles SET permissions_seeded=true WHERE code='ADMIN';
+INSERT INTO role_permissions(role_code,feature,action)
+SELECT 'MANAGER', feature, action FROM (VALUES
+    ('dashboard','READ'),('analytics','READ'),('articles','READ'),('articles','WRITE'),('articles','EXECUTE'),('articles','DELETE'),
+    ('pages','READ'),('pages','WRITE'),('contacts','READ'),('contacts','WRITE'),('clients','READ'),
+    ('support','READ'),('support','EXECUTE'),('accounts','READ'),('accounts','WRITE'),('accounts','EXECUTE'),
+    ('roles','READ'),('roles','WRITE'),('roles','EXECUTE'),('profile','READ'),('profile','WRITE'),('upload','WRITE')
+) AS p(feature,action) WHERE (SELECT NOT permissions_seeded FROM roles WHERE code='MANAGER') ON CONFLICT DO NOTHING;
+UPDATE roles SET permissions_seeded=true WHERE code='MANAGER';
+INSERT INTO role_permissions(role_code,feature,action)
+SELECT 'FIXER', feature, action FROM (VALUES
+    ('dashboard','READ'),('analytics','READ'),('articles','READ'),('support','READ'),('support','EXECUTE'),('profile','READ'),('profile','WRITE')
+) AS p(feature,action) WHERE (SELECT NOT permissions_seeded FROM roles WHERE code='FIXER') ON CONFLICT DO NOTHING;
+UPDATE roles SET permissions_seeded=true WHERE code='FIXER';
+CREATE TABLE IF NOT EXISTS role_audit (
+    id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    actor_id varchar(64) NOT NULL,
+    target_code varchar(30) NOT NULL,
+    operation varchar(30) NOT NULL,
+    before_state text,
+    after_state text,
+    created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC')
 );
 ALTER TABLE users ADD COLUMN IF NOT EXISTS author_name varchar(200);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS author_role varchar(200);

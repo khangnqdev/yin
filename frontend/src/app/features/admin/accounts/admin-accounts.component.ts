@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminManagementService } from '../../../core/services/admin-management.service';
 import { DraftStorageService } from '../../../core/services/draft-storage.service';
 import { AdminAccount } from '../../../core/models/client-auth.model';
+import { AdminRole } from '../../../core/models/role.model';
 import { YinIconComponent } from '../../../shared/components/yin-icon/yin-icon.component';
 import { YinSlideDrawerComponent } from '../../../shared/components/slide-drawer/slide-drawer.component';
 import {
@@ -17,7 +18,7 @@ import { LocalDbService } from '../../../core/services/local-db.service';
 
 interface AdminAccountDraft {
   username: string;
-  role: 'MANAGER' | 'ADMIN' | 'FIXER';
+  role: string;
 }
 
 @Component({
@@ -41,6 +42,7 @@ export class AdminAccountsComponent implements OnInit {
   private readonly DRAFT_KEY = 'admin_account_new';
 
   protected readonly accounts = signal<AdminAccount[]>([]);
+  protected readonly roles = signal<AdminRole[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal('');
   protected readonly successMessage = signal('');
@@ -72,9 +74,7 @@ export class AdminAccountsComponent implements OnInit {
       activeValue: this.selectedRoleFilter(),
       options: [
         { label: 'Tất cả vai trò', value: 'ALL' },
-        { label: 'ADMIN', value: 'ADMIN' },
-        { label: 'MANAGER', value: 'MANAGER' },
-        { label: 'FIXER', value: 'FIXER' },
+        ...this.roles().map(role => ({ label: role.name, value: role.code })),
       ],
     },
     {
@@ -118,7 +118,7 @@ export class AdminAccountsComponent implements OnInit {
   protected readonly isAddingAccount = signal(false);
   protected readonly hasDraftRestored = signal(false);
   protected readonly newUsername = signal('');
-  protected readonly newRole = signal<'MANAGER' | 'FIXER'>('FIXER');
+  protected readonly newRole = signal<string>('');
   protected readonly createdCredential = signal<{ username: string; password: string } | null>(null);
   protected readonly submitting = signal(false);
   protected readonly formError = signal('');
@@ -126,16 +126,17 @@ export class AdminAccountsComponent implements OnInit {
   protected readonly passwordAccount = signal<AdminAccount | null>(null);
   protected readonly replacementPassword = signal('');
 
-  protected creatableRoles(): Array<'MANAGER' | 'FIXER'> {
-    return this.db.adminUser()?.role === 'ADMIN' ? ['MANAGER', 'FIXER'] : ['FIXER'];
+  protected creatableRoles(): string[] {
+    return this.roles().filter(role => role.isActive && role.rank < (this.db.adminSession()?.rank ?? 0)).map(role => role.code);
   }
 
   protected canManage(account: AdminAccount): boolean {
-    const rank: Record<string, number> = { ADMIN: 3, MANAGER: 2, FIXER: 1 };
-    return (rank[this.db.adminUser()?.role || ''] || 0) > rank[account.role];
+    const role = this.roles().find(item => item.code === account.role);
+    return !!role && role.rank < (this.db.adminSession()?.rank ?? 0);
   }
 
   async ngOnInit(): Promise<void> {
+    try { this.roles.set(await this.adminApi.getRoles()); } catch { this.error.set('Không thể tải danh sách vai trò.'); }
     await this.fetchAccounts(0);
   }
 
@@ -200,19 +201,20 @@ export class AdminAccountsComponent implements OnInit {
   }
 
   openAddDrawer(): void {
+    if (!this.db.hasPermission('accounts:WRITE')) return;
     this.formError.set('');
     this.successMessage.set('');
 
     // Kiểm tra và khôi phục bản nháp chưa lưu (trong hạn 12 tiếng)
     const draft = this.draftStorage.getDraft<AdminAccountDraft>(this.DRAFT_KEY);
-    const role = draft?.role === 'MANAGER' && this.creatableRoles().includes('MANAGER') ? 'MANAGER' : 'FIXER';
+    const role = draft && this.creatableRoles().includes(draft.role) ? draft.role : (this.creatableRoles()[0] ?? '');
     if (draft && draft.username) {
       this.newUsername.set(draft.username || '');
       this.newRole.set(role);
       this.hasDraftRestored.set(true);
     } else {
       this.newUsername.set('');
-      this.newRole.set('FIXER');
+      this.newRole.set(role);
       this.hasDraftRestored.set(false);
     }
 
@@ -253,7 +255,7 @@ export class AdminAccountsComponent implements OnInit {
     this.draftStorage.clearDraft(this.DRAFT_KEY);
     this.hasDraftRestored.set(false);
     this.newUsername.set('');
-    this.newRole.set('FIXER');
+    this.newRole.set(this.creatableRoles()[0] ?? '');
   }
 
   validate(): boolean {
@@ -319,7 +321,7 @@ export class AdminAccountsComponent implements OnInit {
   }
 
   async toggleActive(account: AdminAccount): Promise<void> {
-    if (!this.canManage(account) || this.busyAccountId()) return;
+    if (!this.db.hasPermission('accounts:EXECUTE') || !this.canManage(account) || this.busyAccountId()) return;
     const next = !account.isActive;
     if (!next && !confirm(`Khóa tài khoản "${account.username}"? Các phiên đăng nhập hiện tại sẽ hết hiệu lực.`)) return;
     this.busyAccountId.set(account.id);
@@ -336,7 +338,7 @@ export class AdminAccountsComponent implements OnInit {
   }
 
   async changeRole(account: AdminAccount, role: AdminAccount['role']): Promise<void> {
-    if (!this.canManage(account) || !this.creatableRoles().includes(role as 'MANAGER' | 'FIXER') || role === account.role || this.busyAccountId()) return;
+    if (!this.db.hasPermission('accounts:EXECUTE') || !this.canManage(account) || !this.creatableRoles().includes(role) || role === account.role || this.busyAccountId()) return;
     this.busyAccountId.set(account.id);
     this.error.set('');
     try {
@@ -351,7 +353,7 @@ export class AdminAccountsComponent implements OnInit {
   }
 
   openPasswordReset(account: AdminAccount): void {
-    if (!this.canManage(account)) return;
+    if (!this.db.hasPermission('accounts:EXECUTE') || !this.canManage(account)) return;
     this.replacementPassword.set('');
     this.formError.set('');
     this.passwordAccount.set(account);

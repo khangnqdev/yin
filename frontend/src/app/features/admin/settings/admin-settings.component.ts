@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { YinIconComponent } from '../../../core/components/icon/icon.component';
 import { AuthorProfileService } from '../../../core/services/author-profile.service';
 import { ARTICLE_FORMAT_MARKDOWN_TEMPLATE, ARTICLE_AI_SYSTEM_PROMPT } from '../../../core/constants/article-format-template';
+import { APP_VARIABLES } from '../../../core/constants/app.variables';
 
 @Component({
   selector: 'yin-admin-settings',
@@ -11,6 +12,7 @@ import { ARTICLE_FORMAT_MARKDOWN_TEMPLATE, ARTICLE_AI_SYSTEM_PROMPT } from '../.
   imports: [FormsModule, YinIconComponent]
 })
 export class AdminSettingsComponent implements OnInit {
+  protected readonly appVars = APP_VARIABLES;
   private readonly authorProfile = inject(AuthorProfileService);
   
   protected readonly authorName = signal('');

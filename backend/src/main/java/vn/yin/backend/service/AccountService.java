@@ -11,11 +11,14 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import vn.yin.backend.common.AbuseProtection;
 import vn.yin.backend.config.SecurityConfig;
@@ -23,12 +26,9 @@ import vn.yin.backend.repository.AccountRepository;
 
 @Service
 public class AccountService {
-    public static final Set<String> ADMIN_ROLES = Set.of("MANAGER", "ADMIN", "FIXER");
     private static final SecureRandom PASSWORD_RANDOM = new SecureRandom();
 
-    private int rank(String role) {
-        return switch (role) { case "ADMIN" -> 3; case "MANAGER" -> 2; case "FIXER" -> 1; default -> 0; };
-    }
+    private int rank(String role) { Integer value = accounts.roleRank(role); return value == null ? 0 : value; }
 
     private String actorRole(String actorId) {
         Map<String, Object> actor = accounts.activePrincipal(actorId);
@@ -42,19 +42,34 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Role must be below your own");
     }
 
+    private void requireGrantable(String actorId, String targetRole) {
+        var actorPermissions = accounts.permissionsForRole(actorRole(actorId));
+        var targetPermissions = accounts.permissionsForRole(targetRole);
+        if (actorPermissions != null && targetPermissions != null && !actorPermissions.containsAll(targetPermissions))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot grant unavailable permission");
+    }
+
     private final AccountRepository accounts;
     private final AuthenticationManager authentication;
     private final SecurityConfig.TokenService tokens;
     private final PasswordEncoder passwords;
     private final AbuseProtection protection;
+    private final TokenRegistry registry;
 
+    @Autowired
     public AccountService(AccountRepository accounts, AuthenticationManager authentication,
-            SecurityConfig.TokenService tokens, PasswordEncoder passwords, AbuseProtection protection) {
+            SecurityConfig.TokenService tokens, PasswordEncoder passwords, AbuseProtection protection, TokenRegistry registry) {
         this.accounts = accounts;
         this.authentication = authentication;
         this.tokens = tokens;
         this.passwords = passwords;
         this.protection = protection;
+        this.registry = registry;
+    }
+
+    public AccountService(AccountRepository accounts, AuthenticationManager authentication,
+            SecurityConfig.TokenService tokens, PasswordEncoder passwords, AbuseProtection protection) {
+        this(accounts, authentication, tokens, passwords, protection, null);
     }
 
     public void only(Map<String, Object> body, String... allowed) {
@@ -141,7 +156,7 @@ public class AccountService {
                 if (account == null || !Boolean.TRUE.equals(account.get("is_active")))
                     throw new BadCredentialsException("Invalid credentials");
                 String role = account.get("role").toString();
-                if (admin != ADMIN_ROLES.contains(role))
+                if (admin != accounts.isAdminRole(role))
                     throw new BadCredentialsException("Invalid credentials");
                 protection.loginSucceeded(username);
                 String id = account.get("id").toString();
@@ -150,6 +165,8 @@ public class AccountService {
                 return Map.of("token", tokens.issue(id, actualUsername, role, tokenVersion), "tokenType", "Bearer",
                         "expiresIn", tokens.expirationMs() / 1000,
                         "user", Map.of("id", id, "username", actualUsername, "role", role));
+            } catch (AuthenticationServiceException e) {
+                throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Authentication service unavailable", e);
             } catch (AuthenticationException e) {
                 protection.loginFailed(username);
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
@@ -197,12 +214,15 @@ public class AccountService {
         return accounts.updateAuthorProfile(actorId, name, role);
     }
 
+    @Transactional
     public Map<String, Object> createAdmin(String actorId, Map<String, Object> body) {
+        accounts.lockPolicy();
         only(body, "username", "role");
         String username = username(body, true);
         String role = trimmed(body, "role", 30);
-        if (!ADMIN_ROLES.contains(role)) bad("Invalid role");
+        if (!accounts.isAdminRole(role)) bad("Invalid role");
         requireSuperior(actorId, role);
+        requireGrantable(actorId, role);
         byte[] random = new byte[24];
         PASSWORD_RANDOM.nextBytes(random);
         String password = Base64.getUrlEncoder().withoutPadding().encodeToString(random);
@@ -212,7 +232,9 @@ public class AccountService {
         return result;
     }
 
+    @Transactional
     public Map<String, Object> updateAdminStatus(String actorId, String id, Map<String, Object> body) {
+        accounts.lockPolicy();
         only(body, "isActive");
         if (!body.containsKey("isActive")) bad("isActive is required");
         boolean active = booleanField(body, "isActive", false);
@@ -221,28 +243,37 @@ public class AccountService {
         if (active == Boolean.TRUE.equals(current.get("isActive"))) return current;
         if (!accounts.updateAdminStatus(id, active))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot disable the last active ADMIN");
+        if (registry != null) registry.revokeUser(id);
         return adminOrNotFound(id);
     }
 
+    @Transactional
     public Map<String, Object> updateAdminRole(String actorId, String id, Map<String, Object> body) {
+        accounts.lockPolicy();
         only(body, "role");
         String role = trimmed(body, "role", 30);
-        if (!ADMIN_ROLES.contains(role)) bad("Invalid role");
+        if (!accounts.isAdminRole(role)) bad("Invalid role");
         Map<String, Object> current = adminOrNotFound(id);
         requireSuperior(actorId, String.valueOf(current.get("role")));
         requireSuperior(actorId, role);
+        requireGrantable(actorId, role);
         if (role.equals(current.get("role"))) return current;
         if (!accounts.updateAdminRole(id, role))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot demote the last active ADMIN");
+        if (registry != null) registry.revokeUser(id);
+        accounts.auditRoleAssignment(actorId, id, String.valueOf(current.get("role")), role);
         return adminOrNotFound(id);
     }
 
+    @Transactional
     public Map<String, Object> resetAdminPassword(String actorId, String id, Map<String, Object> body) {
+        accounts.lockPolicy();
         only(body, "password");
         String password = password(body, true);
         requireSuperior(actorId, String.valueOf(adminOrNotFound(id).get("role")));
         if (!accounts.resetAdminPassword(id, passwords.encode(password)))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        if (registry != null) registry.revokeUser(id);
         return adminOrNotFound(id);
     }
 

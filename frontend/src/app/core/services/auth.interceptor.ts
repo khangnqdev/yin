@@ -41,9 +41,13 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
         if (request.url.startsWith('/api/client/')) {
           clientAuth.logout();
         } else if (request.url.startsWith('/api/admin/')) {
-          localDb.logout();
+          localDb.requireReauthentication();
           void router.navigate(['/admin/login']);
         }
+      }
+
+      if (error.status === 503 && request.url.startsWith('/api/admin/')) {
+        localDb.loadError.set('Chức năng đang bị lỗi hệ thống. Vui lòng thử lại sau.');
       }
 
       return throwError(() => error);

@@ -4,12 +4,29 @@ import { firstValueFrom } from 'rxjs';
 import { ClientProfile, AdminAccount, CreateAdminDto, CreatedAdminAccount } from '../models/client-auth.model';
 import { AdminSupportRequest, SupportStatus } from '../models/support-request.model';
 import { OffsetPage } from '../models/pagination.model';
+import { AdminRole, RoleInput } from '../models/role.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminManagementService {
   private readonly http = inject(HttpClient);
+
+  async getRoles(): Promise<AdminRole[]> {
+    return firstValueFrom(this.http.get<AdminRole[]>('/api/admin/roles'));
+  }
+
+  async createRole(data: RoleInput & { code: string }): Promise<AdminRole> {
+    return firstValueFrom(this.http.post<AdminRole>('/api/admin/roles', data));
+  }
+
+  async updateRole(code: string, data: RoleInput): Promise<AdminRole> {
+    return firstValueFrom(this.http.put<AdminRole>(`/api/admin/roles/${encodeURIComponent(code)}`, data));
+  }
+
+  async setRoleActive(code: string, isActive: boolean): Promise<AdminRole> {
+    return firstValueFrom(this.http.patch<AdminRole>(`/api/admin/roles/${encodeURIComponent(code)}/status`, { isActive }));
+  }
 
   /**
    * Lấy danh sách khách hàng (hỗ trợ lọc updatesOnly, tìm kiếm, phân trang offset)

@@ -1,10 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 import { FooterConfig } from '../models/footer-config.model';
+import { APP_VARIABLES } from '../constants/app.variables';
 
 export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
-  brandDesc: 'Công ty Yin — Đơn vị thi công xây dựng phần mềm công nghệ doanh nghiệp. Chúng tôi kiến tạo những nền tảng số chuẩn mực, bảo mật cao và vận hành ổn định cho tổ chức dẫn đầu.',
-  founderName: 'Khang',
-  founderRole: 'Người sáng lập',
+  brandDesc: APP_VARIABLES.brand.desc,
+  founderName: APP_VARIABLES.founder.name,
+  founderRole: APP_VARIABLES.founder.roleVi,
 
   col1Title: 'Nền Tảng & Giải Pháp',
   col1Links: [
@@ -26,13 +27,13 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
   ],
 
   col3Title: 'Liên Hệ & Trực Tuyến',
-  contactEmail: 'contact@yin.vn',
-  contactPhone: '+84 900 123 456',
-  contactAddress: 'Khu Công Nghệ Cao, TP. Thủ Đức, TP. HCM',
-  mapLink: 'https://www.google.com/maps/dir/?api=1&destination=Khu+C%C3%B4ng+Ngh%E1%BB%87+Cao+TP+Th%E1%BB%A7+%C4%90%E1%BB%A9c+TP+H%E1%BB%93+Ch%C3%AD+Minh',
+  contactEmail: APP_VARIABLES.contact.email,
+  contactPhone: APP_VARIABLES.contact.hotline,
+  contactAddress: APP_VARIABLES.contact.address,
+  mapLink: APP_VARIABLES.contact.mapLink,
 
-  copyrightText: 'Công ty Công nghệ Yin. Toàn quyền bảo lưu. Sáng lập bởi Khang.',
-  securityBadge: 'Bảo mật chuẩn Enterprise • Thiết kế theo cảm hứng Workday'
+  copyrightText: APP_VARIABLES.copyright.vi,
+  securityBadge: APP_VARIABLES.copyright.securityBadge
 };
 
 @Injectable({ providedIn: 'root' })
@@ -51,6 +52,12 @@ export class FooterService {
     }
     try {
       const parsed = JSON.parse(raw) as Partial<FooterConfig>;
+      if (parsed.founderName === 'Khang') {
+        parsed.founderName = APP_VARIABLES.founder.name;
+      }
+      if (parsed.copyrightText && parsed.copyrightText.includes('Khang')) {
+        parsed.copyrightText = APP_VARIABLES.copyright.vi;
+      }
       return {
         ...DEFAULT_FOOTER_CONFIG,
         ...parsed,

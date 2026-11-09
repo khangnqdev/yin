@@ -8,10 +8,10 @@ Tên miền gắn với Nginx của VPS, không gắn với một container. Khi
 
 ## DNS trên ZoneDNS
 
-| Loại | Tên | Giá trị |
-| --- | --- | --- |
-| A | `@` | `103.149.170.233` |
-| CNAME | `www` | `yin.vn` |
+| Loại  | Tên   | Giá trị           |
+| ----- | ----- | ----------------- |
+| A     | `@`   | `103.149.170.233` |
+| CNAME | `www` | `yin.vn`          |
 
 Đặt TTL 300 giây nếu giao diện cho phép. Kiểm tra `yin.vn` và `www.yin.vn` đều phân giải về `103.149.170.233` trước khi xin chứng chỉ HTTPS. Nếu có bản ghi AAAA cho hai tên này, chỉ giữ khi VPS có IPv6 hoạt động và Nginx lắng nghe trên đó.
 
@@ -20,7 +20,7 @@ Tên miền gắn với Nginx của VPS, không gắn với một container. Khi
 VPS Debian 12 cần Docker Compose, Git, Nginx và Certbot. Tài nguyên hiện có 1 vCPU, 1,5 GB RAM và 25 GB SSD. Stack dùng PostgreSQL 17 thay SQL Server để phù hợp RAM; backend và database đã có giới hạn bộ nhớ. Khi chạy cả hai bot cùng website, theo dõi RAM, swap và thời gian phản hồi; dừng bot test trước nếu máy chậm hoặc swap tăng nhiều.
 
 ```sh
-git clone https://github.com/khangnqdev/yin.git /opt/yin
+git clone https://github.com/Yin/yin.git /opt/yin
 cd /opt/yin
 cp .env.example .env
 chmod 600 .env

@@ -10,10 +10,7 @@ describe('SeoService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        SeoService,
-        provideRouter([])
-      ]
+      providers: [SeoService, provideRouter([])],
     });
     service = TestBed.inject(SeoService);
     titleService = TestBed.inject(Title);
@@ -35,10 +32,10 @@ describe('SeoService', () => {
   });
 
   it('should update meta description tag', () => {
-    const testDesc = 'Yin (Yin Kenna) thi công phần mềm chất lượng cao.';
+    const testDesc = 'Yin thi công phần mềm chất lượng cao.';
     service.updatePageSeo({
       title: 'Dịch Vụ',
-      description: testDesc
+      description: testDesc,
     });
 
     const descMeta = metaService.getTag('name="description"');
@@ -48,4 +45,3 @@ describe('SeoService', () => {
     expect(ogDescMeta?.content).toBe(testDesc);
   });
 });
-

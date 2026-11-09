@@ -12,8 +12,8 @@ describe('AdminSettingsComponent', () => {
       providers: [
         provideHttpClient(), provideHttpClientTesting(), provideRouter([]),
         { provide: AuthorProfileService, useValue: {
-          load: vi.fn().mockResolvedValue({ authorName: 'Khang', authorRole: 'Biên tập viên' }),
-          save: vi.fn().mockResolvedValue({ authorName: 'Khang', authorRole: 'Biên tập viên' })
+          load: vi.fn().mockResolvedValue({ authorName: 'Yin', authorRole: 'Biên tập viên' }),
+          save: vi.fn().mockResolvedValue({ authorName: 'Yin', authorRole: 'Biên tập viên' })
         } }
       ]
     });
@@ -23,7 +23,7 @@ describe('AdminSettingsComponent', () => {
     const fixture = TestBed.createComponent(AdminSettingsComponent);
     const component = fixture.componentInstance;
     await component.ngOnInit();
-    expect(component['authorName']()).toBe('Khang');
+    expect(component['authorName']()).toBe('Yin');
     expect(component['authorRole']()).toBe('Biên tập viên');
 
     await component.saveAuthorProfile();

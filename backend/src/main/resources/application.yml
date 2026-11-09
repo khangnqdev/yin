@@ -15,11 +15,19 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:yin_db}
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:yin_db}?connectTimeout=2&socketTimeout=10
     username: ${POSTGRES_USER:yin}
     password: ${POSTGRES_PASSWORD:}
     hikari:
       maximum-pool-size: ${POSTGRES_POOL_SIZE:5}
+      connection-timeout: 2000
+      validation-timeout: 1000
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 1s
+      connect-timeout: 1s
   servlet:
     multipart:
       max-file-size: 25MB
@@ -41,6 +49,6 @@ app:
     password: ${ADMIN_PASSWORD:}
   jwt:
     secret: ${JWT_SECRET:}
-    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+    expiration-ms: ${JWT_EXPIRATION_MS:604800000}
   media:
     storage-dir: ${MEDIA_STORAGE_DIR:./media}

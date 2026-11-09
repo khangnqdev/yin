@@ -494,6 +494,55 @@ a.nav-item:hover,
   box-shadow: var(--yin-shadow-sm);
 }
 
+/* Figure & Caption alignment fix (Hiển thị ngay sát dưới ảnh, căn giữa hoàn hảo) */
+.tiptap-content figure,
+figure.article-figure,
+figure {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  margin: 28px auto !important;
+  text-align: center !important;
+  max-width: 100% !important;
+}
+
+.tiptap-content figure img,
+figure.article-figure img,
+figure img {
+  display: block !important;
+  margin: 0 auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: var(--yin-radius-md, 8px) !important;
+  border: 1px solid var(--yin-border);
+  box-shadow: var(--yin-shadow-sm);
+}
+
+.tiptap-content figcaption,
+figure.article-figure figcaption,
+figcaption {
+  display: block !important;
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
+  font-size: 0.9rem !important;
+  color: var(--yin-text-dim, #64748B) !important;
+  font-style: italic !important;
+  text-align: center !important;
+  line-height: 1.4 !important;
+  width: 100% !important;
+}
+
+/* Divider <hr> giữa các phân đoạn */
+.tiptap-content hr,
+hr.editor-divider,
+hr {
+  border: none !important;
+  border-top: 1.5px solid var(--yin-border, #E2E8F0) !important;
+  margin: 36px auto !important;
+  width: 100% !important;
+  opacity: 0.8;
+}
+
 .ProseMirror {
   outline: none;
   min-height: 480px;

@@ -14,7 +14,7 @@
             <span>Tư Vấn Kiến Trúc Trực Tiếp</span>
           </div>
 
-          <h2 class="panel-title">Thi Công Giải Pháp Cùng Founder Khang</h2>
+          <h2 class="panel-title">Thi Công Giải Pháp Cùng {{ appVars.brand.name }}</h2>
           <p class="panel-desc">
             Tại Yin, chúng tôi đồng hành trực tiếp cùng các nhà sáng lập và CTO để xây dựng nền tảng phần mềm quy mô lớn, tối ưu kiến trúc và kiểm soát ngân sách theo chuẩn doanh nghiệp.
           </p>
@@ -39,8 +39,8 @@
             <div class="info-row">
               <div class="icon-wrap"><yin-icon name="phone" [size]="18"></yin-icon></div>
               <div>
-                <span class="info-label">Hotline Kỹ Thuật (Khang)</span>
-                <span class="info-val">+84 900 123 456</span>
+                <span class="info-label">{{ appVars.contact.hotlineLabel }}</span>
+                <span class="info-val">{{ appVars.contact.hotline }}</span>
               </div>
             </div>
 
@@ -68,7 +68,7 @@
               </div>
               <h3 class="success-title">Đã Tiếp Nhận Thông Tin Thành Công!</h3>
               <p class="success-desc">
-                Cảm ơn bạn đã liên hệ với Yin. Founder Khang và nhóm kỹ sư đã nhận được yêu cầu và sẽ liên hệ trao đổi phương án kỹ thuật sớm nhất.
+                Cảm ơn bạn đã liên hệ với {{ appVars.brand.name }}. Đội ngũ kỹ sư đã nhận được yêu cầu và sẽ liên hệ trao đổi phương án kỹ thuật sớm nhất.
               </p>
               <button type="button" class="yin-btn yin-btn-secondary" (click)="resetForm()">
                 Gửi Thêm Yêu Cầu Khác

@@ -1,0 +1,49 @@
+<main class="roles-page">
+  <header>
+    <div><h1>Vai trò & phân quyền</h1><p>Quản lý quyền truy cập theo tính năng và hành động.</p></div>
+    @if (db.hasPermission('roles:WRITE')) { <button type="button" (click)="startCreate()">Tạo vai trò</button> }
+  </header>
+  @if (error()) { <p class="notice error" role="alert">{{ error() }}</p> }
+  @if (success()) { <p class="notice" role="status">{{ success() }}</p> }
+  <div class="roles-grid">
+    <section class="role-list" aria-label="Danh sách vai trò">
+      @if (loading()) { <p>Đang tải…</p> }
+      @for (role of roles(); track role.code) {
+        <button type="button" [class.active]="selected()?.code === role.code && !creating" (click)="select(role)">
+          <strong>{{ role.name }}</strong><small>{{ role.code }} · cấp {{ role.rank }} · {{ role.isActive ? 'Hoạt động' : 'Ngừng' }}</small>
+        </button>
+      }
+    </section>
+    @if (creating || selected()) {
+      <section class="role-editor">
+        <h2>{{ creating ? 'Tạo vai trò' : 'Chỉnh sửa vai trò' }}</h2>
+        <div class="fields">
+          <label>Mã vai trò<input [(ngModel)]="code" [disabled]="!creating" maxlength="30" /></label>
+          <label>Tên vai trò<input [(ngModel)]="name" [disabled]="!canEdit()" maxlength="100" /></label>
+          <label>Mô tả<input [(ngModel)]="description" [disabled]="!canEdit()" maxlength="500" /></label>
+          <label>Cấp quản lý<input type="number" [(ngModel)]="rank" [disabled]="!canEdit()" min="1" [max]="(db.adminSession()?.rank ?? 1) - 1" /></label>
+        </div>
+        <p class="hint">Chỉ được quản lý vai trò cấp thấp hơn và cấp những quyền bạn đang có.</p>
+        <div class="matrix-wrap"><table>
+          <thead><tr><th>Tính năng</th>@for (action of actions; track action) { <th>{{ action }}</th> }</tr></thead>
+          <tbody>@for (feature of features; track feature.code) {
+            <tr><th>{{ feature.name }}</th>@for (action of actions; track action) {
+              <td>@if (available(feature.code, action)) {
+                <input type="checkbox" [checked]="grants.has(feature.code + ':' + action)"
+                  [disabled]="!canEdit() || !db.hasPermission(feature.code + ':' + action)"
+                  (change)="toggle(feature.code + ':' + action, $any($event.target).checked)"
+                  [attr.aria-label]="feature.name + ' ' + action" />
+              }</td>
+            }</tr>
+          }</tbody>
+        </table></div>
+        <div class="actions">
+          @if (canEdit()) { <button type="button" [disabled]="saving()" (click)="save()">{{ saving() ? 'Đang lưu…' : 'Lưu vai trò' }}</button> }
+          @if (!creating && selected() && !selected()?.isSystem && db.hasPermission('roles:EXECUTE') && canEdit()) {
+            <button type="button" class="secondary" [disabled]="saving()" (click)="changeStatus()">{{ selected()?.isActive ? 'Ngừng sử dụng' : 'Kích hoạt' }}</button>
+          }
+        </div>
+      </section>
+    } @else { <section class="role-editor"><p>Chọn một vai trò để xem quyền.</p></section> }
+  </div>
+</main>

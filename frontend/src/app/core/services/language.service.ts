@@ -5,223 +5,410 @@ export type SiteLanguage = 'vi' | 'en';
 // English copy for the public site and the content shipped with the initial CMS seed.
 // Unrecognised CMS content stays in its original language until an editor supplies a translation.
 const ENGLISH: Record<string, string> = {
-  'Trang Chủ': 'Home', 'Về Yin': 'About Yin', 'Giải Pháp & Dự Án': 'Solutions & Projects',
-  'Yin | Thi Công Phần Mềm & Giải Pháp Công Nghệ Cao Cấp': 'Yin | Custom Software Development & Enterprise Tech Solutions',
-  'Chi Tiết Bài Viết': 'Article', 'Liên Hệ & Khảo Sát': 'Contact & Consultation',
-  'Cong-Nghe': 'Technology', 'Kien-Truc-Phan-Mem': 'Software Architecture', 'Ho-So-Du-An': 'Case Studies',
-  'Thanh công cụ đọc bài viết': 'Article reading toolbar', 'Mục lục bài viết': 'Article contents',
+  'Trang Chủ': 'Home',
+  'Về Yin': 'About Yin',
+  'Giải Pháp & Dự Án': 'Solutions & Projects',
+  'Yin | Thi Công Phần Mềm & Giải Pháp Công Nghệ Cao Cấp':
+    'Yin | Custom Software Development & Enterprise Tech Solutions',
+  'Chi Tiết Bài Viết': 'Article',
+  'Liên Hệ & Khảo Sát': 'Contact & Consultation',
+  'Cong-Nghe': 'Technology',
+  'Kien-Truc-Phan-Mem': 'Software Architecture',
+  'Ho-So-Du-An': 'Case Studies',
+  'Thanh công cụ đọc bài viết': 'Article reading toolbar',
+  'Mục lục bài viết': 'Article contents',
   'Nhấn để cuộn tới đầu nội dung bài viết': 'Jump to the start of the article',
-  'Quay lại danh sách bài viết': 'Back to articles', 'Cuộn lên đầu trang': 'Scroll to top',
+  'Quay lại danh sách bài viết': 'Back to articles',
+  'Cuộn lên đầu trang': 'Scroll to top',
   'Trung Tâm Hỗ Trợ': 'Support Center',
-  'Yin (Yin Kenna) - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và phát triển kiến trúc công nghệ cao cấp. Chịu tải lớn, vững chắc, bảo mật tuyệt đối.': 'Yin builds custom enterprise software and advanced technology architecture with performance, reliability, and security in mind.',
-  'Tìm hiểu về Yin (Yin Kenna) - Đội ngũ kỹ sư và kiến trúc sư thi công phần mềm chuyên nghiệp, kiến tạo nền tảng công nghệ bền vững cho doanh nghiệp.': 'Meet Yin’s engineers and architects, building lasting technology platforms for businesses.',
-  'Khám phá các dự án thi công phần mềm tiêu biểu, hệ thống microservices chịu tải cao và giải pháp công nghệ cao cấp do Yin thực hiện.': 'Explore Yin’s software projects, high-volume microservices, and technology solutions.',
-  'Kho kiến thức chuyên sâu về kiến trúc phần mềm, kinh nghiệm thi công hệ thống chịu tải lớn và xu hướng công nghệ mới từ Yin Kenna.': 'Insights on software architecture, high-volume systems, and technology trends from Yin Kenna.',
-  'Đọc bài viết phân tích kỹ thuật và kiến trúc giải pháp phần mềm tại Yin Kenna.': 'Read technical insights and software architecture articles from Yin Kenna.',
-  'Liên hệ Yin Kenna để được tư vấn kiến trúc phần mềm, khảo sát yêu cầu kỹ thuật và nhận báo giá thi công dự án chính xác, tối ưu.': 'Contact Yin Kenna for software architecture advice, technical requirements, and a project estimate.',
-  'Tri Thức & Báo Chí': 'Insights & Press', 'Liên Hệ': 'Contact',
-  'Đăng Nhập': 'Log In', 'Đăng Ký': 'Sign Up', 'Đăng xuất': 'Log Out', 'Đăng Xuất': 'Log Out',
-  'Tư Vấn Dự Án': 'Discuss a Project', 'Tài Khoản': 'Account', 'Gửi Ticket Hỗ Trợ': 'Submit a Support Ticket',
-  'Đăng Nhập Khách Hàng': 'Client Log In', 'Đăng Ký Tài Khoản': 'Create an Account',
-  'Đang Mở Dạng In-App': 'Running as an App', 'Cài Đặt App (In-App)': 'Install App',
-  'Chuyển sang giao diện Sáng': 'Switch to light theme', 'Chuyển sang giao diện Tối': 'Switch to dark theme',
-  'Được tin cậy bởi các doanh nghiệp & đối tác công nghệ tiên phong': 'Trusted by forward-looking businesses and technology partners',
+  'Yin - Đơn vị chuyên thi công phần mềm, làm phần mềm theo yêu cầu và phát triển kiến trúc công nghệ cao cấp. Chịu tải lớn, vững chắc, bảo mật tuyệt đối.':
+    'Yin builds custom enterprise software and advanced technology architecture with performance, reliability, and security in mind.',
+  'Tìm hiểu về Yin - Đội ngũ kỹ sư và kiến trúc sư thi công phần mềm chuyên nghiệp, kiến tạo nền tảng công nghệ bền vững cho doanh nghiệp.':
+    'Meet Yin’s engineers and architects, building lasting technology platforms for businesses.',
+  'Khám phá các dự án thi công phần mềm tiêu biểu, hệ thống microservices chịu tải cao và giải pháp công nghệ cao cấp do Yin thực hiện.':
+    'Explore Yin’s software projects, high-volume microservices, and technology solutions.',
+  'Kho kiến thức chuyên sâu về kiến trúc phần mềm, kinh nghiệm thi công hệ thống chịu tải lớn và xu hướng công nghệ mới từ Yin.':
+    'Insights on software architecture, high-volume systems, and technology trends from Yin.',
+  'Đọc bài viết phân tích kỹ thuật và kiến trúc giải pháp phần mềm tại Yin.':
+    'Read technical insights and software architecture articles from Yin.',
+  'Liên hệ Yin để được tư vấn kiến trúc phần mềm, khảo sát yêu cầu kỹ thuật và nhận báo giá thi công dự án chính xác, tối ưu.':
+    'Contact Yin for software architecture advice, technical requirements, and a project estimate.',
+  'Tri Thức & Báo Chí': 'Insights & Press',
+  'Liên Hệ': 'Contact',
+  'Đăng Nhập': 'Log In',
+  'Đăng Ký': 'Sign Up',
+  'Đăng xuất': 'Log Out',
+  'Đăng Xuất': 'Log Out',
+  'Tư Vấn Dự Án': 'Discuss a Project',
+  'Tài Khoản': 'Account',
+  'Gửi Ticket Hỗ Trợ': 'Submit a Support Ticket',
+  'Đăng Nhập Khách Hàng': 'Client Log In',
+  'Đăng Ký Tài Khoản': 'Create an Account',
+  'Đang Mở Dạng In-App': 'Running as an App',
+  'Cài Đặt App (In-App)': 'Install App',
+  'Chuyển sang giao diện Sáng': 'Switch to light theme',
+  'Chuyển sang giao diện Tối': 'Switch to dark theme',
+  'Được tin cậy bởi các doanh nghiệp & đối tác công nghệ tiên phong':
+    'Trusted by forward-looking businesses and technology partners',
   'Kiến Trúc Sư Phần Mềm Thế Hệ Mới': 'Next-generation software architecture',
-  'Thi Công Xây Dựng Phần Mềm': 'Building Software', 'Chuẩn Mực Tương Lai': 'For the Future',
+  'Thi Công Xây Dựng Phần Mềm': 'Building Software',
+  'Chuẩn Mực Tương Lai': 'For the Future',
   'Uy tín hàng đầu': 'Built to Earn Trust',
-  'Công ty Yin được sáng lập bởi Khang — Chuyên gia thi công các hệ sinh thái phần mềm công nghệ cao, biến những bài toán nghiệp vụ phức tạp thành nền tảng số tinh gọn, bảo mật và siêu tốc độ.': 'Founded by Khang, Yin builds advanced software ecosystems that turn complex business challenges into streamlined, secure, high-performance digital platforms.',
-  'Khởi Tạo Dự Án': 'Start a Project', 'Hồ Sơ Năng Lực & Dự Án': 'Our Work & Capabilities',
-  'Uptime Cam Kết': 'Committed Uptime', 'Hiệu Năng Chịu Tải': 'Transaction Capacity', 'Dự Án Hoàn Thành': 'Projects Delivered',
-  'Dự án Enterprise': 'Enterprise Projects', 'Đã bàn giao và vận hành trơn tru': 'Delivered and running reliably',
-  'Độ ổn định SLA': 'SLA Reliability', 'Kiến trúc Multi-region chịu lỗi cao': 'Resilient multi-region architecture',
-  'Tốc độ truy xuất': 'Faster Data Access', 'Nhờ tối ưu tầng CSDL và Caching': 'Through database and caching optimization',
-  'Bảo hành kiến trúc': 'Architecture Warranty', 'Bảo hành trọn đời mã nguồn đã thi công': 'Lifetime warranty on delivered source code',
-  'Sẵn Sàng Hợp Tác': 'Ready to Collaborate', 'Bạn có ý tưởng hoặc bài toán công nghệ thách thức?': 'Have an idea or a challenging technology problem?',
-  'Hãy để Yin và Founder Khang đồng hành cùng bạn thiết kế kiến trúc và thi công phần mềm đạt chuẩn công nghiệp.': 'Let Yin and founder Khang help you design and build software to enterprise standards.',
-  'Hãy để Yin đồng hành cùng bạn thiết kế kiến trúc và thi công phần mềm đạt chuẩn công nghiệp.': 'Let Yin help you design and build software to enterprise standards.',
+  'Công ty Yin — Đơn vị chuyên thi công các hệ sinh thái phần mềm công nghệ cao, biến những bài toán nghiệp vụ phức tạp thành nền tảng số tinh gọn, bảo mật và siêu tốc độ.':
+    'Yin builds advanced software ecosystems that turn complex business challenges into streamlined, secure, high-performance digital platforms.',
+  'Khởi Tạo Dự Án': 'Start a Project',
+  'Hồ Sơ Năng Lực & Dự Án': 'Our Work & Capabilities',
+  'Uptime Cam Kết': 'Committed Uptime',
+  'Hiệu Năng Chịu Tải': 'Transaction Capacity',
+  'Dự Án Hoàn Thành': 'Projects Delivered',
+  'Dự án Enterprise': 'Enterprise Projects',
+  'Đã bàn giao và vận hành trơn tru': 'Delivered and running reliably',
+  'Độ ổn định SLA': 'SLA Reliability',
+  'Kiến trúc Multi-region chịu lỗi cao': 'Resilient multi-region architecture',
+  'Tốc độ truy xuất': 'Faster Data Access',
+  'Nhờ tối ưu tầng CSDL và Caching': 'Through database and caching optimization',
+  'Bảo hành kiến trúc': 'Architecture Warranty',
+  'Bảo hành trọn đời mã nguồn đã thi công': 'Lifetime warranty on delivered source code',
+  'Sẵn Sàng Hợp Tác': 'Ready to Collaborate',
+  'Bạn có ý tưởng hoặc bài toán công nghệ thách thức?':
+    'Have an idea or a challenging technology problem?',
+  'Hãy để Yin đồng hành cùng bạn thiết kế kiến trúc và thi công phần mềm đạt chuẩn công nghiệp.':
+    'Let Yin help you design and build software to enterprise standards.',
   'Liên Hệ Tư Vấn Trực Tiếp': 'Talk to Our Team',
-  'Giới Thiệu Doanh Nghiệp': 'About Our Studio', 'Yin Không Chỉ Viết Code': 'Yin Does More Than Write Code',
+  'Giới Thiệu Doanh Nghiệp': 'About Our Studio',
+  'Yin Không Chỉ Viết Code': 'Yin Does More Than Write Code',
   'Chúng Tôi Thi Công Kiến Trúc Bền Vững': 'We Build Lasting Architecture',
-  'Được sáng lập bởi Khang, Yin định hình là một Engineering Studio cao cấp. Chúng tôi tin rằng phần mềm xuất sắc phải là sự giao thoa hoàn hảo giữa nghệ thuật kiến trúc, tính toán kỹ thuật chính xác và trải nghiệm người dùng chạm đến cảm xúc.': 'Founded by Khang, Yin is a premium engineering studio. We believe exceptional software brings together thoughtful architecture, precise engineering, and a user experience people enjoy.',
-  'Xem Dự Án Thực Tế': 'Explore Our Projects', 'Đặt Lịch Gặp Khang': 'Meet Khang',
-  'Kinh nghiệm sáng lập': 'Founder Experience', 'Cam kết chất lượng': 'Quality Commitment', '8+ Năm': '8+ Years',
+  'Yin định hình là một Engineering Studio cao cấp. Chúng tôi tin rằng phần mềm xuất sắc phải là sự giao thoa hoàn hảo giữa nghệ thuật kiến trúc, tính toán kỹ thuật chính xác và trải nghiệm người dùng chạm đến cảm xúc.':
+    'Yin is a premium engineering studio. We believe exceptional software brings together thoughtful architecture, precise engineering, and a user experience people enjoy.',
+  'Xem Dự Án Thực Tế': 'Explore Our Projects',
+  'Đặt Lịch Tư Vấn': 'Schedule Consultation',
+  'Kinh nghiệm sáng lập': 'Founder Experience',
+  'Cam kết chất lượng': 'Quality Commitment',
+  '8+ Năm': '8+ Years',
   'Triết lý cốt lõi: 3 Trụ Cột Vàng Tại Yin': 'Our Philosophy: Three Core Principles',
   '1. Kỹ nghệ vững chắc (Engineering Excellence):': '1. Engineering Excellence:',
-  'Mọi dòng mã tại Yin đều được xem xét kỹ lưỡng như từng viên gạch xây móng. Chúng tôi từ chối giải pháp chắp vá ngắn hạn.': 'Every line of code is reviewed with the care of laying a foundation. We avoid short-term patches.',
+  'Mọi dòng mã tại Yin đều được xem xét kỹ lưỡng như từng viên gạch xây móng. Chúng tôi từ chối giải pháp chắp vá ngắn hạn.':
+    'Every line of code is reviewed with the care of laying a foundation. We avoid short-term patches.',
   '2. Trải nghiệm chạm cảm xúc (Impeccable UX):': '2. Thoughtful User Experience:',
-  'Hệ thống mạnh mẽ dưới backend nhưng giao diện phía trước phải trực quan, thanh thoát, tinh tế và dễ dùng đến mức người dùng không cần hướng dẫn.': 'Powerful systems should also feel intuitive, refined, and easy to use without instructions.',
+  'Hệ thống mạnh mẽ dưới backend nhưng giao diện phía trước phải trực quan, thanh thoát, tinh tế và dễ dùng đến mức người dùng không cần hướng dẫn.':
+    'Powerful systems should also feel intuitive, refined, and easy to use without instructions.',
   '3. Minh bạch & Đồng hành (Radical Transparency):': '3. Radical Transparency:',
-  'Khách hàng là đối tác chiến lược. Quá trình thi công phần mềm luôn được báo cáo đo lường theo từng tuần, từng milestone rõ ràng.': 'Clients are strategic partners. We report progress every week against clear milestones.',
-  'Kết Nối': 'Connect', 'Trao đổi trực tiếp về dự án của bạn': 'Let’s discuss your project',
-  'Founder Khang luôn sẵn sàng lắng nghe mọi đề bài công nghệ từ startup đến doanh nghiệp lớn.': 'Founder Khang welcomes technology challenges from startups and established enterprises alike.',
+  'Khách hàng là đối tác chiến lược. Quá trình thi công phần mềm luôn được báo cáo đo lường theo từng tuần, từng milestone rõ ràng.':
+    'Clients are strategic partners. We report progress every week against clear milestones.',
+  'Kết Nối': 'Connect',
+  'Trao đổi trực tiếp về dự án của bạn': 'Let’s discuss your project',
+  'Đội ngũ Yin luôn sẵn sàng lắng nghe mọi đề bài công nghệ từ startup đến doanh nghiệp lớn.':
+    'The Yin team welcomes technology challenges from startups and established enterprises alike.',
   'Gặp Gỡ Đội Ngũ Yin': 'Meet the Yin Team',
-  'Những Công Trình Công Nghệ': 'Technology Projects', 'Yin Đã Thi Công': 'Built by Yin',
-  'Khám phá các giải pháp phần mềm chuyên sâu mà Yin đã trực tiếp thiết kế kiến trúc, phát triển và tối ưu hiệu năng vận hành cho khách hàng.': 'Explore the software solutions Yin has architected, developed, and optimized for clients.',
-  'Bắt Đầu Dự Án Mới': 'Start a New Project', 'Về Trang Chủ': 'Back to Home',
-  'Công Trình Tiêu Biểu': 'Featured Work', 'Hồ Sơ Năng Lực & Dự Án Thi Công Thực Tế': 'Capabilities & Real Projects',
-  'Các công trình phần mềm công nghệ cao được Yin thiết kế kiến trúc chuẩn mực và chuyển giao cho doanh nghiệp hàng đầu.': 'Advanced software designed and delivered by Yin for leading businesses.',
-  'Tất Cả Lĩnh Vực': 'All Industries', 'Khảo sát giải pháp tương tự': 'Discuss a Similar Solution',
+  'Những Công Trình Công Nghệ': 'Technology Projects',
+  'Yin Đã Thi Công': 'Built by Yin',
+  'Khám phá các giải pháp phần mềm chuyên sâu mà Yin đã trực tiếp thiết kế kiến trúc, phát triển và tối ưu hiệu năng vận hành cho khách hàng.':
+    'Explore the software solutions Yin has architected, developed, and optimized for clients.',
+  'Bắt Đầu Dự Án Mới': 'Start a New Project',
+  'Về Trang Chủ': 'Back to Home',
+  'Công Trình Tiêu Biểu': 'Featured Work',
+  'Hồ Sơ Năng Lực & Dự Án Thi Công Thực Tế': 'Capabilities & Real Projects',
+  'Các công trình phần mềm công nghệ cao được Yin thiết kế kiến trúc chuẩn mực và chuyển giao cho doanh nghiệp hàng đầu.':
+    'Advanced software designed and delivered by Yin for leading businesses.',
+  'Tất Cả Lĩnh Vực': 'All Industries',
+  'Khảo sát giải pháp tương tự': 'Discuss a Similar Solution',
   'Hệ Thống Điều Vận Hàng Hải SmartPort': 'SmartPort Maritime Operations System',
-  'Xây dựng nền tảng IoT điều phối container tự động cho cảng biển, xử lý 2 triệu sự kiện/ngày.': 'An IoT platform for automated port container coordination, processing 2 million events daily.',
-  'Tập đoàn Cảng biển Quốc tế': 'International Port Group', 'Giảm 35% thời gian neo đậu tàu': '35% less vessel berth time',
+  'Xây dựng nền tảng IoT điều phối container tự động cho cảng biển, xử lý 2 triệu sự kiện/ngày.':
+    'An IoT platform for automated port container coordination, processing 2 million events daily.',
+  'Tập đoàn Cảng biển Quốc tế': 'International Port Group',
+  'Giảm 35% thời gian neo đậu tàu': '35% less vessel berth time',
   'Sàn Giao Dịch Năng Lượng Tái Tạo EnergyX': 'EnergyX Renewable Energy Exchange',
-  'Nền tảng khớp lệnh giao dịch tín chỉ carbon thời gian thực với độ trễ dưới 15ms.': 'A real-time carbon credit exchange with matching latency under 15 ms.',
+  'Nền tảng khớp lệnh giao dịch tín chỉ carbon thời gian thực với độ trễ dưới 15ms.':
+    'A real-time carbon credit exchange with matching latency under 15 ms.',
   'Khớp lệnh 10,000 tx/giây': '10,000 transactions matched per second',
   'Hệ Thống Y Tế Thông Minh MediSync': 'MediSync Smart Healthcare System',
-  'Số hóa bệnh án điện tử liên thông 12 bệnh viện vệ tinh, bảo mật chuẩn HIPAA.': 'Connected electronic medical records across 12 hospitals, with HIPAA-grade security.',
-  'Hệ Thống Bệnh Viện Đa Khoa': 'General Hospital Network', 'Phục vụ 500,000 bệnh nhân': 'Serving 500,000 patients',
+  'Số hóa bệnh án điện tử liên thông 12 bệnh viện vệ tinh, bảo mật chuẩn HIPAA.':
+    'Connected electronic medical records across 12 hospitals, with HIPAA-grade security.',
+  'Hệ Thống Bệnh Viện Đa Khoa': 'General Hospital Network',
+  'Phục vụ 500,000 bệnh nhân': 'Serving 500,000 patients',
   'Hệ Thống Quản Lý Đào Tạo E-Learning YinEdu': 'YinEdu Learning Management Platform',
-  'Nền tảng học trực tuyến tương tác cao, hỗ trợ video streaming phân tán và chống gian lận thi cử.': 'An interactive learning platform with distributed video streaming and exam fraud prevention.',
-  'Tổ chức Giáo dục Á Châu': 'Asia Education Organization', '120,000 học viên đồng thời': '120,000 concurrent learners',
-  'Góc Nhìn Kỹ Thuật &': 'Engineering Perspectives &', 'Tri Thức Phần Mềm': 'Software Insights',
-  'Nơi đội ngũ Yin và Founder Khang chia sẻ các bài học thực chiến, giải pháp kiến trúc hệ thống và xu hướng công nghệ hàng đầu.': 'Practical lessons, system architecture, and technology trends from the Yin team and founder Khang.',
-  'Liên Hệ Phỏng Vấn / Báo Chí': 'Press & Interview Enquiries', 'Đọc Bài Mới Nhất': 'Read the Latest Articles',
-  'Tư Vấn Chuyên Sâu': 'Expert Consultation', 'Khởi Đầu Công Trình Phần Mềm Của Bạn': 'Start Your Software Project',
+  'Nền tảng học trực tuyến tương tác cao, hỗ trợ video streaming phân tán và chống gian lận thi cử.':
+    'An interactive learning platform with distributed video streaming and exam fraud prevention.',
+  'Tổ chức Giáo dục Á Châu': 'Asia Education Organization',
+  '120,000 học viên đồng thời': '120,000 concurrent learners',
+  'Góc Nhìn Kỹ Thuật &': 'Engineering Perspectives &',
+  'Tri Thức Phần Mềm': 'Software Insights',
+  'Nơi đội ngũ Yin chia sẻ các bài học thực chiến, giải pháp kiến trúc hệ thống và xu hướng công nghệ hàng đầu.':
+    'Practical lessons, system architecture, and technology trends from the Yin team.',
+  'Liên Hệ Phỏng Vấn / Báo Chí': 'Press & Interview Enquiries',
+  'Đọc Bài Mới Nhất': 'Read the Latest Articles',
+  'Tư Vấn Chuyên Sâu': 'Expert Consultation',
+  'Khởi Đầu Công Trình Phần Mềm Của Bạn': 'Start Your Software Project',
   'Cùng Đội Ngũ Yin': 'With the Yin Team',
-  'Để lại thông tin dự án bên dưới. Founder Khang và các kỹ sư Yin sẽ nghiên cứu bài toán và liên hệ lại trong vòng 24 giờ làm việc.': 'Tell us about your project below. Founder Khang and the Yin engineers will review your needs and reply within 24 business hours.',
-  'Gửi Yêu Cầu Tư Vấn': 'Request a Consultation', 'Email Trực Tiếp': 'Email Us Directly',
-  'Phản Hồi Nhanh': 'Fast Response', 'Tư Vấn Kiến Trúc': 'Architecture Consultation', 'Miễn Phí': 'Free', '< 24 Giờ': '< 24 Hours',
-  'Bài viết': 'Article', 'Lên đầu': 'Back to top', '← Quay lại danh sách bài viết': '← Back to articles',
-  'Nội Dung Chính': 'Contents', 'Bài viết dạng ngắn gọn.': 'This is a short article.',
-  'Khang — Nhà Sáng Lập & Kỹ Sư Trưởng Yin': 'Khang — Founder & Lead Engineer at Yin',
-  'Chuyên gia thiết kế kiến trúc phần mềm với hơn 8 năm kinh nghiệm thực chiến trong các hệ thống High-Concurrency và Distributed Cloud.': 'Software architect with over eight years of hands-on experience in high-concurrency systems and distributed cloud platforms.',
-  'Không tìm thấy bài viết': 'Article not found', 'Bài viết có thể đã bị xóa hoặc đường dẫn không chính xác.': 'The article may have been removed or the link may be incorrect.',
-  'Về Danh Sách Bài Báo': 'Back to Articles', 'Đang tải danh sách bài viết từ máy chủ…': 'Loading articles…',
-  'Không tìm thấy bài viết phù hợp': 'No matching articles', 'Hãy thử tìm kiếm với từ khóa khác hoặc chuyển sang chuyên mục khác.': 'Try another search term or category.',
-  'Khám phá bài viết': 'Read Article', 'Đang tải thêm…': 'Loading more…', 'Xem Thêm Bài Viết': 'Load More Articles',
-  'Tìm kiếm bài viết, tài liệu kiến trúc kỹ thuật...': 'Search articles and technical guides…', 'Xóa tìm kiếm': 'Clear search',
-  'Tất Cả Chuyên Mục': 'All Categories', 'phút đọc': 'min read', 'lượt xem': 'views', 'đã đọc': 'read', 'từ': 'words',
-  'Tư Vấn Kiến Trúc Trực Tiếp': 'Speak with an Architect', 'Thi Công Giải Pháp Cùng Founder Khang': 'Build Your Solution with Founder Khang',
-  'Tại Yin, chúng tôi đồng hành trực tiếp cùng các nhà sáng lập và CTO để xây dựng nền tảng phần mềm quy mô lớn, tối ưu kiến trúc và kiểm soát ngân sách theo chuẩn doanh nghiệp.': 'At Yin, we work directly with founders and CTOs to build scalable software platforms, refine their architecture, and manage budgets to enterprise standards.',
-  'Trụ Sở Làm Việc': 'Office', 'Email Tiếp Nhận Hồ Sơ': 'Project Email', 'Hotline Kỹ Thuật (Khang)': 'Technical Hotline (Khang)',
-  'Cam Kết Phản Hồi SLA': 'Response Commitment', 'Trong vòng 24 giờ làm việc': 'Within 24 business hours',
-  'Cam kết ký thỏa thuận bảo mật NDA trước khi tiếp cận tài liệu kỹ thuật của quý doanh nghiệp.': 'We can sign an NDA before reviewing your technical documents.',
+  'Để lại thông tin dự án bên dưới. Các kỹ sư Yin sẽ nghiên cứu bài toán và liên hệ lại trong vòng 24 giờ làm việc.':
+    'Tell us about your project below. The Yin engineers will review your needs and reply within 24 business hours.',
+  'Gửi Yêu Cầu Tư Vấn': 'Request a Consultation',
+  'Email Trực Tiếp': 'Email Us Directly',
+  'Phản Hồi Nhanh': 'Fast Response',
+  'Tư Vấn Kiến Trúc': 'Architecture Consultation',
+  'Miễn Phí': 'Free',
+  '< 24 Giờ': '< 24 Hours',
+  'Bài viết': 'Article',
+  'Lên đầu': 'Back to top',
+  '← Quay lại danh sách bài viết': '← Back to articles',
+  'Nội Dung Chính': 'Contents',
+  'Bài viết dạng ngắn gọn.': 'This is a short article.',
+  'Yin — Nhà Sáng Lập & Kỹ Sư Trưởng': 'Yin — Founder & Lead Engineer',
+  'Chuyên gia thiết kế kiến trúc phần mềm với hơn 8 năm kinh nghiệm thực chiến trong các hệ thống High-Concurrency và Distributed Cloud.':
+    'Software architect with over eight years of hands-on experience in high-concurrency systems and distributed cloud platforms.',
+  'Không tìm thấy bài viết': 'Article not found',
+  'Bài viết có thể đã bị xóa hoặc đường dẫn không chính xác.':
+    'The article may have been removed or the link may be incorrect.',
+  'Về Danh Sách Bài Báo': 'Back to Articles',
+  'Đang tải danh sách bài viết từ máy chủ…': 'Loading articles…',
+  'Không tìm thấy bài viết phù hợp': 'No matching articles',
+  'Hãy thử tìm kiếm với từ khóa khác hoặc chuyển sang chuyên mục khác.':
+    'Try another search term or category.',
+  'Khám phá bài viết': 'Read Article',
+  'Đang tải thêm…': 'Loading more…',
+  'Xem Thêm Bài Viết': 'Load More Articles',
+  'Tìm kiếm bài viết, tài liệu kiến trúc kỹ thuật...': 'Search articles and technical guides…',
+  'Xóa tìm kiếm': 'Clear search',
+  'Tất Cả Chuyên Mục': 'All Categories',
+  'phút đọc': 'min read',
+  'lượt xem': 'views',
+  'đã đọc': 'read',
+  từ: 'words',
+  'Tư Vấn Kiến Trúc Trực Tiếp': 'Speak with an Architect',
+  'Thi Công Giải Pháp Cùng Yin': 'Build Your Solution with Yin',
+  'Tại Yin, chúng tôi đồng hành trực tiếp cùng các nhà sáng lập và CTO để xây dựng nền tảng phần mềm quy mô lớn, tối ưu kiến trúc và kiểm soát ngân sách theo chuẩn doanh nghiệp.':
+    'At Yin, we work directly with founders and CTOs to build scalable software platforms, refine their architecture, and manage budgets to enterprise standards.',
+  'Trụ Sở Làm Việc': 'Office',
+  'Email Tiếp Nhận Hồ Sơ': 'Project Email',
+  'Hotline Kỹ Thuật (Yin)': 'Technical Hotline (Yin)',
+  'Cam Kết Phản Hồi SLA': 'Response Commitment',
+  'Trong vòng 24 giờ làm việc': 'Within 24 business hours',
+  'Cam kết ký thỏa thuận bảo mật NDA trước khi tiếp cận tài liệu kỹ thuật của quý doanh nghiệp.':
+    'We can sign an NDA before reviewing your technical documents.',
   'Đã Tiếp Nhận Thông Tin Thành Công!': 'Your Request Was Received!',
-  'Cảm ơn bạn đã liên hệ với Yin. Founder Khang và nhóm kỹ sư đã nhận được yêu cầu và sẽ liên hệ trao đổi phương án kỹ thuật sớm nhất.': 'Thank you for contacting Yin. Founder Khang and our engineers will reach out to discuss the technical approach soon.',
-  'Gửi Thêm Yêu Cầu Khác': 'Send Another Request', 'Gửi Yêu Cầu Tư Vấn & Khảo Sát Dự Án': 'Request a Project Consultation',
-  'Họ và tên *': 'Full name *', 'Địa chỉ Email doanh nghiệp *': 'Business email *', 'Số điện thoại *': 'Phone number *',
-  'Tên doanh nghiệp / Đơn vị': 'Company / Organization', 'Loại hình phần mềm cần thi công': 'Type of Software Project',
+  'Cảm ơn bạn đã liên hệ với Yin. Đội ngũ kỹ sư đã nhận được yêu cầu và sẽ liên hệ trao đổi phương án kỹ thuật sớm nhất.':
+    'Thank you for contacting Yin. Our engineers will reach out to discuss the technical approach soon.',
+  'Gửi Thêm Yêu Cầu Khác': 'Send Another Request',
+  'Gửi Yêu Cầu Tư Vấn & Khảo Sát Dự Án': 'Request a Project Consultation',
+  'Họ và tên *': 'Full name *',
+  'Địa chỉ Email doanh nghiệp *': 'Business email *',
+  'Số điện thoại *': 'Phone number *',
+  'Tên doanh nghiệp / Đơn vị': 'Company / Organization',
+  'Loại hình phần mềm cần thi công': 'Type of Software Project',
   'Hệ thống Web & Mobile Doanh nghiệp': 'Enterprise Web & Mobile Systems',
   'Kiến trúc Microservices & Cloud Backend': 'Microservices & Cloud Backend Architecture',
   'Nền tảng Fintech / Logistics Chịu Tải Cao': 'High-Volume Fintech / Logistics Platform',
   'Tối ưu & Tái cấu trúc Hệ thống cũ': 'Legacy System Optimization & Modernization',
   'Tư vấn Kiến trúc & Đánh giá Bảo mật': 'Architecture Consulting & Security Review',
-  'Ngân sách dự kiến': 'Estimated Budget', 'Dưới 200M VNĐ': 'Under VND 200 million',
-  '200M - 500M VNĐ': 'VND 200–500 million', '500M - 1 Tỷ VNĐ': 'VND 500 million–1 billion', 'Trên 1 Tỷ VNĐ': 'Over VND 1 billion',
+  'Ngân sách dự kiến': 'Estimated Budget',
+  'Dưới 200M VNĐ': 'Under VND 200 million',
+  '200M - 500M VNĐ': 'VND 200–500 million',
+  '500M - 1 Tỷ VNĐ': 'VND 500 million–1 billion',
+  'Trên 1 Tỷ VNĐ': 'Over VND 1 billion',
   'Mô tả tóm tắt bài toán hoặc yêu cầu kỹ thuật *': 'Project summary or technical requirements *',
-  'Chia sẻ về mục tiêu, quy mô người dùng hoặc các vấn đề kỹ thuật bạn đang cần giải quyết...': 'Tell us about your goals, user base, or technical challenges…',
-  'Công ty Cổ Phần...': 'Company name…', 'Đang gửi thông tin...': 'Sending…', 'Gửi Yêu Cầu Khảo Sát': 'Submit Project Request',
-  'Vị Trí & Chỉ Đường': 'Location & Directions', 'Ghé Thăm Trụ Sở Công Nghệ Yin': 'Visit Yin’s Office',
-  'Chỉ cần 1 chạm để mở trực tiếp ứng dụng Google Maps và nhận lộ trình dẫn đường nhanh nhất từ vị trí hiện tại của bạn đến văn phòng làm việc của chúng tôi.': 'Open Google Maps for directions from your current location to our office.',
-  'Mở Google Maps Chỉ Đường': 'Get Directions in Google Maps', 'Chỉ đường': 'Directions',
-  'Sao chép địa chỉ': 'Copy address', 'Đã sao chép địa chỉ!': 'Address copied!', 'Bắt đầu lộ trình': 'Start directions',
+  'Chia sẻ về mục tiêu, quy mô người dùng hoặc các vấn đề kỹ thuật bạn đang cần giải quyết...':
+    'Tell us about your goals, user base, or technical challenges…',
+  'Công ty Cổ Phần...': 'Company name…',
+  'Đang gửi thông tin...': 'Sending…',
+  'Gửi Yêu Cầu Khảo Sát': 'Submit Project Request',
+  'Vị Trí & Chỉ Đường': 'Location & Directions',
+  'Ghé Thăm Trụ Sở Công Nghệ Yin': 'Visit Yin’s Office',
+  'Chỉ cần 1 chạm để mở trực tiếp ứng dụng Google Maps và nhận lộ trình dẫn đường nhanh nhất từ vị trí hiện tại của bạn đến văn phòng làm việc của chúng tôi.':
+    'Open Google Maps for directions from your current location to our office.',
+  'Mở Google Maps Chỉ Đường': 'Get Directions in Google Maps',
+  'Chỉ đường': 'Directions',
+  'Sao chép địa chỉ': 'Copy address',
+  'Đã sao chép địa chỉ!': 'Address copied!',
+  'Bắt đầu lộ trình': 'Start directions',
   'Mở Google Maps và bắt đầu dẫn đường': 'Open Google Maps for directions',
   'Sao chép địa chỉ văn phòng': 'Copy office address',
   'Bản đồ vị trí Công ty Công nghệ Yin': 'Map showing Yin’s office',
-  'Nếu bản đồ không hiển thị do trình duyệt hoặc tiện ích chặn bên thứ ba, bạn có thể bấm trực tiếp nút': 'If the map is blocked by your browser or third-party extensions, click',
+  'Nếu bản đồ không hiển thị do trình duyệt hoặc tiện ích chặn bên thứ ba, bạn có thể bấm trực tiếp nút':
+    'If the map is blocked by your browser or third-party extensions, click',
   'ở trên để xem trực tiếp.': 'above to view directly in Google Maps.',
-  'Khu Công Nghệ Cao, Xa lộ Hà Nội, TP. Thủ Đức, TP. Hồ Chí Minh': 'High-Tech Park, Hanoi Highway, Thu Duc City, Ho Chi Minh City',
+  'Khu Công Nghệ Cao, Xa lộ Hà Nội, TP. Thủ Đức, TP. Hồ Chí Minh':
+    'High-Tech Park, Hanoi Highway, Thu Duc City, Ho Chi Minh City',
   'Văn Phòng Kỹ Nghệ Công Nghệ Yin': 'Yin Technology Studio',
-  'Người sáng lập': 'Founder', 'Nền Tảng & Giải Pháp': 'Platforms & Solutions',
-  'Người sáng lập:': 'Founder:', 'Kiến Trúc Microservices & Event-Driven': 'Microservices & Event-Driven Architecture',
-  'Trang Chủ Doanh Nghiệp': 'Home', 'Về Công Ty Yin': 'About Yin', 'Dự Án Đã Thi Công': 'Our Projects',
-  'Kho Tri Thức & Báo Chí': 'Insights & Press', 'Liên Hệ Khảo Sát Dự Án': 'Project Enquiries',
-  'Năng Lực Kỹ Nghệ': 'Engineering Capabilities', 'Liên Hệ & Trực Tuyến': 'Contact & Online',
-  'Công ty Yin — Đơn vị thi công xây dựng phần mềm công nghệ doanh nghiệp. Chúng tôi kiến tạo những nền tảng số chuẩn mực, bảo mật cao và vận hành ổn định cho tổ chức dẫn đầu.': 'Yin builds enterprise software. We create reliable, secure digital platforms for ambitious organizations.',
+  'Người sáng lập': 'Founder',
+  'Nền Tảng & Giải Pháp': 'Platforms & Solutions',
+  'Người sáng lập:': 'Founder:',
+  'Kiến Trúc Microservices & Event-Driven': 'Microservices & Event-Driven Architecture',
+  'Trang Chủ Doanh Nghiệp': 'Home',
+  'Về Công Ty Yin': 'About Yin',
+  'Dự Án Đã Thi Công': 'Our Projects',
+  'Kho Tri Thức & Báo Chí': 'Insights & Press',
+  'Liên Hệ Khảo Sát Dự Án': 'Project Enquiries',
+  'Năng Lực Kỹ Nghệ': 'Engineering Capabilities',
+  'Liên Hệ & Trực Tuyến': 'Contact & Online',
+  'Công ty Yin — Đơn vị thi công xây dựng phần mềm công nghệ doanh nghiệp. Chúng tôi kiến tạo những nền tảng số chuẩn mực, bảo mật cao và vận hành ổn định cho tổ chức dẫn đầu.':
+    'Yin builds enterprise software. We create reliable, secure digital platforms for ambitious organizations.',
   'Bảo Mật Zero-Trust & Chống XSS': 'Zero-Trust Security & XSS Protection',
   'Khu Công Nghệ Cao, TP. Thủ Đức, TP. HCM': 'High-Tech Park, Thu Duc City, Ho Chi Minh City',
-  'Công ty Công nghệ Yin. Toàn quyền bảo lưu. Sáng lập bởi Khang.': 'Yin Technology. All rights reserved. Founded by Khang.',
-  'Bảo mật chuẩn Enterprise • Thiết kế theo cảm hứng Workday': 'Enterprise-grade security • Inspired by Workday',
-  'Chỉ Đường Google Maps →': 'Google Maps Directions →', 'Truy Cập CMS Quản Trị →': 'Open Admin CMS →',
+  'Công ty Công nghệ Yin. Toàn quyền bảo lưu.':
+    'Yin Technology. All rights reserved.',
+  'Bảo mật chuẩn Enterprise • Thiết kế theo cảm hứng Workday':
+    'Enterprise-grade security • Inspired by Workday',
+  'Chỉ Đường Google Maps →': 'Google Maps Directions →',
+  'Truy Cập CMS Quản Trị →': 'Open Admin CMS →',
   'Mở Google Maps chỉ đường đến Yin': 'Get directions to Yin in Google Maps',
-  'Hotline Kỹ Thuật:': 'Technical Hotline:', 'Địa chỉ:': 'Address:',
+  'Hotline Kỹ Thuật:': 'Technical Hotline:',
+  'Địa chỉ:': 'Address:',
   'Liên Hệ & Khảo Sát Dự Án': 'Contact & Project Consultation',
   'Cổng Khách Hàng Doanh Nghiệp': 'Enterprise Client Portal',
-  'Quản trị tài khoản đối tác, thông số bảo mật và kênh tiếp nhận hỗ trợ kỹ thuật trực tiếp từ Founder Khang và đội ngũ kỹ sư Yin.': 'Manage your partner account, security settings, and direct technical support from founder Khang and the Yin engineers.',
-  'Yêu Cầu Hỗ Trợ Kỹ Thuật': 'Technical Support Request', 'Đang tải thông tin hồ sơ tài khoản…': 'Loading your account…',
-  'Hồ Sơ Tài Khoản': 'Account Profile', 'Thông tin định danh và số điện thoại liên lạc của doanh nghiệp bạn.': 'Your organization’s identity and contact details.',
-  'Tên đăng nhập (Username)': 'Username', 'Địa chỉ Email': 'Email Address', 'Số điện thoại liên hệ': 'Contact Phone',
-  'Ngày sinh': 'Date of Birth', 'Thời gian tạo tài khoản': 'Account Created',
+  'Quản trị tài khoản đối tác, thông số bảo mật và kênh tiếp nhận hỗ trợ kỹ thuật trực tiếp từ đội ngũ kỹ sư Yin.':
+    'Manage your partner account, security settings, and direct technical support from the Yin engineers.',
+  'Yêu Cầu Hỗ Trợ Kỹ Thuật': 'Technical Support Request',
+  'Đang tải thông tin hồ sơ tài khoản…': 'Loading your account…',
+  'Hồ Sơ Tài Khoản': 'Account Profile',
+  'Thông tin định danh và số điện thoại liên lạc của doanh nghiệp bạn.':
+    'Your organization’s identity and contact details.',
+  'Tên đăng nhập (Username)': 'Username',
+  'Địa chỉ Email': 'Email Address',
+  'Số điện thoại liên hệ': 'Contact Phone',
+  'Ngày sinh': 'Date of Birth',
+  'Thời gian tạo tài khoản': 'Account Created',
   'Bản Tin & Cập Nhật Công Nghệ': 'News & Technology Updates',
-  'Tùy chọn nhận thông báo về kiến trúc phần mềm, thông cáo bảo mật và giải pháp mới từ Yin.': 'Choose whether to receive software architecture insights, security notices, and new solutions from Yin.',
+  'Tùy chọn nhận thông báo về kiến trúc phần mềm, thông cáo bảo mật và giải pháp mới từ Yin.':
+    'Choose whether to receive software architecture insights, security notices, and new solutions from Yin.',
   'Nhận thông tin cập nhật công nghệ từ Yin': 'Receive technology updates from Yin',
-  'Khi bật tùy chọn này, bạn sẽ nhận được thông tin chuyên sâu từ Founder Khang về các công nghệ Microservices, chuẩn mã hóa dữ liệu cao cấp và giải pháp tối ưu cơ sở dữ liệu quy mô lớn.': 'When enabled, you will receive insights from founder Khang about microservices, data encryption, and large-scale database optimization.',
+  'Khi bật tùy chọn này, bạn sẽ nhận được thông tin chuyên sâu từ Yin về các công nghệ Microservices, chuẩn mã hóa dữ liệu cao cấp và giải pháp tối ưu cơ sở dữ liệu quy mô lớn.':
+    'When enabled, you will receive insights from Yin about microservices, data encryption, and large-scale database optimization.',
   'Đang cập nhật tùy chọn…': 'Updating preference…',
   'Bạn cần hỗ trợ khẩn cấp hoặc tư vấn giải pháp?': 'Need urgent support or solution advice?',
-  'Mở ticket yêu cầu kỹ thuật trực tiếp để được đội ngũ Yin phản hồi và xử lý nhanh chóng.': 'Open a technical support ticket for a prompt response from the Yin team.',
-  'Mở danh sách Ticket →': 'Open Support Tickets →', 'Trang chủ Yin': 'Yin Home',
-  'Tên đăng nhập': 'Username', 'Mật khẩu': 'Password', 'Đang xác thực thông tin…': 'Signing in…',
-  'Đăng Nhập Hệ Thống': 'Log In', 'Chưa có tài khoản đối tác?': 'New partner?',
-  'Đăng ký tài khoản ngay →': 'Create an account →', '← Trang chủ Yin': '← Yin Home',
+  'Mở ticket yêu cầu kỹ thuật trực tiếp để được đội ngũ Yin phản hồi và xử lý nhanh chóng.':
+    'Open a technical support ticket for a prompt response from the Yin team.',
+  'Mở danh sách Ticket →': 'Open Support Tickets →',
+  'Trang chủ Yin': 'Yin Home',
+  'Tên đăng nhập': 'Username',
+  'Mật khẩu': 'Password',
+  'Đang xác thực thông tin…': 'Signing in…',
+  'Đăng Nhập Hệ Thống': 'Log In',
+  'Chưa có tài khoản đối tác?': 'New partner?',
+  'Đăng ký tài khoản ngay →': 'Create an account →',
+  '← Trang chủ Yin': '← Yin Home',
   'Đăng Ký Tài Khoản Client': 'Create a Client Account',
-  'Tạo tài khoản đối tác để quản lý tiến độ thi công kiến trúc phần mềm, yêu cầu tư vấn kỹ thuật và nhận cập nhật công nghệ chuyên sâu.': 'Create a partner account to track software projects, request technical advice, and receive technology updates.',
-  'Cho phép chữ cái, chữ số, dấu gạch dưới (_), chấm (.) và gạch ngang (-).': 'Use letters, numbers, underscores (_), periods (.), or hyphens (-).',
-  'Mật khẩu bảo mật': 'Secure Password', 'Tối thiểu 12 ký tự theo chuẩn Zero-Trust Security của Yin.': 'At least 12 characters, in line with Yin’s security standard.',
-  'Nhận thông báo định kỳ về giải pháp kiến trúc mới, báo cáo hiệu năng và thông cáo bảo mật.': 'Receive updates about architecture, performance, and security.',
-  'Đang khởi tạo tài khoản…': 'Creating your account…', 'Đã có tài khoản đối tác?': 'Already have an account?',
-  'Đăng nhập tại đây →': 'Log in here →', '← Quay lại Hồ Sơ Tài Khoản': '← Back to Account Profile',
+  'Tạo tài khoản đối tác để quản lý tiến độ thi công kiến trúc phần mềm, yêu cầu tư vấn kỹ thuật và nhận cập nhật công nghệ chuyên sâu.':
+    'Create a partner account to track software projects, request technical advice, and receive technology updates.',
+  'Cho phép chữ cái, chữ số, dấu gạch dưới (_), chấm (.) và gạch ngang (-).':
+    'Use letters, numbers, underscores (_), periods (.), or hyphens (-).',
+  'Mật khẩu bảo mật': 'Secure Password',
+  'Tối thiểu 12 ký tự theo chuẩn Zero-Trust Security của Yin.':
+    'At least 12 characters, in line with Yin’s security standard.',
+  'Nhận thông báo định kỳ về giải pháp kiến trúc mới, báo cáo hiệu năng và thông cáo bảo mật.':
+    'Receive updates about architecture, performance, and security.',
+  'Đang khởi tạo tài khoản…': 'Creating your account…',
+  'Đã có tài khoản đối tác?': 'Already have an account?',
+  'Đăng nhập tại đây →': 'Log in here →',
+  '← Quay lại Hồ Sơ Tài Khoản': '← Back to Account Profile',
   'Trung Tâm Tiếp Nhận & Tư Vấn': 'Support & Consultation Center',
   'Yêu Cầu Hỗ Trợ & Khảo Sát Kỹ Thuật': 'Technical Support & Consultation Requests',
-  'Kênh giao tiếp trực tiếp giữa doanh nghiệp của bạn và đội ngũ kỹ sư kiến trúc Yin. Chúng tôi cam kết phản hồi trong vòng 2–4 giờ làm việc.': 'A direct channel to Yin’s engineering team. We aim to respond within 2–4 business hours.',
+  'Kênh giao tiếp trực tiếp giữa doanh nghiệp của bạn và đội ngũ kỹ sư kiến trúc Yin. Chúng tôi cam kết phản hồi trong vòng 2–4 giờ làm việc.':
+    'A direct channel to Yin’s engineering team. We aim to respond within 2–4 business hours.',
   'Tạo Yêu Cầu Kỹ Thuật Mới': 'Create a Technical Request',
-  'Vui lòng mô tả chi tiết bài toán, lỗi hệ thống hoặc giải pháp bạn mong muốn khảo sát.': 'Describe the problem, system issue, or solution you would like us to explore.',
-  'Chủ đề yêu cầu': 'Request Subject', 'Tối thiểu 3 ký tự, tối đa 200 ký tự.': '3 to 200 characters.',
-  'Nội dung chi tiết': 'Details', 'Tối thiểu 10 ký tự, tối đa 5000 ký tự.': '10 to 5,000 characters.',
-  'Hủy Bỏ': 'Cancel', 'Đang gửi yêu cầu…': 'Submitting request…',
-  'Gửi Yêu Cầu Hỗ Trợ': 'Submit Support Request', 'Danh Sách Yêu Cầu Của Bạn': 'Your Requests',
+  'Vui lòng mô tả chi tiết bài toán, lỗi hệ thống hoặc giải pháp bạn mong muốn khảo sát.':
+    'Describe the problem, system issue, or solution you would like us to explore.',
+  'Chủ đề yêu cầu': 'Request Subject',
+  'Tối thiểu 3 ký tự, tối đa 200 ký tự.': '3 to 200 characters.',
+  'Nội dung chi tiết': 'Details',
+  'Tối thiểu 10 ký tự, tối đa 5000 ký tự.': '10 to 5,000 characters.',
+  'Hủy Bỏ': 'Cancel',
+  'Đang gửi yêu cầu…': 'Submitting request…',
+  'Gửi Yêu Cầu Hỗ Trợ': 'Submit Support Request',
+  'Danh Sách Yêu Cầu Của Bạn': 'Your Requests',
   'Đang tải danh sách yêu cầu hỗ trợ…': 'Loading support requests…',
   'Chưa Có Yêu Cầu Hỗ Trợ Nào': 'No Support Requests Yet',
-  'Khi bạn gửi yêu cầu kỹ thuật hoặc tư vấn kiến trúc, thông tin và tiến độ giải quyết sẽ hiển thị đầy đủ tại đây.': 'When you submit a technical or architecture request, its details and progress will appear here.',
-  'Tạo Yêu Cầu Đầu Tiên': 'Create Your First Request', '← Trang trước': '← Previous Page',
-  'Thao tác quá nhanh, vui lòng kiểm tra lại thông tin.': 'Please check your details and try again.',
-  'Vui lòng điền đầy đủ họ tên, email, số điện thoại và nội dung lời nhắn.': 'Please provide your name, email, phone number, and message.',
-  'Địa chỉ email không đúng định dạng. Vui lòng kiểm tra lại.': 'Please enter a valid email address.',
-  'Không thể gửi liên hệ. Vui lòng đợi một lát và thử lại.': 'Unable to send your request. Please try again shortly.',
-  'Tiêu Chuẩn Thi Công Phần Mềm Doanh Nghiệp 2026: Kiến Trúc Microservices & Event-Driven': 'Enterprise Software Engineering in 2026: Microservices & Event-Driven Architecture',
-  'Phân tích chi tiết quy trình thi công hệ thống phần mềm chịu tải cao tại Yin, từ phân rã domain đến giải pháp đảm bảo tính toàn vẹn dữ liệu.': 'A closer look at how Yin builds high-volume software, from domain modeling to data integrity.',
-  '1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?': '1. Why do businesses need sound software engineering?',
-  'Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.': 'In the digital era, software is the backbone of business operations. A patchwork system quickly accumulates technical debt as its user base grows.',
+  'Khi bạn gửi yêu cầu kỹ thuật hoặc tư vấn kiến trúc, thông tin và tiến độ giải quyết sẽ hiển thị đầy đủ tại đây.':
+    'When you submit a technical or architecture request, its details and progress will appear here.',
+  'Tạo Yêu Cầu Đầu Tiên': 'Create Your First Request',
+  '← Trang trước': '← Previous Page',
+  'Thao tác quá nhanh, vui lòng kiểm tra lại thông tin.':
+    'Please check your details and try again.',
+  'Vui lòng điền đầy đủ họ tên, email, số điện thoại và nội dung lời nhắn.':
+    'Please provide your name, email, phone number, and message.',
+  'Địa chỉ email không đúng định dạng. Vui lòng kiểm tra lại.':
+    'Please enter a valid email address.',
+  'Không thể gửi liên hệ. Vui lòng đợi một lát và thử lại.':
+    'Unable to send your request. Please try again shortly.',
+  'Tiêu Chuẩn Thi Công Phần Mềm Doanh Nghiệp 2026: Kiến Trúc Microservices & Event-Driven':
+    'Enterprise Software Engineering in 2026: Microservices & Event-Driven Architecture',
+  'Phân tích chi tiết quy trình thi công hệ thống phần mềm chịu tải cao tại Yin, từ phân rã domain đến giải pháp đảm bảo tính toàn vẹn dữ liệu.':
+    'A closer look at how Yin builds high-volume software, from domain modeling to data integrity.',
+  '1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?':
+    '1. Why do businesses need sound software engineering?',
+  'Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.':
+    'In the digital era, software is the backbone of business operations. A patchwork system quickly accumulates technical debt as its user base grows.',
   '2. Triết lý thi công phần mềm tại Yin': '2. Yin’s approach to software engineering',
-  'Tại Yin, dưới sự dẫn dắt của Founder Khang, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.': 'Led by founder Khang, we approach software like a high-rise building: start with a strong foundation, account for the load, and plan for growth.',
+  'Tại Yin, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.':
+    'At Yin, we approach software like a high-rise building: start with a strong foundation, account for the load, and plan for growth.',
   '3. Chiến lược kiểm soát hiệu năng & Bảo mật': '3. Performance and security strategy',
-  'Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.': 'Every line of code follows clean code and zero-trust principles, with automated tests before deployment.',
-  'Tối Ưu Change Detection Trong Angular v22 Với Signals & Fine-Grained Reactivity': 'Optimizing Angular v22 Change Detection with Signals and Fine-Grained Reactivity',
-  'Khám phá cách mạng Signals trong Angular: Loại bỏ Zone.js, giảm tải re-render và xây dựng ứng dụng web với độ mượt tuyệt đối 60 FPS.': 'Explore Angular Signals: remove Zone.js, reduce unnecessary rendering, and build smooth 60 FPS web apps.',
+  'Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.':
+    'Every line of code follows clean code and zero-trust principles, with automated tests before deployment.',
+  'Tối Ưu Change Detection Trong Angular v22 Với Signals & Fine-Grained Reactivity':
+    'Optimizing Angular v22 Change Detection with Signals and Fine-Grained Reactivity',
+  'Khám phá cách mạng Signals trong Angular: Loại bỏ Zone.js, giảm tải re-render và xây dựng ứng dụng web với độ mượt tuyệt đối 60 FPS.':
+    'Explore Angular Signals: remove Zone.js, reduce unnecessary rendering, and build smooth 60 FPS web apps.',
   'Kỷ nguyên Zoneless và Signals': 'The Era of Zoneless Angular and Signals',
-  'Angular đã bước sang trang mới với mô hình phản ứng vi hạt (fine-grained reactivity). Không còn việc quét toàn bộ cây component để tìm thay đổi, Signals kích hoạt chính xác DOM node cần cập nhật.': 'Angular has entered a new era of fine-grained reactivity. Instead of checking the entire component tree for changes, Signals update the DOM nodes that need it.',
-  'Hồ Sơ Năng Lực & Dự Án: Hệ Thống Điều Vận Hàng Hải SmartPort': 'Project Case Study: SmartPort Maritime Operations System',
-  'Hồ sơ thi công nền tảng IoT điều phối container tự động cho Tập đoàn Cảng biển Quốc tế. Xử lý 2 triệu sự kiện/ngày, giảm 35% thời gian neo đậu tàu cảng.': 'An IoT platform for automated container coordination at an international port. It handles 2 million events per day and cuts vessel berth time by 35%.',
-  '1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế': '1. Operational challenges at an international port',
-  'Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.': 'More than 200 vessels dock each week while hundreds of thousands of containers move through the port. Manual coordination caused congestion, delays, and millions of dollars in extra costs. Yin was asked to design a real-time operations platform.',
-  '2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin': '2. Yin’s technical solution and architecture',
-  'Đội ngũ kỹ sư Yin do Founder Khang chủ trì đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.': 'Founder Khang’s team combined event-driven architecture, Spring Boot 3, partitioned Apache Kafka, and distributed SQL Server. Telemetry from 5,000 crane and forklift sensors feeds an improved Dijkstra algorithm to optimize loading and unloading.',
+  'Angular đã bước sang trang mới với mô hình phản ứng vi hạt (fine-grained reactivity). Không còn việc quét toàn bộ cây component để tìm thay đổi, Signals kích hoạt chính xác DOM node cần cập nhật.':
+    'Angular has entered a new era of fine-grained reactivity. Instead of checking the entire component tree for changes, Signals update the DOM nodes that need it.',
+  'Hồ Sơ Năng Lực & Dự Án: Hệ Thống Điều Vận Hàng Hải SmartPort':
+    'Project Case Study: SmartPort Maritime Operations System',
+  'Hồ sơ thi công nền tảng IoT điều phối container tự động cho Tập đoàn Cảng biển Quốc tế. Xử lý 2 triệu sự kiện/ngày, giảm 35% thời gian neo đậu tàu cảng.':
+    'An IoT platform for automated container coordination at an international port. It handles 2 million events per day and cuts vessel berth time by 35%.',
+  '1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế':
+    '1. Operational challenges at an international port',
+  'Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.':
+    'More than 200 vessels dock each week while hundreds of thousands of containers move through the port. Manual coordination caused congestion, delays, and millions of dollars in extra costs. Yin was asked to design a real-time operations platform.',
+  '2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin':
+    '2. Yin’s technical solution and architecture',
+  'Đội ngũ kỹ sư Yin đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.':
+    'Yin engineers combined event-driven architecture, Spring Boot 3, partitioned Apache Kafka, and distributed SQL Server. Telemetry from 5,000 crane and forklift sensors feeds an improved Dijkstra algorithm to optimize loading and unloading.',
   '3. Kết quả đo lường thực tế (KPI & SLA)': '3. Measured results (KPIs and SLAs)',
-  'Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.': 'After six months in production, the platform reliably processed 2 million events a day. Average vessel berth time fell 35%, truck pickup time dropped from 48 to 16 minutes, and coordination errors fell to 0.001%.',
-  'Hồ Sơ Năng Lực & Dự Án: Sàn Giao Dịch Năng Lượng Tái Tạo EnergyX': 'Project Case Study: EnergyX Renewable Energy Exchange',
-  'Hồ sơ thi công sàn giao dịch tín chỉ carbon thời gian thực cho EnergyX Global. Động cơ khớp lệnh đạt độ trễ dưới 15ms, xử lý 10,000 giao dịch/giây.': 'A real-time carbon credit exchange for EnergyX Global. Its matching engine runs below 15 ms latency and handles 10,000 transactions per second.',
+  'Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.':
+    'After six months in production, the platform reliably processed 2 million events a day. Average vessel berth time fell 35%, truck pickup time dropped from 48 to 16 minutes, and coordination errors fell to 0.001%.',
+  'Hồ Sơ Năng Lực & Dự Án: Sàn Giao Dịch Năng Lượng Tái Tạo EnergyX':
+    'Project Case Study: EnergyX Renewable Energy Exchange',
+  'Hồ sơ thi công sàn giao dịch tín chỉ carbon thời gian thực cho EnergyX Global. Động cơ khớp lệnh đạt độ trễ dưới 15ms, xử lý 10,000 giao dịch/giây.':
+    'A real-time carbon credit exchange for EnergyX Global. Its matching engine runs below 15 ms latency and handles 10,000 transactions per second.',
   '1. Yêu cầu khắt khe của thị trường tín chỉ carbon': '1. Demands of the carbon credit market',
-  'Thị trường tín chỉ carbon và năng lượng tái tạo xuyên biên giới đòi hỏi tính toàn vẹn dữ liệu sổ cái, khả năng khớp lệnh tức thì với độ trễ tối thiểu (sub-15ms), và cơ chế chống double-spending tín chỉ khắt khe theo tiêu chuẩn quốc tế.': 'Cross-border carbon and renewable-energy markets require trustworthy ledgers, matching under 15 ms, and controls that prevent credits from being spent twice.',
-  '2. Động cơ khớp lệnh In-Memory & Angular Signals Frontend': '2. In-memory matching engine and Angular Signals frontend',
-  'Yin đã xây dựng Order Matching Engine viết trên nền tảng Java Reactive Event-Driven với Redis In-Memory Cluster. Giao diện người dùng phát triển trên Angular v22 sử dụng Signals và WebSockets hai chiều, đảm bảo bảng giá và biểu đồ nến cập nhật theo thời gian thực 60 FPS không giật lag.': 'Yin built a reactive Java order-matching engine with a Redis in-memory cluster. The Angular v22 interface uses Signals and bidirectional WebSockets to update price boards and candlestick charts at a smooth 60 FPS.',
+  'Thị trường tín chỉ carbon và năng lượng tái tạo xuyên biên giới đòi hỏi tính toàn vẹn dữ liệu sổ cái, khả năng khớp lệnh tức thì với độ trễ tối thiểu (sub-15ms), và cơ chế chống double-spending tín chỉ khắt khe theo tiêu chuẩn quốc tế.':
+    'Cross-border carbon and renewable-energy markets require trustworthy ledgers, matching under 15 ms, and controls that prevent credits from being spent twice.',
+  '2. Động cơ khớp lệnh In-Memory & Angular Signals Frontend':
+    '2. In-memory matching engine and Angular Signals frontend',
+  'Yin đã xây dựng Order Matching Engine viết trên nền tảng Java Reactive Event-Driven với Redis In-Memory Cluster. Giao diện người dùng phát triển trên Angular v22 sử dụng Signals và WebSockets hai chiều, đảm bảo bảng giá và biểu đồ nến cập nhật theo thời gian thực 60 FPS không giật lag.':
+    'Yin built a reactive Java order-matching engine with a Redis in-memory cluster. The Angular v22 interface uses Signals and bidirectional WebSockets to update price boards and candlestick charts at a smooth 60 FPS.',
   '3. Chỉ số năng lực vận hành': '3. Operating metrics',
-  'Hệ thống đáp ứng thông lượng 10,000 giao dịch/giây trong các phiên cao điểm; 100% lệnh giao dịch được đối soát và kiểm chứng tự động; cam kết thời gian hoạt động Uptime 99.99%.': 'The system handles 10,000 transactions per second at peak load, automatically reconciles every order, and commits to 99.99% uptime.',
-  'Hồ Sơ Năng Lực & Dự Án: Hệ Thống Y Tế Thông Minh MediSync': 'Project Case Study: MediSync Smart Healthcare System',
-  'Hồ sơ số hóa bệnh án điện tử và điều phối bệnh nhân liên thông 12 bệnh viện vệ tinh, phục vụ 500,000 hồ sơ bệnh án theo chuẩn an toàn bảo mật HIPAA.': 'Electronic health records and patient coordination across 12 hospitals, serving 500,000 patient records with HIPAA-grade security.',
+  'Hệ thống đáp ứng thông lượng 10,000 giao dịch/giây trong các phiên cao điểm; 100% lệnh giao dịch được đối soát và kiểm chứng tự động; cam kết thời gian hoạt động Uptime 99.99%.':
+    'The system handles 10,000 transactions per second at peak load, automatically reconciles every order, and commits to 99.99% uptime.',
+  'Hồ Sơ Năng Lực & Dự Án: Hệ Thống Y Tế Thông Minh MediSync':
+    'Project Case Study: MediSync Smart Healthcare System',
+  'Hồ sơ số hóa bệnh án điện tử và điều phối bệnh nhân liên thông 12 bệnh viện vệ tinh, phục vụ 500,000 hồ sơ bệnh án theo chuẩn an toàn bảo mật HIPAA.':
+    'Electronic health records and patient coordination across 12 hospitals, serving 500,000 patient records with HIPAA-grade security.',
   '1. Thách thức kết nối hồ sơ bệnh án phân tán': '1. Connecting fragmented health records',
-  'Mỗi cơ sở y tế trong chuỗi 12 bệnh viện vệ tinh từng vận hành trên phần mềm riêng lẻ, dữ liệu bệnh án bị phân mảnh khiến việc hội chẩn từ xa và chuyển viện mất nhiều thời gian, tiềm ẩn rủi ro sai sót phác đồ điều trị.': 'Each of the 12 hospitals used separate software. Fragmented records slowed remote consultations and transfers and increased the risk of treatment errors.',
-  '2. Kiến trúc Microservices & Bảo mật dữ liệu y tế HIPAA': '2. Microservices and HIPAA-grade health data security',
-  'Yin đã xây dựng hệ thống MediSync với kiến trúc Microservices phân tách độc lập, áp dụng HashiCorp Vault để quản lý mã hóa khóa đầu-cuối (End-to-End Encryption) cho toàn bộ dữ liệu định danh bệnh nhân (PII/PHI). CSDL kết hợp PostgreSQL và cơ chế kiểm soát truy cập dựa trên vai trò phân tầng RBAC nghiêm ngặt.': 'Yin built MediSync as independent microservices. HashiCorp Vault manages end-to-end encryption keys for patient data, while PostgreSQL and strict role-based access controls protect sensitive records.',
+  'Mỗi cơ sở y tế trong chuỗi 12 bệnh viện vệ tinh từng vận hành trên phần mềm riêng lẻ, dữ liệu bệnh án bị phân mảnh khiến việc hội chẩn từ xa và chuyển viện mất nhiều thời gian, tiềm ẩn rủi ro sai sót phác đồ điều trị.':
+    'Each of the 12 hospitals used separate software. Fragmented records slowed remote consultations and transfers and increased the risk of treatment errors.',
+  '2. Kiến trúc Microservices & Bảo mật dữ liệu y tế HIPAA':
+    '2. Microservices and HIPAA-grade health data security',
+  'Yin đã xây dựng hệ thống MediSync với kiến trúc Microservices phân tách độc lập, áp dụng HashiCorp Vault để quản lý mã hóa khóa đầu-cuối (End-to-End Encryption) cho toàn bộ dữ liệu định danh bệnh nhân (PII/PHI). CSDL kết hợp PostgreSQL và cơ chế kiểm soát truy cập dựa trên vai trò phân tầng RBAC nghiêm ngặt.':
+    'Yin built MediSync as independent microservices. HashiCorp Vault manages end-to-end encryption keys for patient data, while PostgreSQL and strict role-based access controls protect sensitive records.',
   '3. Tác động xã hội và hiệu quả vận hành': '3. Patient impact and operational results',
-  'Hệ thống số hóa thành công 500,000 hồ sơ bệnh nhân, thời gian tra cứu hồ sơ chuyển tuyến giảm từ 2 giờ xuống còn 3 giây, hỗ trợ hơn 3,500 ca hội chẩn từ xa đạt hiệu quả xuất sắc.': 'The platform digitized 500,000 patient records, cut transfer-record lookup from two hours to three seconds, and supported more than 3,500 remote consultations.',
-  'Hồ Sơ Năng Lực & Dự Án: Nền Tảng Đào Tạo Trực Tuyến E-Learning YinEdu': 'Project Case Study: YinEdu Online Learning Platform',
-  'Hồ sơ thi công nền tảng học trực tuyến tương tác cao cho Tổ chức Giáo dục Á Châu. Công nghệ WebRTC streaming phân tán chịu tải 120,000 học viên đồng thời.': 'An interactive online learning platform for Asia Education Organization. Distributed WebRTC streaming supports 120,000 concurrent learners.',
+  'Hệ thống số hóa thành công 500,000 hồ sơ bệnh nhân, thời gian tra cứu hồ sơ chuyển tuyến giảm từ 2 giờ xuống còn 3 giây, hỗ trợ hơn 3,500 ca hội chẩn từ xa đạt hiệu quả xuất sắc.':
+    'The platform digitized 500,000 patient records, cut transfer-record lookup from two hours to three seconds, and supported more than 3,500 remote consultations.',
+  'Hồ Sơ Năng Lực & Dự Án: Nền Tảng Đào Tạo Trực Tuyến E-Learning YinEdu':
+    'Project Case Study: YinEdu Online Learning Platform',
+  'Hồ sơ thi công nền tảng học trực tuyến tương tác cao cho Tổ chức Giáo dục Á Châu. Công nghệ WebRTC streaming phân tán chịu tải 120,000 học viên đồng thời.':
+    'An interactive online learning platform for Asia Education Organization. Distributed WebRTC streaming supports 120,000 concurrent learners.',
   '1. Thách thức quy mô hạ tầng giáo dục số': '1. Scaling digital education infrastructure',
-  'Trong các kỳ thi và buổi học quy mô lớn, việc đồng thời phục vụ hơn 100,000 học sinh trực tuyến đòi hỏi băng thông video ổn định, kiểm soát độ trễ dưới 200ms và cơ chế giám sát thi trực tuyến chống gian lận hiệu quả.': 'Large exams and classes with more than 100,000 online students require stable video, latency below 200 ms, and effective exam supervision.',
-  '2. Giải pháp Streaming WebRTC phân tán kết hợp Spring WebFlux': '2. Distributed WebRTC streaming with Spring WebFlux',
-  'Yin áp dụng công nghệ Selective Forwarding Unit (SFU) qua WebRTC, kết hợp hạ tầng Spring WebFlux phi đồng bộ và CSDL tài liệu MongoDB phân mảnh. Giao diện học viên sử dụng Angular Standalone tối ưu kích thước bundle dưới 180KB.': 'Yin combined WebRTC selective forwarding units, asynchronous Spring WebFlux, and sharded MongoDB. The student interface uses Angular standalone components and keeps its bundle under 180 KB.',
+  'Trong các kỳ thi và buổi học quy mô lớn, việc đồng thời phục vụ hơn 100,000 học sinh trực tuyến đòi hỏi băng thông video ổn định, kiểm soát độ trễ dưới 200ms và cơ chế giám sát thi trực tuyến chống gian lận hiệu quả.':
+    'Large exams and classes with more than 100,000 online students require stable video, latency below 200 ms, and effective exam supervision.',
+  '2. Giải pháp Streaming WebRTC phân tán kết hợp Spring WebFlux':
+    '2. Distributed WebRTC streaming with Spring WebFlux',
+  'Yin áp dụng công nghệ Selective Forwarding Unit (SFU) qua WebRTC, kết hợp hạ tầng Spring WebFlux phi đồng bộ và CSDL tài liệu MongoDB phân mảnh. Giao diện học viên sử dụng Angular Standalone tối ưu kích thước bundle dưới 180KB.':
+    'Yin combined WebRTC selective forwarding units, asynchronous Spring WebFlux, and sharded MongoDB. The student interface uses Angular standalone components and keeps its bundle under 180 KB.',
   '3. Kết quả triển khai': '3. Deployment results',
-  'Nền tảng phục vụ an toàn 120,000 học viên đồng thời trong đợt kiểm tra năng lực quốc gia; chi phí hạ tầng máy chủ tối ưu hóa tiết kiệm 42% so với giải pháp cũ.': 'The platform safely supported 120,000 concurrent learners during a national assessment while reducing server infrastructure costs by 42% compared with the previous solution.',
-  'Không thể tải dữ liệu từ máy chủ. Vui lòng thử lại sau.': 'Unable to load data from the server. Please try again later.'
+  'Nền tảng phục vụ an toàn 120,000 học viên đồng thời trong đợt kiểm tra năng lực quốc gia; chi phí hạ tầng máy chủ tối ưu hóa tiết kiệm 42% so với giải pháp cũ.':
+    'The platform safely supported 120,000 concurrent learners during a national assessment while reducing server infrastructure costs by 42% compared with the previous solution.',
+  'Không thể tải dữ liệu từ máy chủ. Vui lòng thử lại sau.':
+    'Unable to load data from the server. Please try again later.',
 };
 
 @Injectable({ providedIn: 'root' })
@@ -229,12 +416,18 @@ export class LanguageService {
   private readonly storageKey = 'yin_language';
   readonly language = signal<SiteLanguage>(this.readStoredLanguage());
 
-  constructor() { this.applyDocumentLanguage(); }
+  constructor() {
+    this.applyDocumentLanguage();
+  }
 
   setLanguage(language: SiteLanguage): void {
     this.language.set(language);
     if (typeof window !== 'undefined') {
-      try { localStorage.setItem(this.storageKey, language); } catch { /* Storage may be disabled. */ }
+      try {
+        localStorage.setItem(this.storageKey, language);
+      } catch {
+        /* Storage may be disabled. */
+      }
     }
     this.applyDocumentLanguage();
   }
@@ -246,7 +439,10 @@ export class LanguageService {
     return value
       .replace(/^Hotline Kỹ Thuật:/, 'Technical Hotline:')
       .replace(/^Địa chỉ:/, 'Address:')
-      .replace(/^© (\d+) Công ty Công nghệ Yin\. Toàn quyền bảo lưu\. Sáng lập bởi Khang\.$/, '© $1 Yin Technology. All rights reserved. Founded by Khang.')
+      .replace(
+        /^© (\d+) Công ty Công nghệ Yin\. Toàn quyền bảo lưu\.$/,
+        '© $1 Yin Technology. All rights reserved.',
+      )
       .replace(/(\d+) phút đọc/g, '$1 min read')
       .replace(/(\d+) lượt xem/g, '$1 views')
       .replace(/(\d+)% đã đọc/g, '$1% read')
@@ -257,8 +453,11 @@ export class LanguageService {
 
   private readStoredLanguage(): SiteLanguage {
     if (typeof window === 'undefined') return 'vi';
-    try { return localStorage.getItem(this.storageKey) === 'en' ? 'en' : 'vi'; }
-    catch { return 'vi'; }
+    try {
+      return localStorage.getItem(this.storageKey) === 'en' ? 'en' : 'vi';
+    } catch {
+      return 'vi';
+    }
   }
 
   private applyDocumentLanguage(): void {

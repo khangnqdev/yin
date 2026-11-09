@@ -7,8 +7,8 @@
       "summary": "Phân tích chi tiết quy trình thi công hệ thống phần mềm chịu tải cao tại Yin, từ phân rã domain đến giải pháp đảm bảo tính toàn vẹn dữ liệu.",
       "category": "Kien-Truc-Phan-Mem",
       "thumbnailUrl": "/assets/logo/yin.svg",
-      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Triết lý thi công phần mềm tại Yin\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Tại Yin, dưới sự dẫn dắt của Founder Khang, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Chiến lược kiểm soát hiệu năng & Bảo mật\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.\"}]}]}",
-      "contentHtml": "\n          <h2 id=\"heading-1\">1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?</h2>\n          <p>Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.</p>\n          <h2 id=\"heading-2\">2. Triết lý thi công phần mềm tại Yin</h2>\n          <p>Tại Yin, dưới sự dẫn dắt của Founder Khang, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.</p>\n          <h3 id=\"heading-3\">3. Chiến lược kiểm soát hiệu năng & Bảo mật</h3>\n          <p>Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.</p>\n        ",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Triết lý thi công phần mềm tại Yin\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Tại Yin, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Chiến lược kiểm soát hiệu năng & Bảo mật\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.\"}]}]}",
+      "contentHtml": "\n          <h2 id=\"heading-1\">1. Tại sao doanh nghiệp cần thi công phần mềm chuẩn mực?</h2>\n          <p>Trong kỷ nguyên số, phần mềm không đơn thuần là công cụ hỗ trợ mà chính là xương sống vận hành của doanh nghiệp. Một hệ thống chắp vá sẽ nhanh chóng trở thành món nợ kỹ thuật (Technical Debt) khổng lồ khi quy mô người dùng tăng trưởng.</p>\n          <h2 id=\"heading-2\">2. Triết lý thi công phần mềm tại Yin</h2>\n          <p>Tại Yin, chúng tôi tiếp cận việc lập trình giống như một công trình kiến trúc dân dụng cao tầng: nền móng phải vững chắc, tải trọng tính toán chi tiết, và khả năng mở rộng không bị giới hạn.</p>\n          <h3 id=\"heading-3\">3. Chiến lược kiểm soát hiệu năng & Bảo mật</h3>\n          <p>Mọi dòng code đều tuân thủ nguyên tắc Clean Code, Zero Trust Security và chuẩn hóa kiểm thử tự động trước khi triển khai thực địa.</p>\n        ",
       "status": "PUBLISHED",
       "focusKeyword": "thi công phần mềm",
       "seoTitle": "Tiêu Chuẩn Thi Công Phần Mềm Doanh Nghiệp 2026 | Yin Tech",
@@ -16,7 +16,7 @@
       "readingTimeMinutes": 3,
       "wordCount": 380,
       "viewCount": 412,
-      "authorName": "Khang (Founder)",
+      "authorName": "Yin",
       "publishedAt": "2026-10-15T08:00:00Z",
       "createdAt": "2026-10-15T08:00:00Z",
       "updatedAt": "2026-10-15T08:00:00Z"
@@ -37,7 +37,7 @@
       "readingTimeMinutes": 4,
       "wordCount": 450,
       "viewCount": 285,
-      "authorName": "Khang (Founder)",
+      "authorName": "Yin",
       "publishedAt": "2026-10-22T09:30:00Z",
       "createdAt": "2026-10-22T09:30:00Z",
       "updatedAt": "2026-10-22T09:30:00Z"
@@ -49,8 +49,8 @@
       "summary": "Hồ sơ thi công nền tảng IoT điều phối container tự động cho Tập đoàn Cảng biển Quốc tế. Xử lý 2 triệu sự kiện/ngày, giảm 35% thời gian neo đậu tàu cảng.",
       "category": "Ho-So-Du-An",
       "thumbnailUrl": "/assets/logo/yin.svg",
-      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Đội ngũ kỹ sư Yin do Founder Khang chủ trì đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Kết quả đo lường thực tế (KPI & SLA)\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.\"}]}]}",
-      "contentHtml": "\n      <h2 id=\"heading-1\">1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế</h2>\n      <p>Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.</p>\n      <h2 id=\"heading-2\">2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin</h2>\n      <p>Đội ngũ kỹ sư Yin do Founder Khang chủ trì đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.</p>\n      <h3 id=\"heading-3\">3. Kết quả đo lường thực tế (KPI & SLA)</h3>\n      <p>Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.</p>\n    ",
+      "contentJson": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Đội ngũ kỹ sư Yin đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"3. Kết quả đo lường thực tế (KPI & SLA)\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.\"}]}]}",
+      "contentHtml": "\n      <h2 id=\"heading-1\">1. Thách thức hạ tầng vận hành tại Cảng biển quốc tế</h2>\n      <p>Với mật độ hơn 200 lượt tàu cập bến mỗi tuần và hàng trăm ngàn lượt container luân chuyển, việc điều phối thủ công hoặc bán tự động dẫn đến tình trạng nghẽn bãi đỗ, thời gian chờ kéo dài gây tổn thất hàng triệu USD chi phí lưu cảng. Bài toán đặt ra cho Yin là thiết kế nền tảng điều vận thông minh thời gian thực.</p>\n      <h2 id=\"heading-2\">2. Giải pháp kỹ thuật & Kiến trúc thi công từ Yin</h2>\n      <p>Đội ngũ kỹ sư Yin đã áp dụng kiến trúc Event-Driven kết hợp Spring Boot 3, Apache Kafka phân vùng và cụm cơ sở dữ liệu SQL Server phân tán. Hệ thống tiếp nhận telemetry từ 5,000 cảm biến IoT gắn trên cần cẩu và xe nâng, tự động tính toán vị trí bốc dỡ tối ưu theo thuật toán Dijkstra cải tiến.</p>\n      <h3 id=\"heading-3\">3. Kết quả đo lường thực tế (KPI & SLA)</h3>\n      <p>Sau 6 tháng đưa vào khai thác thực tế: Nền tảng xử lý ổn định 2,000,000 sự kiện/ngày; thời gian neo đậu trung bình của tàu container giảm 35%; thời gian xe tải vào lấy hàng giảm từ 48 phút xuống còn 16 phút; tỷ lệ sai sót điều phối giảm về mức 0.001%.</p>\n    ",
       "status": "PUBLISHED",
       "focusKeyword": "SmartPort IoT logistics",
       "seoTitle": "Hồ Sơ Năng Lực Dự Án SmartPort - Điều Vận Cảng Biển | Yin",
@@ -58,7 +58,7 @@
       "readingTimeMinutes": 4,
       "wordCount": 520,
       "viewCount": 625,
-      "authorName": "Khang (Founder & Architect)",
+      "authorName": "Yin",
       "publishedAt": "2026-10-18T08:00:00Z",
       "createdAt": "2026-10-18T08:00:00Z",
       "updatedAt": "2026-10-18T08:00:00Z"
@@ -79,7 +79,7 @@
       "readingTimeMinutes": 5,
       "wordCount": 580,
       "viewCount": 540,
-      "authorName": "Khang (Founder & Architect)",
+      "authorName": "Yin",
       "publishedAt": "2026-10-25T08:00:00Z",
       "createdAt": "2026-10-25T08:00:00Z",
       "updatedAt": "2026-10-25T08:00:00Z"
@@ -100,7 +100,7 @@
       "readingTimeMinutes": 4,
       "wordCount": 490,
       "viewCount": 482,
-      "authorName": "Khang (Founder & Architect)",
+      "authorName": "Yin",
       "publishedAt": "2026-10-28T08:00:00Z",
       "createdAt": "2026-10-28T08:00:00Z",
       "updatedAt": "2026-10-28T08:00:00Z"
@@ -121,7 +121,7 @@
       "readingTimeMinutes": 4,
       "wordCount": 460,
       "viewCount": 395,
-      "authorName": "Khang (Founder & Architect)",
+      "authorName": "Yin",
       "publishedAt": "2026-10-30T08:00:00Z",
       "createdAt": "2026-10-30T08:00:00Z",
       "updatedAt": "2026-10-30T08:00:00Z"
@@ -140,7 +140,7 @@
           "badgeText": "Kiến Trúc Sư Phần Mềm Thế Hệ Mới",
           "headline": "Thi Công Xây Dựng Phần Mềm",
           "highlightText": "Chuẩn Mực Tương Lai",
-          "description": "Công ty Yin được sáng lập bởi Khang — Chuyên gia thi công các hệ sinh thái phần mềm công nghệ cao, biến những bài toán nghiệp vụ phức tạp thành nền tảng số tinh gọn, bảo mật và siêu tốc độ.",
+          "description": "Công ty Yin — Đơn vị chuyên thi công các hệ sinh thái phần mềm công nghệ cao, biến những bài toán nghiệp vụ phức tạp thành nền tảng số tinh gọn, bảo mật và siêu tốc độ.",
           "primaryCtaText": "Khởi Tạo Dự Án",
           "primaryCtaLink": "/contact",
           "secondaryCtaText": "Hồ Sơ Năng Lực & Dự Án",
@@ -243,7 +243,7 @@
           "type": "cta",
           "badge": "Sẵn Sàng Hợp Tác",
           "headline": "Bạn có ý tưởng hoặc bài toán công nghệ thách thức?",
-          "description": "Hãy để Yin và Founder Khang đồng hành cùng bạn thiết kế kiến trúc và thi công phần mềm đạt chuẩn công nghiệp.",
+          "description": "Hãy để Yin đồng hành cùng bạn thiết kế kiến trúc và thi công phần mềm đạt chuẩn công nghiệp.",
           "buttonText": "Liên Hệ Tư Vấn Trực Tiếp",
           "buttonLink": "/contact"
         }
@@ -252,7 +252,7 @@
     "about": {
       "pageKey": "about",
       "pageTitle": "Về Yin - Hành Trình Kiến Tạo Phần Mềm Đỉnh Cao",
-      "metaDescription": "Khám phá câu chuyện thương hiệu Yin, triết lý thi công phần mềm của Founder Khang và cam kết chất lượng của chúng tôi.",
+      "metaDescription": "Khám phá câu chuyện thương hiệu Yin, triết lý thi công phần mềm chuẩn mực và cam kết chất lượng của chúng tôi.",
       "updatedAt": "2026-11-02T07:40:50.928Z",
       "blocks": [
         {
@@ -261,10 +261,10 @@
           "badgeText": "Giới Thiệu Doanh Nghiệp",
           "headline": "Yin Không Chỉ Viết Code",
           "highlightText": "Chúng Tôi Thi Công Kiến Trúc Bền Vững",
-          "description": "Được sáng lập bởi Khang, Yin định hình là một Engineering Studio cao cấp. Chúng tôi tin rằng phần mềm xuất sắc phải là sự giao thoa hoàn hảo giữa nghệ thuật kiến trúc, tính toán kỹ thuật chính xác và trải nghiệm người dùng chạm đến cảm xúc.",
+          "description": "Yin định hình là một Engineering Studio cao cấp. Chúng tôi tin rằng phần mềm xuất sắc phải là sự giao thoa hoàn hảo giữa nghệ thuật kiến trúc, tính toán kỹ thuật chính xác và trải nghiệm người dùng chạm đến cảm xúc.",
           "primaryCtaText": "Xem Dự Án Thực Tế",
           "primaryCtaLink": "/projects",
-          "secondaryCtaText": "Đặt Lịch Gặp Khang",
+          "secondaryCtaText": "Đặt Lịch Tư Vấn",
           "secondaryCtaLink": "/contact",
           "statsPreview": [
             {
@@ -288,7 +288,7 @@
           "type": "cta",
           "badge": "Kết Nối",
           "headline": "Trao đổi trực tiếp về dự án của bạn",
-          "description": "Founder Khang luôn sẵn sàng lắng nghe mọi đề bài công nghệ từ startup đến doanh nghiệp lớn.",
+          "description": "Đội ngũ Yin luôn sẵn sàng lắng nghe mọi đề bài công nghệ từ startup đến doanh nghiệp lớn.",
           "buttonText": "Gặp Gỡ Đội Ngũ Yin",
           "buttonLink": "/contact"
         }
@@ -394,7 +394,7 @@
           "badgeText": "Yin Tech Insights",
           "headline": "Góc Nhìn Kỹ Thuật &",
           "highlightText": "Tri Thức Phần Mềm",
-          "description": "Nơi đội ngũ Yin và Founder Khang chia sẻ các bài học thực chiến, giải pháp kiến trúc hệ thống và xu hướng công nghệ hàng đầu.",
+          "description": "Nơi đội ngũ Yin chia sẻ các bài học thực chiến, giải pháp kiến trúc hệ thống và xu hướng công nghệ hàng đầu.",
           "primaryCtaText": "Liên Hệ Phỏng Vấn / Báo Chí",
           "primaryCtaLink": "/contact",
           "secondaryCtaText": "Đọc Bài Mới Nhất",
@@ -406,7 +406,7 @@
     "contact": {
       "pageKey": "contact",
       "pageTitle": "Liên Hệ Hợp Tác | Công Ty Công Nghệ Yin",
-      "metaDescription": "Kết nối với Khang và đội ngũ Yin để nhận tư vấn kỹ thuật và giải pháp thi công phần mềm tối ưu.",
+      "metaDescription": "Kết nối với đội ngũ Yin để nhận tư vấn kỹ thuật và giải pháp thi công phần mềm tối ưu.",
       "updatedAt": "2026-11-02T07:40:50.928Z",
       "blocks": [
         {
@@ -415,7 +415,7 @@
           "badgeText": "Tư Vấn Chuyên Sâu",
           "headline": "Khởi Đầu Công Trình Phần Mềm Của Bạn",
           "highlightText": "Cùng Đội Ngũ Yin",
-          "description": "Để lại thông tin dự án bên dưới. Founder Khang và các kỹ sư Yin sẽ nghiên cứu bài toán và liên hệ lại trong vòng 24 giờ làm việc.",
+          "description": "Để lại thông tin dự án bên dưới. Các kỹ sư Yin sẽ nghiên cứu bài toán và liên hệ lại trong vòng 24 giờ làm việc.",
           "primaryCtaText": "Gửi Yêu Cầu Tư Vấn",
           "primaryCtaLink": "#contact-form",
           "secondaryCtaText": "Email Trực Tiếp",

@@ -11,12 +11,32 @@
       <p class="page-subtitle">Hệ thống đo lường tỷ lệ đọc, quản lý bài viết công nghệ và kiểm soát từ khóa chuẩn SEO.</p>
     </div>
 
-    @if (canEdit()) {
-      <a routerLink="/admin/articles/create" class="yin-btn yin-btn-primary create-article-btn">
-        <yin-icon name="plus" [size]="16"></yin-icon>
-        <span>Viết bài mới</span>
-      </a>
-    }
+    <div class="header-action-group">
+      <button type="button" class="yin-btn yin-btn-secondary" (click)="openFormatModal()" title="Xuất quy chuẩn và Prompt cho AI ngoài">
+        <yin-icon name="file-text" [size]="15"></yin-icon>
+        <span>Xuất format AI</span>
+      </button>
+
+      <button type="button" class="yin-btn yin-btn-secondary" (click)="triggerImportMd()" title="Nạp bài viết từ file .md">
+        <yin-icon name="upload" [size]="15"></yin-icon>
+        <span>Nhập file .md</span>
+      </button>
+
+      @if (canEdit()) {
+        <a routerLink="/admin/articles/create" class="yin-btn yin-btn-primary create-article-btn">
+          <yin-icon name="plus" [size]="16"></yin-icon>
+          <span>Viết bài mới</span>
+        </a>
+      }
+    </div>
+
+    <!-- Hidden Native File Input for Markdown Upload -->
+    <input 
+      type="file" 
+      #mdFileInput 
+      accept=".md,.markdown,text/markdown" 
+      (change)="onMdFileSelected($event)" 
+      style="display: none" />
   </header>
 
   <!-- Reusable Enterprise Data Table -->
@@ -103,7 +123,7 @@
     <!-- COLUMN 8: Thao tác -->
     <ng-template yinCell="actions" let-art>
       <div class="actions-buttons-row">
-        @if (selectedStatus() === 'TRASH') {
+        @if (selectedStatus() === 'TRASH' && db.hasPermission('articles:EXECUTE')) {
           <button type="button" class="tbl-btn restore-btn" (click)="restoreArticle(art.id)" title="Khôi phục bài viết">
             <yin-icon name="undo" [size]="14"></yin-icon>
             <span>Khôi phục</span>
@@ -119,7 +139,7 @@
             <yin-icon name="eye" [size]="14"></yin-icon>
             <span>Xem</span>
           </a>
-          @if (canEdit()) {
+          @if (db.hasPermission('articles:DELETE')) {
             <button type="button" class="tbl-btn delete-btn" (click)="deleteArticle(art.id, art.title)" title="Chuyển vào thùng rác">
               <yin-icon name="trash" [size]="14"></yin-icon>
             </button>
@@ -129,5 +149,70 @@
     </ng-template>
 
   </yin-data-table>
+
+  <!-- Format Guide & AI Export Modal -->
+  @if (isFormatModalOpen()) {
+    <div class="format-modal-backdrop" (click)="closeFormatModal()">
+      <div class="format-modal-card" (click)="$event.stopPropagation()">
+        
+        <div class="format-modal-header">
+          <div class="format-modal-title-wrap">
+            <div class="format-icon-circle">
+              <yin-icon name="file-text" [size]="18"></yin-icon>
+            </div>
+            <div>
+              <h3 class="format-modal-title">Quy Chuẩn Soạn Thảo & Mẫu Prompt AI</h3>
+              <p class="format-modal-subtitle">Xuất mẫu quy định hoặc sao chép Prompt để đưa cho AI ngoài (ChatGPT, Claude, Gemini...)</p>
+            </div>
+          </div>
+          <button type="button" class="format-close-btn" (click)="closeFormatModal()" title="Đóng">&times;</button>
+        </div>
+
+        <div class="format-modal-body">
+          <div class="format-guide-section">
+            <h4 class="guide-section-title">
+              <yin-icon name="check-circle" [size]="16"></yin-icon>
+              <span>Quy trình nạp bài viết từ AI vào Yin:</span>
+            </h4>
+            <ol class="workflow-steps-list">
+              <li>
+                <strong>Bước 1: Tải file .md mẫu hoặc sao chép Prompt AI</strong>
+                <p>Nhận cấu trúc Markdown Frontmatter chuẩn hóa (tiêu đề, slug, tóm tắt, từ khóa, gợi ý ảnh bìa).</p>
+              </li>
+              <li>
+                <strong>Bước 2: AI tạo bài viết và xuất file .md</strong>
+                <p>Dán prompt cho ChatGPT/Claude để AI viết nội dung có H2, H3, bảng so sánh và phân đoạn rõ ràng.</p>
+              </li>
+              <li>
+                <strong>Bước 3: Bấm nút "Nhập file .md"</strong>
+                <p>Hệ thống tự động đọc và mở ngay bài viết trong trình soạn thảo, sẵn sàng xuất bản chỉ sau vài giây.</p>
+              </li>
+            </ol>
+          </div>
+
+          <div class="format-actions-bar">
+            <button type="button" class="btn-download-format" (click)="downloadFormatGuide()">
+              <yin-icon name="download" [size]="16"></yin-icon>
+              <span>Tải File Mẫu (.md)</span>
+            </button>
+
+            <button type="button" class="btn-copy-prompt" (click)="copyAiPrompt()">
+              <yin-icon [name]="isCopiedPrompt() ? 'check' : 'copy'" [size]="16"></yin-icon>
+              <span>{{ isCopiedPrompt() ? 'Đã chép Prompt AI vào bộ nhớ!' : 'Sao Chép Prompt AI Chuẩn SEO' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="format-modal-footer">
+          <button type="button" class="btn-modal-close" (click)="closeFormatModal()">Đóng cửa sổ</button>
+          <button type="button" class="btn-modal-import" (click)="closeFormatModal(); triggerImportMd()">
+            <yin-icon name="upload" [size]="15"></yin-icon>
+            <span>Chọn file .MD để nhập ngay</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
 
 </div>

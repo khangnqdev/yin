@@ -1,10 +1,16 @@
-import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy, viewChild, ElementRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LocalDbService } from '../../../../core/services/local-db.service';
 import { Article } from '../../../../core/models/article.model';
 import { YinIconComponent } from '../../../../core/components/icon/icon.component';
+import {
+  ARTICLE_FORMAT_MARKDOWN_TEMPLATE,
+  ARTICLE_AI_SYSTEM_PROMPT,
+  parseArticleMarkdown,
+} from '../../../../core/constants/article-format-template';
+import { DEFAULT_AUTHOR_NAME } from '../../../../core/constants/app.variables';
 import {
   YinDataTableComponent,
   YinCellDefDirective,
@@ -29,7 +35,7 @@ export class AdminArticlesComponent implements OnInit, OnDestroy {
   private readonly db = inject(LocalDbService);
   private readonly router = inject(Router);
 
-  protected readonly canEdit = () => ['ADMIN', 'MANAGER'].includes(this.db.adminUser()?.role || '');
+  protected readonly canEdit = () => this.db.hasPermission('articles:WRITE');
 
   protected readonly articles = signal<Article[]>([]);
   protected readonly loading = signal<boolean>(true);
@@ -264,5 +270,78 @@ export class AdminArticlesComponent implements OnInit, OnDestroy {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+
+  // Format Modal & Markdown Import (Tính năng hỗ trợ AI & Nạp .md)
+  protected readonly isFormatModalOpen = signal<boolean>(false);
+  protected readonly isCopiedPrompt = signal<boolean>(false);
+  protected readonly mdFileInput = viewChild<ElementRef<HTMLInputElement>>('mdFileInput');
+
+  openFormatModal(): void {
+    this.isFormatModalOpen.set(true);
+  }
+
+  closeFormatModal(): void {
+    this.isFormatModalOpen.set(false);
+  }
+
+  downloadFormatGuide(): void {
+    const blob = new Blob([ARTICLE_FORMAT_MARKDOWN_TEMPLATE], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'yin-article-format-template.md';
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async copyAiPrompt(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(ARTICLE_AI_SYSTEM_PROMPT);
+      this.isCopiedPrompt.set(true);
+      setTimeout(() => this.isCopiedPrompt.set(false), 2500);
+    } catch {
+      alert('Không thể sao chép vào bộ nhớ tạm.');
+    }
+  }
+
+  triggerImportMd(): void {
+    this.mdFileInput()?.nativeElement.click();
+  }
+
+  async onMdFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const parsed = parseArticleMarkdown(text);
+      
+      const cleanTitle = parsed.title || file.name.replace(/\.[^/.]+$/, '');
+      const cleanSlug = parsed.slug || cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+      // Tạo bài viết mới nháp từ file markdown và điều hướng thẳng vào trang edit
+      const newArticle = await this.db.saveArticle({
+        title: cleanTitle,
+        slug: cleanSlug,
+        summary: parsed.excerpt || '',
+        category: parsed.category || 'Cong-Nghe',
+        focusKeyword: parsed.tags?.[0] || 'Chung',
+        contentHtml: parsed.contentHtml,
+        contentJson: '{"type":"doc","content":[]}',
+        thumbnailUrl: '/assets/logo/yin.svg',
+        status: 'DRAFT',
+        viewCount: 0,
+        readingTimeMinutes: Math.max(1, Math.ceil((parsed.contentHtml.length || 500) / 1000)),
+        wordCount: parsed.contentHtml.split(/\s+/).length,
+        authorName: this.db.adminUser()?.username || DEFAULT_AUTHOR_NAME,
+      });
+
+      input.value = '';
+      void this.router.navigate(['/admin/articles/edit', newArticle.id]);
+    } catch {
+      alert('Không thể nạp file Markdown. Vui lòng kiểm tra lại định dạng file.');
+    }
   }
 }

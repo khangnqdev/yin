@@ -6,6 +6,7 @@ import { ContactService } from '../../../core/services/contact.service';
 import { AnalyticsTrackerService } from '../../../core/services/analytics-tracker.service';
 import { DynamicPageHostComponent } from '../../../shared/components/dynamic-page-host/dynamic-page-host.component';
 import { YinIconComponent } from '../../../core/components/icon/icon.component';
+import { APP_VARIABLES } from '../../../core/constants/app.variables';
 
 @Component({
   selector: 'yin-contact',
@@ -14,6 +15,7 @@ import { YinIconComponent } from '../../../core/components/icon/icon.component';
   imports: [FormsModule, DynamicPageHostComponent, YinIconComponent],
 })
 export class ContactComponent implements OnInit {
+  protected readonly appVars = APP_VARIABLES;
   private readonly db = inject(LocalDbService);
   private readonly contacts = inject(ContactService);
   private readonly tracker = inject(AnalyticsTrackerService);

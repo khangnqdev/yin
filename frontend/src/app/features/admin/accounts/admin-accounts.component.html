@@ -13,13 +13,13 @@
       </p>
     </div>
 
-    <button 
+    @if (db.hasPermission('accounts:WRITE')) { <button 
       type="button" 
       class="yin-btn yin-btn-primary create-admin-btn"
       (click)="openAddDrawer()">
       <yin-icon name="plus" [size]="16"></yin-icon>
       <span>Thêm Quản Trị Viên</span>
-    </button>
+    </button> }
   </header>
 
   <!-- Success Message -->
@@ -145,7 +145,7 @@
     [filterPills]="filterPills()"
     [pageSize]="pageSize()"
     [currentPage]="currentPage() + 1"
-    [primaryActionLabel]="'Thêm Quản Trị Viên'"
+    [primaryActionLabel]="db.hasPermission('accounts:WRITE') ? 'Thêm Quản Trị Viên' : ''"
     [primaryActionIcon]="'plus'"
     (searchChange)="onSearchChange($event)"
     (filterChange)="onFilterChange($event)"
@@ -194,21 +194,21 @@
       <div class="account-actions-row">
         <select class="yin-select-compact" [ngModel]="acc.role"
           (ngModelChange)="changeRole(acc, $event)"
-          [disabled]="!canManage(acc) || !!busyAccountId()"
+          [disabled]="!db.hasPermission('accounts:EXECUTE') || !canManage(acc) || !!busyAccountId()"
           [attr.aria-label]="'Đổi vai trò của ' + acc.username">
           @for (role of creatableRoles(); track role) {
             <option [value]="role">{{ role }}</option>
           }
-          @if (!canManage(acc)) { <option [value]="acc.role">{{ acc.role }}</option> }
+          @if (!creatableRoles().includes(acc.role)) { <option [value]="acc.role">{{ acc.role }}</option> }
         </select>
         <button type="button" class="btn-table-action"
-          [disabled]="!canManage(acc) || !!busyAccountId()"
+          [disabled]="!db.hasPermission('accounts:EXECUTE') || !canManage(acc) || !!busyAccountId()"
           (click)="toggleActive(acc)"
           title="{{ acc.isActive ? 'Khóa tài khoản này' : 'Mở khóa tài khoản' }}">
           {{ acc.isActive ? 'Khóa' : 'Mở khóa' }}
         </button>
         <button type="button" class="btn-table-action"
-          [disabled]="!canManage(acc) || !!busyAccountId()" 
+          [disabled]="!db.hasPermission('accounts:EXECUTE') || !canManage(acc) || !!busyAccountId()" 
           (click)="openPasswordReset(acc)"
           title="Đặt lại mật khẩu">
           Đổi mật khẩu

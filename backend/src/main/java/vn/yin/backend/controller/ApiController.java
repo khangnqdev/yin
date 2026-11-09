@@ -98,12 +98,22 @@ public class ApiController {
 
     @PostMapping("/admin/articles")
     public Map<String, Object> createArticle(@RequestBody Map<String, Object> body) {
+        requireArticleExecute(body);
         return siteService.createArticle(body);
     }
 
     @PutMapping("/admin/articles/{id}")
     public Map<String, Object> updateArticle(@PathVariable String id, @RequestBody Map<String, Object> body) {
+        requireArticleExecute(body);
         return siteService.updateArticle(id, body);
+    }
+
+    private void requireArticleExecute(Map<String, Object> body) {
+        if (!java.util.Set.of("PUBLISHED", "ARCHIVED").contains(String.valueOf(body.get("status")))) return;
+        var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getAuthorities().stream()
+                .noneMatch(a -> "PERM_articles:EXECUTE".equals(a.getAuthority())))
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Execute permission required");
     }
 
     @DeleteMapping("/admin/articles/{id}")

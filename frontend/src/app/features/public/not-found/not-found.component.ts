@@ -6,7 +6,7 @@ import {
   signal,
   computed,
   ElementRef,
-  viewChild
+  viewChild,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
@@ -28,7 +28,7 @@ export interface ErrorInfo {
   selector: 'yin-not-found',
   templateUrl: './not-found.component.html',
   styleUrls: ['./not-found.component.css'],
-  imports: [RouterLink, RouterLinkActive]
+  imports: [RouterLink, RouterLinkActive],
 })
 export class NotFoundComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
@@ -43,7 +43,7 @@ export class NotFoundComponent implements OnInit, OnDestroy {
   readonly reelCol2 = viewChild<ElementRef<HTMLDivElement>>('reelCol2');
   readonly reelCol3 = viewChild<ElementRef<HTMLDivElement>>('reelCol3');
 
-  // Status Code Signal: 404 | 403 | 510
+  // Status Code Signal: 404 | 403 | 410 | 510
   readonly statusCode = signal<number>(404);
 
   readonly errorInfo = computed<ErrorInfo>(() => {
@@ -53,20 +53,26 @@ export class NotFoundComponent implements OnInit, OnDestroy {
         return {
           code: 403,
           label: 'FORBIDDEN',
-          title: 'Truy Cập Bị Từ Chối'
+          title: 'Truy Cập Bị Từ Chối',
+        };
+      case 410:
+        return {
+          code: 410,
+          label: 'GONE',
+          title: 'Liên Kết Đã Bị Xóa Vĩnh Viễn',
         };
       case 510:
         return {
           code: 510,
           label: 'NOT EXTENDED',
-          title: 'Yêu Cầu Chưa Được Hỗ Trợ'
+          title: 'Yêu Cầu Chưa Được Hỗ Trợ',
         };
       case 404:
       default:
         return {
           code: 404,
           label: 'NOT FOUND',
-          title: 'Không Tìm Thấy Trang'
+          title: 'Không Tìm Thấy Trang',
         };
     }
   });
@@ -77,7 +83,7 @@ export class NotFoundComponent implements OnInit, OnDestroy {
     { path: '/about', title: 'Về Yin' },
     { path: '/projects', title: 'Giải pháp' },
     { path: '/blog', title: 'Bài viết' },
-    { path: '/contact', title: 'Liên hệ' }
+    { path: '/contact', title: 'Liên hệ' },
   ];
 
   // Trạng thái đã dừng và khóa đúng 4 0 4
@@ -85,7 +91,7 @@ export class NotFoundComponent implements OnInit, OnDestroy {
 
   // Cấu hình kích thước ô số (px)
   readonly itemHeight = 150; // Chiều cao mỗi chữ số (px) được tăng lớn hơn
-  readonly restY = 100;      // Vị trí translateY tại điểm dừng để index 1 nằm ngay giữa khung 250px
+  readonly restY = 100; // Vị trí translateY tại điểm dừng để index 1 nằm ngay giữa khung 250px
 
   // Mỗi cột chỉ render TỐI ĐA 6 DIV trong DOM (đáp ứng đúng yêu cầu khi kiểm tra F12)
   readonly reel1 = signal<string[]>(['4', '4', '0', '4', '4', '0']);
@@ -111,6 +117,8 @@ export class NotFoundComponent implements OnInit, OnDestroy {
       this.statusCode.set(routeDataCode);
     } else if (currentPath.includes('/403')) {
       this.statusCode.set(403);
+    } else if (currentPath.includes('/410')) {
+      this.statusCode.set(410);
     } else if (currentPath.includes('/510')) {
       this.statusCode.set(510);
     } else {
@@ -171,7 +179,7 @@ export class NotFoundComponent implements OnInit, OnDestroy {
     finalTop: string,
     finalCenter: string,
     finalBottom: string,
-    seedPattern: string[]
+    seedPattern: string[],
   ): string[] {
     const list: string[] = [];
     for (let i = 0; i < steps; i++) {
@@ -200,9 +208,23 @@ export class NotFoundComponent implements OnInit, OnDestroy {
     this.isLocked.set(false);
 
     // Chuẩn bị 3 dãy số chạy khác nhau hoàn toàn trong bộ nhớ
-    const seq1 = this.createReelSequence(18, '4', '4', '0', ['4', '0', '4', '0', '4', '4', '0']);
-    const seq2 = this.createReelSequence(25, '4', '0', '4', ['0', '4', '0', '0', '4', '0', '4']);
-    const seq3 = this.createReelSequence(32, '4', '4', '0', ['4', '4', '0', '0', '4', '0', '4', '4']);
+    const codeStr = String(this.statusCode());
+    const c1 = codeStr[0] || '4';
+    const c2 = codeStr[1] || '0';
+    const c3 = codeStr[2] || '4';
+
+    const seq1 = this.createReelSequence(18, '4', c1, '0', ['4', '0', '4', '0', '4', '4', '0']);
+    const seq2 = this.createReelSequence(25, '4', c2, '4', ['0', '4', '0', '0', '4', '0', '4']);
+    const seq3 = this.createReelSequence(32, '4', c3, '0', [
+      '4',
+      '4',
+      '0',
+      '0',
+      '4',
+      '0',
+      '4',
+      '4',
+    ]);
 
     const startTime = performance.now();
     const dur1 = 1850;

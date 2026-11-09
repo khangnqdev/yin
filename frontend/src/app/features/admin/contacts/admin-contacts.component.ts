@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ContactService } from '../../../core/services/contact.service';
+import { LocalDbService } from '../../../core/services/local-db.service';
 import { DraftStorageService } from '../../../core/services/draft-storage.service';
 import { Contact, ContactStatus } from '../../../core/models/contact.model';
 import { YinIconComponent } from '../../../core/components/icon/icon.component';
@@ -28,6 +29,7 @@ import {
 })
 export class AdminContactsComponent implements OnInit, OnDestroy {
   private readonly contactsService = inject(ContactService);
+  protected readonly db = inject(LocalDbService);
   private readonly draftStorage = inject(DraftStorageService);
 
   protected readonly searchQuery = signal<string>('');
@@ -233,6 +235,7 @@ export class AdminContactsComponent implements OnInit, OnDestroy {
   }
 
   async saveModalChanges(): Promise<void> {
+    if (!this.db.hasPermission('contacts:WRITE')) return;
     const c = this.selectedContact();
     if (!c) {
       return;
@@ -266,6 +269,7 @@ export class AdminContactsComponent implements OnInit, OnDestroy {
   }
 
   updateContactStatus(status: ContactStatus): void {
+    if (!this.db.hasPermission('contacts:WRITE')) return;
     const current = this.selectedContact();
     if (current) {
       this.selectedContact.set({ ...current, status });

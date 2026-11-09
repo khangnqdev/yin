@@ -17,7 +17,7 @@ export class AdminDashboardComponent implements OnInit {
   private readonly contactService = inject(ContactService);
 
   protected readonly summary = computed(() => this.db.getAnalyticsSummary());
-  protected readonly canManageContent = () => ['ADMIN', 'MANAGER'].includes(this.db.adminUser()?.role || '');
+  protected readonly canManageContent = () => this.db.hasPermission('articles:WRITE');
   protected readonly recentContacts = signal<Contact[]>([]);
   protected readonly topArticles = signal<Article[]>([]);
 

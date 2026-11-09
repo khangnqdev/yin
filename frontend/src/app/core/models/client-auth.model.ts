@@ -1,4 +1,4 @@
-export type UserRole = 'CLIENT' | 'ADMIN' | 'MANAGER' | 'FIXER';
+export type UserRole = string;
 
 export interface ClientProfile {
   id: string;
@@ -41,14 +41,14 @@ export interface AuthResponse {
 export interface AdminAccount {
   id: string;
   username: string;
-  role: 'MANAGER' | 'ADMIN' | 'FIXER';
+  role: string;
   isActive: boolean;
   createdAt: string;
 }
 
 export interface CreateAdminDto {
   username: string;
-  role: 'MANAGER' | 'FIXER';
+  role: string;
 }
 
 export interface CreatedAdminAccount extends AdminAccount {

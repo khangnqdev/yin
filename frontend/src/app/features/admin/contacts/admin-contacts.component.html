@@ -157,6 +157,7 @@
             <button 
               type="button" 
               class="st-btn new" 
+              [disabled]="!db.hasPermission('contacts:WRITE')"
               [class.selected]="contact.status === 'NEW'"
               (click)="updateStatus('NEW')">
               Mới
@@ -164,6 +165,7 @@
             <button 
               type="button" 
               class="st-btn contacted" 
+              [disabled]="!db.hasPermission('contacts:WRITE')"
               [class.selected]="contact.status === 'CONTACTED'"
               (click)="updateStatus('CONTACTED')">
               Đã Phản Hồi
@@ -171,6 +173,7 @@
             <button 
               type="button" 
               class="st-btn in_progress" 
+              [disabled]="!db.hasPermission('contacts:WRITE')"
               [class.selected]="contact.status === 'IN_PROGRESS'"
               (click)="updateStatus('IN_PROGRESS')">
               Đang Tư Vấn Kỹ Thuật
@@ -178,6 +181,7 @@
             <button 
               type="button" 
               class="st-btn closed" 
+              [disabled]="!db.hasPermission('contacts:WRITE')"
               [class.selected]="contact.status === 'CLOSED'"
               (click)="updateStatus('CLOSED')">
               Đã Ký Hợp Đồng

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { YinIconComponent } from '../../../shared/components/yin-icon/yin-icon.component';
+import { APP_VARIABLES } from '../../../core/constants/app.variables';
 
 @Component({
   selector: 'yin-privacy',
@@ -9,6 +10,7 @@ import { YinIconComponent } from '../../../shared/components/yin-icon/yin-icon.c
   styleUrls: ['./privacy.component.css']
 })
 export class PrivacyComponent {
+  protected readonly appVars = APP_VARIABLES;
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 

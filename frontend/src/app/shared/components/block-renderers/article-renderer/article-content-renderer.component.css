@@ -9,6 +9,9 @@
   margin: 28px auto;
   text-align: center;
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .article-body-wrapper figure img,
@@ -30,12 +33,21 @@
 
 .article-body-wrapper figcaption,
 .article-body-wrapper .article-figcaption {
-  margin-top: 10px;
-  font-size: 0.92rem;
+  margin-top: 8px;
+  margin-bottom: 0;
+  font-size: 0.9rem;
   color: #64748b;
   font-style: italic;
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.4;
+  width: 100%;
+}
+
+.article-body-wrapper hr {
+  border: none;
+  border-top: 1.5px solid #E2E8F0;
+  margin: 36px auto;
+  width: 100%;
 }
 
 /* Modern Enterprise Table Styling */

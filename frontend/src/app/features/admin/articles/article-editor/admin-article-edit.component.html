@@ -1,86 +1,77 @@
-<div class="article-edit-canvas" [class.fullscreen-mode]="isFullscreen()">
+<div class="article-edit-shell" [class.is-fullscreen]="isFullscreen()">
   
-  <!-- Outer Card Frame (White Window matching reference photo) -->
-  <div class="article-edit-window">
-
-    <!-- Top Window Header Bar -->
-    <header class="window-header">
+  <div class="article-edit-container">
+    
+    <!-- TOP ACTION HEADER -->
+    <header class="editor-header">
       
-      <!-- Left: Close & Page Title -->
       <div class="header-left">
-        <button type="button" class="close-article-btn" (click)="cancel()" title="Đóng và quay lại danh sách">
-          <yin-icon name="close" [size]="15"></yin-icon>
-          <span class="page-title-text">{{ isEditMode() ? 'Chỉnh Sửa Bài Viết' : 'Soạn Thảo Bài Viết' }}</span>
-        </button>
+        <a routerLink="/admin/articles" class="back-nav-btn" title="Quay lại danh sách bài viết">
+          <yin-icon name="arrow-left" [size]="18"></yin-icon>
+          <span>Danh sách bài viết</span>
+        </a>
+        <div class="header-divider"></div>
+        <div class="header-status-badge" [class.published]="status() === 'PUBLISHED'">
+          <span class="status-dot"></span>
+          <span>{{ status() === 'PUBLISHED' ? 'Đã xuất bản' : 'Bản nháp' }}</span>
+        </div>
       </div>
 
-      <!-- Right: Action Buttons (Mẫu Quy Định, Nhập .MD, Hủy bài, Lưu bài viết, Xuất bản) -->
-      <div class="header-right">
+      <!-- Action Buttons (Yêu cầu: AI Soạn bài | Hủy bài viết | Lưu nháp | Xuất bản/Cập nhật) -->
+      <div class="header-actions">
         
-        <!-- Hidden input for markdown file import -->
-        <input 
-          type="file" 
-          #markdownFileInput 
-          accept=".md,.markdown,text/markdown,text/plain" 
-          (change)="onMarkdownFileSelected($event)" 
-          style="display: none" />
-
-        <!-- 1. Mẫu Quy Định Button -->
         <button 
           type="button" 
-          class="btn-format-guide" 
-          (click)="openFormatModal()" 
-          title="Xem quy chuẩn bài viết, tải file mẫu .md hoặc sao chép Prompt cho AI">
-          <yin-icon name="file-text" [size]="15"></yin-icon>
-          <span>Mẫu Quy Định</span>
+          class="yin-btn yin-btn-secondary btn-ai-format" 
+          (click)="openFormatModal()"
+          title="Xuất quy chuẩn định dạng và Prompt cho AI ngoài">
+          <yin-icon name="sparkles" [size]="15"></yin-icon>
+          <span>AI Soạn bài</span>
         </button>
 
-        <!-- 2. Nhập File .MD Button -->
         <button 
           type="button" 
-          class="btn-import-md" 
-          (click)="triggerImportMarkdown()" 
-          title="Nhập bài viết từ file .md đã soạn bởi AI bên ngoài">
+          class="yin-btn yin-btn-secondary btn-import-md" 
+          (click)="triggerImportMarkdown()"
+          title="Nạp nhanh từ file Markdown (.md)">
           <yin-icon name="upload" [size]="15"></yin-icon>
-          <span>Nhập File .MD</span>
+          <span>Nhập .md</span>
         </button>
 
-        <!-- 3. Hủy bài Button -->
-        <button type="button" class="btn-cancel" (click)="cancel()" title="Hủy bỏ thao tác">
-          Hủy bài
-        </button>
-
-        <!-- 4. Lưu bài viết Button -->
         <button 
           type="button" 
-          class="btn-save-draft" 
+          class="yin-btn yin-btn-ghost btn-cancel" 
+          (click)="cancel()"
+          title="Hủy bỏ và quay lại danh sách">
+          <yin-icon name="close" [size]="15"></yin-icon>
+          <span>Hủy bài</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="yin-btn yin-btn-secondary btn-save-draft" 
           (click)="saveDraft()" 
           [disabled]="isSaving()"
-          title="Lưu nội dung bài viết">
-          <yin-icon name="file-text" [size]="14"></yin-icon>
-          <span>{{ isSaving() ? 'Đang lưu…' : 'Lưu bài viết' }}</span>
+          title="Lưu lại nội dung bài viết hiện tại">
+          <yin-icon name="file-text" [size]="15"></yin-icon>
+          <span>{{ isSaving() ? 'Đang lưu…' : 'Lưu nháp' }}</span>
         </button>
 
-        <!-- 5. Xuất bản Button -->
         <button 
           type="button" 
-          class="btn-publish" 
+          class="yin-btn yin-btn-primary btn-publish" 
           (click)="publishArticle()" 
           [disabled]="isSaving()"
-          title="Xuất bản công khai bài viết">
-          <yin-icon name="check" [size]="15"></yin-icon>
-          @if (isSaving()) {
-            <span>Đang xử lý…</span>
-          } @else {
-            <span>{{ status() === 'PUBLISHED' ? 'Cập nhật' : 'Xuất bản' }}</span>
-          }
+          title="Xuất bản hoặc cập nhật bài viết công khai">
+          <yin-icon name="check" [size]="16"></yin-icon>
+          <span>{{ isSaving() ? 'Đang xử lý…' : (status() === 'PUBLISHED' ? 'Cập nhật' : 'Xuất bản') }}</span>
         </button>
 
       </div>
 
     </header>
 
-    <!-- Save Notification Toast -->
+    <!-- Notification Toasts -->
     @if (isSavedSuccess()) {
       <div class="save-toast-banner" role="status">
         <yin-icon name="check" [size]="16"></yin-icon>
@@ -88,7 +79,6 @@
       </div>
     }
 
-    <!-- Error Banner -->
     @if (errorMessage()) {
       <div class="error-toast-banner" role="alert">
         <yin-icon name="alert-circle" [size]="16"></yin-icon>
@@ -96,373 +86,245 @@
       </div>
     }
 
-    <!-- Main 2-Column Editor Workspace -->
-    <div class="editor-two-columns">
+    <!-- =========================================================================
+         BỐ CỤC CHÍNH BÀI VIẾT (THEO ĐÚNG THỨ TỰ YÊU CẦU CỦA USER):
+         1. Tiêu đề | Ảnh bìa bài viết | Tác giả (chọn tài khoản active, không đổi tên trực tiếp)
+            Đường dẫn (Slug): font size subtitle
+         2. Đoạn trích tóm tắt (font size subtitle)
+         3. Danh mục | Ngày hiển thị (chọn ngày hoặc ngay lập tức) | Từ khóa SEO
+         4. Nội dung bài viết (Tiptap + Dev Mode xem mã <b>, <i>...)
+         5. Bảng đề xuất hoàn chỉnh bài viết & Chấm điểm SEO
+         ========================================================================= -->
+
+    <div class="article-form-layout">
       
-      <!-- LEFT COLUMN: Title & Tiptap Rich Content -->
-      <div class="left-main-column">
+      <!-- PHẦN 1: TIÊU ĐỀ | ẢNH BÌA | TÁC GIẢ -->
+      <section class="form-section-card top-identity-grid">
         
-        <!-- Field 1: Title -->
-        <div class="field-block">
-          <label class="field-label" for="articleTitleInput">
-            <span class="label-primary">Tiêu đề</span>
-            <span class="label-muted">(Tên bài viết của bạn)</span>
-          </label>
+        <!-- CỘT 1: TIÊU ĐỀ & ĐƯỜNG DẪN (SLUG) -->
+        <div class="identity-col-title">
+          <div class="field-label-row">
+            <label class="field-label" for="articleTitleInput">Tiêu đề bài viết</label>
+            <span class="help-tooltip-trigger">
+              <yin-icon name="help-circle" [size]="14"></yin-icon>
+              <span class="help-tooltip-popover">
+                <strong>Tiêu đề bài viết (H1)</strong>
+                Tiêu đề chính hiển thị trên cùng bài viết và kết quả tìm kiếm Google.
+                <div class="example-text">Ví dụ: Kiến Trúc Microservices Tốc Độ Cao Cho Doanh Nghiệp</div>
+              </span>
+            </span>
+          </div>
+
           <input 
             id="articleTitleInput"
             type="text" 
-            class="input-title" 
+            class="input-main-title" 
             placeholder="Nhập tiêu đề bài viết của bạn tại đây..." 
             [ngModel]="title()" 
             (ngModelChange)="title.set($event)" />
+
+          <!-- Đường dẫn Slug ngay dưới tiêu đề (size font subtitle) -->
+          <div class="slug-subtitle-box">
+            <div class="slug-label-row">
+              <span class="slug-label">Đường dẫn:</span>
+              <span class="help-tooltip-trigger">
+                <yin-icon name="help-circle" [size]="13"></yin-icon>
+                <span class="help-tooltip-popover">
+                  <strong>Đường dẫn tĩnh (Slug URL)</strong>
+                  Đường dẫn thân thiện cho bài viết, ảnh hưởng trực tiếp đến thứ hạng SEO.
+                  <div class="example-text">Ví dụ: kien-truc-microservices-toc-do-cao</div>
+                </span>
+              </span>
+            </div>
+
+            <div class="slug-input-wrap">
+              <span class="slug-prefix">yin.vn/blog/</span>
+              <input 
+                id="articleSlugInput"
+                type="text" 
+                class="input-subtitle-slug" 
+                placeholder="duong-dan-bai-viet-slug" 
+                [ngModel]="slug()" 
+                (ngModelChange)="slug.set($event)" />
+            </div>
+          </div>
         </div>
 
-        <!-- Field 2: Content (Tiptap Rich Text Editor) -->
-        <div class="field-block content-field-block">
-          <label class="field-label">
-            <span class="label-primary">Nội dung</span>
-            <span class="label-muted">(Soạn thảo hoặc kéo thả file .md / hình ảnh vào đây)</span>
-          </label>
+        <!-- CỘT 2: ẢNH BÌA BÀI VIẾT (COVER IMAGE) -->
+        <div class="identity-col-cover">
+          <div class="field-label-row">
+            <label class="field-label">Ảnh bìa bài viết</label>
+            <span class="help-tooltip-trigger">
+              <yin-icon name="help-circle" [size]="14"></yin-icon>
+              <span class="help-tooltip-popover">
+                <strong>Ảnh bìa bài viết (Cover Image)</strong>
+                Hình ảnh đại diện bài viết tỷ lệ 16:9, hiển thị ở đầu bài và khi chia sẻ liên kết mạng xã hội (Facebook, LinkedIn).
+                <div class="example-text">Kích thước khuyến nghị: 1200 x 675 px</div>
+              </span>
+            </span>
+          </div>
 
-          <!-- Hidden File Input for Tiptap Content Image Upload -->
+          <!-- Hidden Native File Input for Cover Image -->
           <input 
             type="file" 
-            #editorImageFileInput 
+            #coverFileInput 
             accept="image/*" 
-            (change)="onEditorImageFileSelected($event)" 
+            (change)="onCoverFileSelected($event)" 
             style="display: none" />
 
-          <!-- Tiptap Editor Box Frame -->
-          <div class="tiptap-editor-card">
-            
-            <!-- Tiptap Toolbar -->
-            <div class="tiptap-toolbar">
-              
-              <!-- Style / Format Dropdown -->
-              <div class="toolbar-dropdown-wrap">
-                <select 
-                  class="toolbar-select" 
-                  [ngModel]="selectedBlockType()" 
-                  (ngModelChange)="setBlockType($event)">
-                  <option value="paragraph">Văn bản thường</option>
-                  <option value="h1">Tiêu đề lớn (H1)</option>
-                  <option value="h2">Tiêu đề mục (H2)</option>
-                  <option value="h3">Tiêu đề phụ (H3)</option>
-                  <option value="quote">Trích dẫn (Quote)</option>
-                  <option value="code">Khối mã code</option>
-                </select>
-                <span class="select-chevron">
-                  <yin-icon name="chevron-down" [size]="12"></yin-icon>
-                </span>
+          @if (coverImage()) {
+            <div class="cover-preview-card">
+              <img [src]="coverImage()" alt="Ảnh bìa bài viết" class="cover-thumb" />
+              <div class="cover-overlay-actions">
+                <button type="button" class="btn-cover-action" (click)="triggerCoverImageUpload()">Thay đổi</button>
+                <button type="button" class="btn-cover-action danger" (click)="removeCoverImage($event)">Xóa ảnh</button>
               </div>
-
-              <div class="toolbar-divider"></div>
-
-              <!-- Inline Style Buttons: B, I, U -->
-              <button 
-                type="button" 
-                class="tb-btn font-bold-btn" 
-                [class.active]="isBoldActive()" 
-                (click)="toggleBold()" 
-                title="In đậm (Ctrl+B)">
-                <span>B</span>
-              </button>
-
-              <button 
-                type="button" 
-                class="tb-btn font-italic-btn" 
-                [class.active]="isItalicActive()" 
-                (click)="toggleItalic()" 
-                title="In nghiêng (Ctrl+I)">
-                <span>I</span>
-              </button>
-
-              <button 
-                type="button" 
-                class="tb-btn font-underline-btn" 
-                [class.active]="isUnderlineActive()" 
-                (click)="toggleUnderline()" 
-                title="Gạch chân (Ctrl+U)">
-                <span>U</span>
-              </button>
-
-              <!-- Link Button -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                [class.active]="isLinkActive()" 
-                (click)="setLink()" 
-                title="Chèn liên kết (Link)">
-                <yin-icon name="link" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Blockquote (66) -->
-              <button 
-                type="button" 
-                class="tb-btn tb-quote-btn" 
-                [class.active]="isQuoteActive()" 
-                (click)="toggleBlockquote()" 
-                title="Trích dẫn (Quote)">
-                <span>66</span>
-              </button>
-
-              <!-- Code </> -->
-              <button 
-                type="button" 
-                class="tb-btn tb-code-btn" 
-                [class.active]="isCodeActive()" 
-                (click)="toggleCodeBlock()" 
-                title="Mã nguồn (Code Block)">
-                <span>&lt;/&gt;</span>
-              </button>
-
-              <!-- Image -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                (click)="addImage()" 
-                title="Chèn hình ảnh với chú thích">
-                <yin-icon name="image" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Bullet List -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                [class.active]="isBulletListActive()" 
-                (click)="toggleBulletList()" 
-                title="Danh sách gạch đầu dòng">
-                <yin-icon name="list" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Numbered List -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                [class.active]="isOrderedListActive()" 
-                (click)="toggleOrderedList()" 
-                title="Danh sách số thứ tự">
-                <yin-icon name="list-ordered" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Strike / Checklist -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                [class.active]="isStrikeActive()" 
-                (click)="toggleStrike()" 
-                title="Gạch ngang văn bản">
-                <yin-icon name="check-square" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Table -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                (click)="insertTable()" 
-                title="Chèn bảng biểu">
-                <yin-icon name="table" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Highlighter / Pen -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                [class.active]="isHighlightActive()" 
-                (click)="toggleHighlight()" 
-                title="Bút dạ quang đánh dấu (Highlight)">
-                <yin-icon name="highlighter" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Align / Divider -->
-              <button 
-                type="button" 
-                class="tb-btn" 
-                (click)="cycleAlign()" 
-                title="Căn chỉnh văn bản">
-                <yin-icon name="align-left" [size]="15"></yin-icon>
-              </button>
-
-              <!-- Embed Dropdown -->
-              <div class="embed-menu-wrap">
-                <button 
-                  type="button" 
-                  class="tb-btn tb-embed-btn" 
-                  (click)="toggleEmbedDropdown()" 
-                  title="Nhúng nội dung ngoài">
-                  <span>Nhúng</span>
-                  <yin-icon name="chevron-down" [size]="12"></yin-icon>
-                </button>
-
-                @if (isEmbedOpen()) {
-                  <div class="embed-popover" (mouseleave)="isEmbedOpen.set(false)">
-                    <button type="button" class="embed-item" (click)="insertEmbed('youtube')">
-                      <yin-icon name="film" [size]="14"></yin-icon>
-                      <span>YouTube / Video</span>
-                    </button>
-                    <button type="button" class="embed-item" (click)="insertEmbed('divider')">
-                      <yin-icon name="align-center" [size]="14"></yin-icon>
-                      <span>Đường kẻ phân cách</span>
-                    </button>
-                    <button type="button" class="embed-item" (click)="insertEmbed('code')">
-                      <yin-icon name="code" [size]="14"></yin-icon>
-                      <span>Khối mã code</span>
-                    </button>
-                  </div>
-                }
-              </div>
-
-              <!-- Fullscreen / Expand -->
-              <div class="toolbar-spacer"></div>
-
-              <button 
-                type="button" 
-                class="tb-btn fullscreen-btn" 
-                (click)="toggleFullscreen()" 
-                [title]="isFullscreen() ? 'Thu nhỏ' : 'Toàn màn hình'">
-                <yin-icon [name]="isFullscreen() ? 'minimize' : 'maximize'" [size]="15"></yin-icon>
-              </button>
-
             </div>
-
-            <!-- Tiptap Host Element where Tiptap mounts (with file drag & drop + paste support) -->
+          } @else {
             <div 
-              #tiptapEditorRef 
-              class="tiptap-content-viewport"
-              [class.editor-dragging]="isEditorDragging()"
-              (dragover)="onEditorDragOver($event)"
-              (dragleave)="onEditorDragLeave($event)"
-              (drop)="onEditorDrop($event)"
-              (paste)="onEditorPaste($event)"></div>
-
-            @if (isUploadingEditorImage()) {
-              <div class="editor-uploading-bar">
-                <yin-icon name="clock" [size]="14" className="spinning-icon"></yin-icon>
-                <span>Đang tải ảnh lên và chèn vào bài viết…</span>
-              </div>
-            }
-
-          </div>
+              class="cover-drop-zone" 
+              [class.dragging]="isCoverDragging()"
+              (click)="triggerCoverImageUpload()"
+              (dragover)="onCoverDragOver($event)"
+              (dragleave)="onCoverDragLeave($event)"
+              (drop)="onCoverDrop($event)">
+              @if (isUploadingCover()) {
+                <div class="cover-uploading">
+                  <yin-icon name="clock" [size]="20" className="spin-icon"></yin-icon>
+                  <span>Đang tải ảnh…</span>
+                </div>
+              } @else {
+                <yin-icon name="image" [size]="24" className="cover-placeholder-icon"></yin-icon>
+                <span class="cover-upload-text">Kéo thả hoặc tải ảnh bìa</span>
+              }
+            </div>
+          }
         </div>
 
-      </div>
+        <!-- CỘT 3: TÁC GIẢ BÀI VIẾT (CHỌN TỪ TÀI KHOẢN HOẠT ĐỘNG TRONG HỆ THỐNG) -->
+        <div class="identity-col-author">
+          <div class="field-label-row">
+            <label class="field-label">Tác giả</label>
+            <span class="help-tooltip-trigger">
+              <yin-icon name="help-circle" [size]="14"></yin-icon>
+              <span class="help-tooltip-popover">
+                <strong>Tác giả bài viết</strong>
+                Chọn từ danh sách tài khoản quản trị đang hoạt động trong hệ thống. Để đổi tên hoặc chức danh, vui lòng vào Cài đặt tài khoản.
+                <div class="example-text">{{ appVars.author.exampleLabel }}</div>
+              </span>
+            </span>
+          </div>
 
-      <!-- RIGHT COLUMN: Metadata Sidebar -->
-      <div class="right-sidebar-column">
+          <div class="author-selector-card" (click)="toggleAuthorDropdown()">
+            <img [src]="authorAvatar()" alt="Avatar tác giả" class="author-avatar-img" />
+            <div class="author-info">
+              <div class="author-name-val">{{ authorName() }}</div>
+              <div class="author-role-val">{{ authorRole() }}</div>
+            </div>
+            <yin-icon name="chevron-down" [size]="14" className="author-dropdown-arrow"></yin-icon>
+          </div>
+
+          <div class="author-note-help">
+            <yin-icon name="lock" [size]="11"></yin-icon>
+            <span>Tên tác giả cố định theo tài khoản (sửa trong Cài đặt)</span>
+          </div>
+
+          <!-- Author Popover (Chỉ hiện tài khoản active) -->
+          @if (isAuthorDropdownOpen()) {
+            <div class="author-popover" (mouseleave)="isAuthorDropdownOpen.set(false)">
+              <div class="popover-title">Chọn tài khoản tác giả (Đang hoạt động):</div>
+              @for (author of systemActiveAuthors(); track author.name) {
+                <div class="author-popover-item" (click)="selectAuthor(author)">
+                  <img [src]="author.avatar" alt="Avatar" class="popover-avatar" />
+                  <div>
+                    <div class="popover-author-name">{{ author.name }}</div>
+                    <div class="popover-author-role">{{ author.role }}</div>
+                  </div>
+                  @if (authorName() === author.name) {
+                    <yin-icon name="check" [size]="14" className="author-selected-check"></yin-icon>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+      </section>
+
+      <!-- PHẦN 2: ĐOẠN TRÍCH TÓM TẮT (FONT SIZE SUBTITLE) -->
+      <section class="form-section-card">
+        <div class="field-label-row">
+          <label class="field-label" for="articleExcerptInput">Đoạn trích tóm tắt (Excerpt)</label>
+          <span class="help-tooltip-trigger">
+            <yin-icon name="help-circle" [size]="14"></yin-icon>
+            <span class="help-tooltip-popover">
+              <strong>Đoạn trích tóm tắt (Meta Description)</strong>
+              Hiển thị dưới tiêu đề khi xem bài viết và làm đoạn trích xuất hiện trên Google Search.
+              <div class="example-text">Ví dụ: Khám phá cách mạng Signals trong Angular v22 giúp kiến trúc phần mềm vận hành siêu tốc và loại bỏ hoàn toàn Zone.js...</div>
+            </span>
+          </span>
+          <span class="char-counter" [class.optimal]="excerpt().length >= 120 && excerpt().length <= 160">
+            {{ excerpt().length }} ký tự (Khuyến nghị: 120 - 160)
+          </span>
+        </div>
+
+        <textarea 
+          id="articleExcerptInput"
+          rows="3" 
+          class="textarea-subtitle-excerpt" 
+          placeholder="Nhập đoạn tóm tắt ngắn gọn giúp độc giả và Google nhanh chóng nắm bắt luận điểm chính của bài viết..." 
+          [ngModel]="excerpt()" 
+          (ngModelChange)="excerpt.set($event)"></textarea>
+      </section>
+
+      <!-- PHẦN 3: DANH MỤC | NGÀY HIỂN THỊ (LẬP TỨC HOẶC LÊN LỊCH) | TỪ KHÓA SEO -->
+      <section class="form-section-card meta-tri-grid">
         
-        <!-- Field: Thao tác nhanh -->
-        <div class="sidebar-field-block">
-          <label class="field-label">
-            <span class="label-primary">Thao tác bài viết</span>
-          </label>
-          <div class="quick-actions-card">
-            <div class="current-status-badge" [class.published]="status() === 'PUBLISHED'">
-              <span class="status-dot"></span>
-              <span>Trạng thái: <strong>{{ status() === 'PUBLISHED' ? 'Đã xuất bản' : status() === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp' }}</strong></span>
-            </div>
-            <div class="quick-action-buttons">
-              <button 
-                type="button" 
-                class="btn-quick-save" 
-                (click)="saveDraft()" 
-                [disabled]="isSaving()"
-                title="Lưu lại nội dung bài viết hiện tại">
-                <yin-icon name="file-text" [size]="14"></yin-icon>
-                <span>{{ isSaving() ? 'Đang lưu…' : 'Lưu bài viết' }}</span>
-              </button>
-              
-              <button 
-                type="button" 
-                class="btn-quick-publish" 
-                (click)="publishArticle()" 
-                [disabled]="isSaving()"
-                title="Xuất bản công khai bài viết">
-                <yin-icon name="check" [size]="14"></yin-icon>
-                <span>{{ isSaving() ? 'Đang xử lý…' : (status() === 'PUBLISHED' ? 'Cập nhật xuất bản' : 'Xuất bản ngay') }}</span>
-              </button>
-
-              <button 
-                type="button" 
-                class="btn-quick-cancel" 
-                (click)="cancel()" 
-                title="Hủy thao tác và quay lại danh sách">
-                <yin-icon name="close" [size]="14"></yin-icon>
-                <span>Hủy bài</span>
-              </button>
-            </div>
+        <!-- DANH MỤC (CATEGORY) -->
+        <div class="meta-col">
+          <div class="field-label-row">
+            <label class="field-label">Danh mục bài viết</label>
+            <span class="help-tooltip-trigger">
+              <yin-icon name="help-circle" [size]="14"></yin-icon>
+              <span class="help-tooltip-popover">
+                <strong>Chuyên mục phân loại</strong>
+                Gắn nhãn các chuyên mục liên quan giúp phân luồng nội dung và tạo bộ lọc trên website.
+                <div class="example-text">Ví dụ: Công Nghệ, Kiến Trúc Phần Mềm</div>
+              </span>
+            </span>
           </div>
-        </div>
 
-        <!-- Field: Slug -->
-        <div class="sidebar-field-block">
-          <label class="field-label" for="articleSlugInput">
-            <span class="label-primary">Đường dẫn (Slug)</span>
-            <span class="label-muted">(Đường dẫn URL thân thiện cho bài viết)</span>
-          </label>
-          <input 
-            id="articleSlugInput"
-            type="text" 
-            class="input-sidebar" 
-            placeholder="duong-dan-bai-viet-url" 
-            [ngModel]="slug()" 
-            (ngModelChange)="slug.set($event)" />
-        </div>
-
-        <!-- Field: Excerpt -->
-        <div class="sidebar-field-block">
-          <label class="field-label" for="articleExcerptInput">
-            <span class="label-primary">Đoạn trích tóm tắt</span>
-            <span class="label-muted">(Tóm tắt ngắn gọn nội dung bài viết)</span>
-          </label>
-          <textarea 
-            id="articleExcerptInput"
-            rows="4" 
-            class="textarea-sidebar" 
-            placeholder="Nhập đoạn tóm tắt ngắn gọn giúp độc giả và các công cụ tìm kiếm dễ dàng nắm bắt nội dung cốt lõi của bài viết trước khi xem chi tiết..." 
-            [ngModel]="excerpt()" 
-            (ngModelChange)="excerpt.set($event)"></textarea>
-        </div>
-
-        <!-- Field: Category Multi-Select Chips -->
-        <div class="sidebar-field-block">
-          <label class="field-label">
-            <span class="label-primary">Danh mục</span>
-            <span class="label-muted">(Phân loại chuyên mục cho bài viết)</span>
-          </label>
-
-          <div class="category-box" (click)="toggleCategoryDropdown()">
-            <div class="chips-wrap">
+          <div class="category-chips-container" (click)="toggleCategoryDropdown()">
+            <div class="chips-list">
               @for (cat of categories(); track cat; let idx = $index) {
                 <span class="tag-chip">
-                  <span class="chip-label">{{ cat }}</span>
-                  <button type="button" class="chip-remove" (click)="removeCategory(idx, $event)" title="Xóa thẻ">✕</button>
+                  <span>{{ cat }}</span>
+                  <button type="button" class="chip-del" (click)="removeCategory(idx, $event)" title="Xóa chuyên mục">✕</button>
                 </span>
               }
               <input 
                 type="text" 
-                class="chip-inline-input" 
-                placeholder="Thêm danh mục…" 
+                class="chip-ghost-input" 
+                placeholder="Thêm mục…" 
                 [ngModel]="newCategoryInput()" 
                 (ngModelChange)="newCategoryInput.set($event)" 
                 (keydown)="onCategoryInputKeydown($event)" 
                 (click)="$event.stopPropagation()" />
             </div>
-
-            <button type="button" class="category-dropdown-arrow" title="Chọn danh mục có sẵn">
+            <button type="button" class="category-arrow-btn" title="Gợi ý danh mục">
               <yin-icon name="chevron-down" [size]="14"></yin-icon>
             </button>
           </div>
 
-          <!-- Category Quick Selection Dropdown -->
           @if (isCategoryDropdownOpen()) {
             <div class="category-popover" (mouseleave)="isCategoryDropdownOpen.set(false)">
-              <div class="popover-title">Gợi ý danh mục:</div>
-              <div class="popover-tags-list">
+              <div class="popover-title">Chuyên mục gợi ý:</div>
+              <div class="popover-tags-grid">
                 @for (preset of availableCategories; track preset) {
                   <button 
                     type="button" 
-                    class="preset-tag-btn" 
-                    [class.selected]="categories().includes(preset)"
+                    class="preset-pill-btn" 
+                    [class.active]="categories().includes(preset)"
                     (click)="addCategory(preset)">
                     <span>{{ preset }}</span>
                     @if (categories().includes(preset)) {
@@ -475,196 +337,490 @@
           }
         </div>
 
-        <!-- Field: Date -->
-        <div class="sidebar-field-block">
-          <label class="field-label" for="articleDateInput">
-            <span class="label-primary">Ngày hiển thị</span>
-            <span class="label-muted">(Ngày hiển thị công khai trên bài viết)</span>
-          </label>
-          <div class="date-input-wrap">
-            <yin-icon name="calendar" [size]="16" className="calendar-icon"></yin-icon>
-            <input 
-              id="articleDateInput"
-              type="date" 
-              class="input-sidebar date-field" 
-              [ngModel]="date()" 
-              (ngModelChange)="date.set($event)" />
+        <!-- NGÀY HIỂN THỊ & LÊN LỊCH (PUBLISH DATE) -->
+        <div class="meta-col">
+          <div class="field-label-row">
+            <label class="field-label" for="articleDateInput">Ngày hiển thị & Lên lịch</label>
+            <span class="help-tooltip-trigger">
+              <yin-icon name="help-circle" [size]="14"></yin-icon>
+              <span class="help-tooltip-popover">
+                <strong>Ngày xuất bản công khai</strong>
+                Chọn thời gian bài viết sẽ xuất hiện trước công chúng hoặc bấm "Ngay lập tức" để xuất bản bài viết ngay bây giờ.
+              </span>
+            </span>
+          </div>
+
+          <div class="date-schedule-wrap">
+            <div class="date-input-box">
+              <yin-icon name="calendar" [size]="15" className="input-inner-icon"></yin-icon>
+              <input 
+                id="articleDateInput"
+                type="date" 
+                class="input-with-icon" 
+                [ngModel]="date()" 
+                (ngModelChange)="date.set($event)" />
+            </div>
+            <button 
+              type="button" 
+              class="btn-immediate" 
+              (click)="setPublishImmediately()" 
+              title="Đặt thời gian đăng bài ngay bây giờ">
+              <yin-icon name="clock" [size]="13"></yin-icon>
+              <span>Ngay lập tức</span>
+            </button>
           </div>
         </div>
 
-        <!-- Field: Cover Image Upload -->
-        <div class="sidebar-field-block">
-          <label class="field-label">
-            <span class="label-primary">Ảnh bìa bài viết</span>
-          </label>
-
-          <!-- Hidden Native File Input for Cover Image -->
-          <input 
-            type="file" 
-            #coverFileInput 
-            accept="image/*" 
-            (change)="onCoverFileSelected($event)" 
-            style="display: none" />
-
-          @if (coverImage()) {
-            <div class="cover-image-preview-card">
-              <img [src]="coverImage()" alt="Ảnh bìa bài viết" class="preview-thumb" />
-              <div class="preview-overlay">
-                <button type="button" class="btn-change-img" (click)="triggerCoverImageUpload()">Thay đổi</button>
-                <button type="button" class="btn-remove-img" (click)="removeCoverImage($event)">Xóa</button>
-              </div>
-            </div>
-          } @else {
-            <div 
-              class="cover-upload-dashed" 
-              [class.dragging]="isCoverDragging()"
-              (click)="triggerCoverImageUpload()"
-              (dragover)="onCoverDragOver($event)"
-              (dragleave)="onCoverDragLeave($event)"
-              (drop)="onCoverDrop($event)">
-              @if (isUploadingCover()) {
-                <div class="uploading-state">
-                  <yin-icon name="clock" [size]="24" className="spinning-icon"></yin-icon>
-                  <span>Đang tải ảnh lên…</span>
-                </div>
-              } @else {
-                <div class="mountain-icon-box">
-                  <yin-icon name="image" [size]="24"></yin-icon>
-                </div>
-                <div class="upload-text-main">
-                  {{ isCoverDragging() ? 'Thả ảnh vào đây để tải lên' : 'Kéo & thả ảnh vào đây hoặc' }}
-                </div>
-                <div class="upload-link-text">
-                  <yin-icon name="image" [size]="14"></yin-icon>
-                  <span>Tải ảnh từ máy tính</span>
-                </div>
-              }
-            </div>
-          }
-        </div>
-
-        <!-- Field: Author Selector -->
-        <div class="sidebar-field-block">
-          <label class="field-label">
-            <span class="label-primary">Tác giả</span>
-            <span class="label-muted">(Người biên soạn bài viết)</span>
-          </label>
-
-          <div class="author-card-box" (click)="toggleAuthorDropdown()">
-            <img [src]="authorAvatar()" alt="Ảnh đại diện tác giả" class="author-img" />
-            <div class="author-details">
-              <div class="author-name-text">{{ authorName() }}</div>
-              <div class="author-role-text">{{ authorRole() }}</div>
-            </div>
-            <yin-icon name="chevron-down" [size]="14" className="author-chevron"></yin-icon>
+        <!-- TỪ KHÓA SEO (FOCUS KEYWORDS - GÕ CỤM ENTER TẠO TAG, DOUBLE CLICK SỬA) -->
+        <div class="meta-col">
+          <div class="field-label-row">
+            <label class="field-label">Từ khóa SEO (Focus Keywords)</label>
+            <span class="help-tooltip-trigger">
+              <yin-icon name="help-circle" [size]="14"></yin-icon>
+              <span class="help-tooltip-popover">
+                <strong>Từ khóa trọng tâm</strong>
+                Gõ cụm từ khóa (vd: Angular Signals) rồi nhấn Enter. Nhấp đúp vào từ khóa để sửa.
+                <div class="example-text">Ví dụ: Angular Signals, Kiến Trúc Phần Mềm</div>
+              </span>
+            </span>
           </div>
 
-          <!-- Author Selection Popover -->
-          @if (isAuthorDropdownOpen()) {
-            <div class="author-popover" (mouseleave)="isAuthorDropdownOpen.set(false)">
-              <div class="popover-title">Chọn tác giả bài viết:</div>
-              @for (author of availableAuthors; track author.name) {
-                <div class="author-popover-item" (click)="selectAuthor(author)">
-                  <img [src]="author.avatar" alt="Ảnh đại diện tác giả" class="popover-avatar" />
-                  <div>
-                    <div class="popover-author-name">{{ author.name }}</div>
-                    <div class="popover-author-role">{{ author.role }}</div>
-                  </div>
-                </div>
+          <div class="keywords-chips-container">
+            <div class="chips-list">
+              @for (kw of focusKeywords(); track kw; let kIdx = $index) {
+                <span 
+                  class="tag-chip keyword-chip" 
+                  (dblclick)="editKeyword(kIdx)" 
+                  title="Nhấp đúp chuột để chỉnh sửa từ khóa này">
+                  <span>{{ kw }}</span>
+                  <button type="button" class="chip-del" (click)="removeKeyword(kIdx, $event)" title="Xóa từ khóa">✕</button>
+                </span>
               }
+              <input 
+                type="text" 
+                class="chip-ghost-input" 
+                placeholder="Gõ từ khóa + Enter…" 
+                [ngModel]="keywordInput()" 
+                (ngModelChange)="keywordInput.set($event)" 
+                (keydown)="onKeywordKeydown($event)" />
             </div>
-          }
+          </div>
         </div>
 
-      </div>
+      </section>
+
+      <!-- PHẦN 4: NỘI DUNG BÀI VIẾT (TIPTAP RICH TEXT + DEV MODE) -->
+      <section class="form-section-card content-editor-section">
+        
+        <div class="content-header-bar">
+          <div class="field-label-row">
+            <label class="field-label">Nội dung bài viết</label>
+            <span class="help-tooltip-trigger">
+              <yin-icon name="help-circle" [size]="14"></yin-icon>
+              <span class="help-tooltip-popover">
+                <strong>Trình soạn thảo bài viết</strong>
+                Soạn thảo trực quan với thanh công cụ hoặc bấm "&lt;/&gt; Chế độ Dev" để gõ trực tiếp các thẻ HTML như &lt;b&gt;, &lt;i&gt;, &lt;h2&gt;, &lt;hr&gt;...
+              </span>
+            </span>
+          </div>
+
+          <!-- View Mode Toggle: Visual vs Dev Mode -->
+          <div class="editor-mode-toggle-group">
+            <button 
+              type="button" 
+              class="mode-toggle-btn" 
+              [class.active]="editorViewMode() === 'visual'" 
+              (click)="editorViewMode() === 'dev' ? toggleEditorMode() : null" 
+              title="Soạn thảo trực quan WYSIWYG">
+              <yin-icon name="edit" [size]="14"></yin-icon>
+              <span>Trực quan</span>
+            </button>
+            <button 
+              type="button" 
+              class="mode-toggle-btn dev-btn" 
+              [class.active]="editorViewMode() === 'dev'" 
+              (click)="editorViewMode() === 'visual' ? toggleEditorMode() : null" 
+              title="Chế độ nhà phát triển: Xem và gõ thẻ HTML <b>, <i>, <hr>...">
+              <yin-icon name="code" [size]="14"></yin-icon>
+              <span>&lt;/&gt; Chế độ Dev</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hidden Native File Input for Content Image Upload -->
+        <input 
+          type="file" 
+          #editorImageFileInput 
+          accept="image/*" 
+          (change)="onEditorImageFileSelected($event)" 
+          style="display: none" />
+
+        <!-- TIPTAP TOOLBAR (HIỂN THỊ Ở CHẾ ĐỘ VISUAL) -->
+        @if (editorViewMode() === 'visual') {
+          <div class="tiptap-toolbar">
+            
+            <!-- Block Format Dropdown -->
+            <div class="tb-dropdown-wrap">
+              <select 
+                class="tb-select" 
+                [ngModel]="selectedBlockType()" 
+                (ngModelChange)="setBlockType($event)">
+                <option value="paragraph">Văn bản thường</option>
+                <option value="h1">Tiêu đề lớn (H1)</option>
+                <option value="h2">Tiêu đề mục (H2)</option>
+                <option value="h3">Tiêu đề phụ (H3)</option>
+                <option value="quote">Trích dẫn (Quote)</option>
+                <option value="code">Khối mã code</option>
+              </select>
+              <yin-icon name="chevron-down" [size]="12" className="tb-select-chevron"></yin-icon>
+            </div>
+
+            <div class="tb-sep"></div>
+
+            <!-- Formatting Actions -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isBoldActive()" 
+              (click)="toggleBold()" 
+              title="In đậm (Bold - Ctrl+B)">
+              <strong>B</strong>
+            </button>
+
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isItalicActive()" 
+              (click)="toggleItalic()" 
+              title="In nghiêng (Italic - Ctrl+I)">
+              <em>I</em>
+            </button>
+
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isUnderlineActive()" 
+              (click)="toggleUnderline()" 
+              title="Gạch chân (Underline - Ctrl+U)">
+              <u>U</u>
+            </button>
+
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isStrikeActive()" 
+              (click)="toggleStrike()" 
+              title="Gạch ngang chữ (Strikethrough)">
+              <s>S</s>
+            </button>
+
+            <div class="tb-sep"></div>
+
+            <!-- GẠCH NGANG PHÂN ĐOẠN (DIVIDER <HR>) -->
+            <button 
+              type="button" 
+              class="tb-btn tb-divider-btn" 
+              (click)="insertDivider()" 
+              title="Chèn đường kẻ ngang phân cách giữa các đoạn (<hr>)">
+              <yin-icon name="minus" [size]="16"></yin-icon>
+            </button>
+
+            <!-- Quote -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isQuoteActive()" 
+              (click)="toggleBlockquote()" 
+              title="Trích dẫn (Blockquote)">
+              <span class="tb-text-icon">66</span>
+            </button>
+
+            <!-- Code Block -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isCodeActive()" 
+              (click)="toggleCodeBlock()" 
+              title="Khối mã code">
+              <span class="tb-text-icon">&lt;/&gt;</span>
+            </button>
+
+            <!-- Image with caption -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              (click)="addImage()" 
+              title="Chèn hình ảnh có chú thích">
+              <yin-icon name="image" [size]="15"></yin-icon>
+            </button>
+
+            <!-- Lists -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isBulletListActive()" 
+              (click)="toggleBulletList()" 
+              title="Danh sách gạch đầu dòng">
+              <yin-icon name="list" [size]="15"></yin-icon>
+            </button>
+
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isOrderedListActive()" 
+              (click)="toggleOrderedList()" 
+              title="Danh sách số thứ tự">
+              <yin-icon name="list-ordered" [size]="15"></yin-icon>
+            </button>
+
+            <!-- Table -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              (click)="insertTable()" 
+              title="Chèn bảng biểu">
+              <yin-icon name="table" [size]="15"></yin-icon>
+            </button>
+
+            <!-- Highlight -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              [class.active]="isHighlightActive()" 
+              (click)="toggleHighlight()" 
+              title="Bút dạ quang (Highlight)">
+              <yin-icon name="highlighter" [size]="15"></yin-icon>
+            </button>
+
+            <!-- Align -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              (click)="cycleAlign()" 
+              title="Căn chỉnh lề">
+              <yin-icon name="align-left" [size]="15"></yin-icon>
+            </button>
+
+            <div class="tb-sep"></div>
+
+            <!-- Fullscreen -->
+            <button 
+              type="button" 
+              class="tb-btn" 
+              (click)="toggleFullscreen()" 
+              title="Toàn màn hình">
+              <yin-icon [name]="isFullscreen() ? 'minimize' : 'maximize'" [size]="15"></yin-icon>
+            </button>
+
+          </div>
+
+          <!-- WYSIWYG Tiptap Content Viewport -->
+          <div 
+            #tiptapEditorRef 
+            class="tiptap-content-viewport"
+            [class.dragging-over]="isEditorDragging()"
+            (dragover)="onEditorDragOver($event)"
+            (dragleave)="onEditorDragLeave($event)"
+            (drop)="onEditorDrop($event)"
+            (paste)="onEditorPaste($event)">
+          </div>
+
+        } @else {
+          
+          <!-- DEV MODE VIEWPORT (CHO PHÉP GÕ THẺ <b>, <i>, <hr>, <h2>...) -->
+          <div class="dev-mode-viewport">
+            
+            <div class="dev-quick-toolbar">
+              <span class="dev-tools-label">Chèn thẻ nhanh:</span>
+              <button type="button" class="dev-tag-pill" (click)="insertDevTag('b')">&lt;b&gt; In đậm &lt;/b&gt;</button>
+              <button type="button" class="dev-tag-pill" (click)="insertDevTag('i')">&lt;i&gt; In nghiêng &lt;/i&gt;</button>
+              <button type="button" class="dev-tag-pill" (click)="insertDevTag('u')">&lt;u&gt; Gạch chân &lt;/u&gt;</button>
+              <button type="button" class="dev-tag-pill" (click)="insertDevTag('h2')">&lt;h2&gt; Đề mục H2 &lt;/h2&gt;</button>
+              <button type="button" class="dev-tag-pill" (click)="insertDevTag('h3')">&lt;h3&gt; Tiểu mục H3 &lt;/h3&gt;</button>
+              <button type="button" class="dev-tag-pill" (click)="insertDevTag('hr')">&lt;hr /&gt; Gạch ngang</button>
+              <button type="button" class="dev-tag-pill" (click)="insertDevTag('p')">&lt;p&gt; Đoạn văn &lt;/p&gt;</button>
+            </div>
+
+            <textarea 
+              class="dev-html-textarea" 
+              [ngModel]="devHtmlContent()" 
+              (ngModelChange)="onDevHtmlChange($event)"
+              placeholder="Nhập trực tiếp mã HTML với các thẻ <b>, <i>, <h2>, <hr>..."
+              spellcheck="false"></textarea>
+
+            <div class="dev-footer-hint">
+              <yin-icon name="check-circle" [size]="13"></yin-icon>
+              <span>Bạn có thể gõ tự do các thẻ lồng nhau như <code>&lt;b&gt;&lt;i&gt;nội dung&lt;/i&gt;&lt;/b&gt;</code>. Khi chuyển về chế độ "Trực quan", định dạng sẽ tự động hiển thị hoàn hảo.</span>
+            </div>
+
+          </div>
+
+        }
+
+      </section>
+
+      <!-- PHẦN 5: ĐỀ XUẤT ĐỂ 1 BÀI VIẾT HOÀN CHỈNH & PHÂN TÍCH SEO -->
+      <section class="form-section-card audit-seo-section">
+        
+        <div class="audit-header">
+          <div class="audit-title-wrap">
+            <div class="audit-score-circle" 
+              [class.score-high]="articleAudit().score >= 80"
+              [class.score-mid]="articleAudit().score >= 50 && articleAudit().score < 80"
+              [class.score-low]="articleAudit().score < 50">
+              <span class="score-number">{{ articleAudit().score }}</span>
+              <span class="score-label">/100</span>
+            </div>
+            <div>
+              <h3 class="audit-main-title">Đề Xuất Hoàn Chỉnh Bài Viết & Tối Ưu SEO</h3>
+              <p class="audit-subtitle">Hệ thống phân tích cấu trúc H1-H3, độ dài đoạn văn, hình ảnh và mật độ từ khóa chuẩn SEO.</p>
+            </div>
+          </div>
+
+          <!-- Quick Metrics Badges -->
+          <div class="audit-stats-badges">
+            <span class="metric-chip">
+              <yin-icon name="file-text" [size]="13"></yin-icon>
+              <span><strong>{{ articleAudit().wordCount }}</strong> từ</span>
+            </span>
+            <span class="metric-chip" [class.danger]="articleAudit().pCount < 3">
+              <yin-icon name="list" [size]="13"></yin-icon>
+              <span><strong>{{ articleAudit().pCount }}</strong> đoạn (Tối thiểu 3)</span>
+            </span>
+            <span class="metric-chip">
+              <yin-icon name="search" [size]="13"></yin-icon>
+              <span>Mật độ từ khóa: <strong>{{ articleAudit().keywordDensity }}%</strong></span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Recommendations Checklist -->
+        <div class="audit-checklist-grid">
+          
+          <div class="checklist-col">
+            <h4 class="checklist-heading">Tiêu chí cấu trúc & Độ dài:</h4>
+            
+            <div class="check-item" [class.passed]="articleAudit().hasH2">
+              <yin-icon [name]="articleAudit().hasH2 ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Đề mục H2 phân chia luận điểm</span>
+            </div>
+
+            <div class="check-item" [class.passed]="articleAudit().hasH3">
+              <yin-icon [name]="articleAudit().hasH3 ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Tiểu mục H3 chi tiết</span>
+            </div>
+
+            <div class="check-item" [class.passed]="articleAudit().pCount >= 3">
+              <yin-icon [name]="articleAudit().pCount >= 3 ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Độ dài nội dung (Tối thiểu 3 đoạn văn hoàn chỉnh)</span>
+            </div>
+
+            <div class="check-item" [class.passed]="articleAudit().hasImg">
+              <yin-icon [name]="articleAudit().hasImg ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Hình ảnh minh họa kèm chú thích</span>
+            </div>
+          </div>
+
+          <div class="checklist-col">
+            <h4 class="checklist-heading">Tiêu chí SEO & Tìm kiếm:</h4>
+
+            <div class="check-item" [class.passed]="articleAudit().titleLen >= 30 && articleAudit().titleLen <= 70">
+              <yin-icon [name]="(articleAudit().titleLen >= 30 && articleAudit().titleLen <= 70) ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Tiêu đề chuẩn SEO (30 - 70 ký tự)</span>
+            </div>
+
+            <div class="check-item" [class.passed]="articleAudit().excerptLen >= 60">
+              <yin-icon [name]="articleAudit().excerptLen >= 60 ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Đoạn trích tóm tắt đầy đủ</span>
+            </div>
+
+            <div class="check-item" [class.passed]="articleAudit().keywordInTitle">
+              <yin-icon [name]="articleAudit().keywordInTitle ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Từ khóa xuất hiện trong Tiêu đề</span>
+            </div>
+
+            <div class="check-item" [class.passed]="articleAudit().keywordInContent">
+              <yin-icon [name]="articleAudit().keywordInContent ? 'check-circle' : 'alert-circle'" [size]="15"></yin-icon>
+              <span>Từ khóa xuất hiện trong Nội dung</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Google Snippet Preview -->
+        <div class="google-snippet-preview">
+          <div class="snippet-header">
+            <yin-icon name="globe" [size]="14"></yin-icon>
+            <span>Xem trước kết quả trên Google Search:</span>
+          </div>
+          <div class="snippet-card">
+            <div class="snippet-url">https://yin.vn/blog/{{ slug() || 'duong-dan-bai-viet' }}</div>
+            <div class="snippet-title">{{ title() || 'Tiêu đề bài viết sẽ xuất hiện tại đây' }} - Yin</div>
+            <div class="snippet-desc">{{ excerpt() || 'Đoạn trích tóm tắt bài viết sẽ được hiển thị trên Google tìm kiếm để thu hút người dùng nhấp vào xem chi tiết...' }}</div>
+          </div>
+        </div>
+
+      </section>
 
     </div>
 
   </div>
 
   <!-- =========================================================================
-       MODAL 1: FORMAT GUIDE & EXPORT MODAL
+       MODAL 1: FORMAT GUIDE & AI PROMPT EXPORT MODAL
        ========================================================================= -->
   @if (isFormatModalOpen()) {
     <div class="format-modal-backdrop" (click)="closeFormatModal()">
       <div class="format-modal-card" (click)="$event.stopPropagation()">
         
-        <!-- Modal Head -->
         <div class="format-modal-header">
           <div class="format-modal-title-wrap">
             <div class="format-icon-circle">
-              <yin-icon name="file-text" [size]="18"></yin-icon>
+              <yin-icon name="sparkles" [size]="18"></yin-icon>
             </div>
             <div>
               <h3 class="format-modal-title">Quy Chuẩn Soạn Thảo & Mẫu File .MD</h3>
-              <p class="format-modal-subtitle">Xuất mẫu quy định hoặc sao chép Prompt để đưa cho AI ngoài (ChatGPT, Claude, Gemini, DeepSeek...)</p>
+              <p class="format-modal-subtitle">Xuất mẫu quy định hoặc sao chép Prompt để đưa cho AI ngoài (ChatGPT, Claude, Gemini...)</p>
             </div>
           </div>
-          <button type="button" class="format-close-btn" (click)="closeFormatModal()" title="Đóng">
-            <yin-icon name="close" [size]="16"></yin-icon>
-          </button>
+          <button type="button" class="format-close-btn" (click)="closeFormatModal()" title="Đóng">&times;</button>
         </div>
 
-        <!-- Modal Body -->
         <div class="format-modal-body">
-          
-          <!-- Quy trình 4 bước -->
           <div class="format-guide-section">
             <h4 class="guide-section-title">
               <yin-icon name="check-circle" [size]="16"></yin-icon>
-              <span>Quy trình biên soạn và nạp bài viết:</span>
+              <span>Quy trình nạp bài viết từ AI vào website Yin:</span>
             </h4>
             <ol class="workflow-steps-list">
               <li>
-                <strong>Bước 1: Tải mẫu hoặc sao chép Prompt AI</strong>
-                <p>Tải file <code>.md</code> mẫu về máy hoặc sao chép Prompt AI đã được tối ưu hóa tiêu chuẩn SEO & CORE-EEAT.</p>
+                <strong>Bước 1: Tải file .md mẫu hoặc sao chép Prompt AI</strong>
+                <p>Prompt đã được tối ưu tiêu chuẩn SEO, CORE-EEAT và Frontmatter đầy đủ.</p>
               </li>
               <li>
-                <strong>Bước 2: Yêu cầu AI soạn bài & xuất file .md</strong>
-                <p>Gửi nội dung cần viết cho AI (ChatGPT, Claude...) kèm quy chuẩn mẫu. Nhắc AI xuất ra file Markdown kèm cấu trúc Frontmatter (tiêu đề, slug, tóm tắt, danh mục, gợi ý ảnh bìa).</p>
+                <strong>Bước 2: Gửi cho AI soạn thảo</strong>
+                <p>AI sẽ viết nội dung có cấu trúc H2, H3, gạch ngang phân đoạn, bảng biểu và gợi ý ảnh bìa.</p>
               </li>
               <li>
                 <strong>Bước 3: Nhập file .md vào website</strong>
-                <p>Bấm nút <strong>"Nhập File .MD"</strong> trên thanh công cụ hoặc kéo thả file <code>.md</code> trực tiếp vào khung soạn thảo. Hệ thống sẽ tự động điền toàn bộ dữ liệu và hiển thị bản xem trước.</p>
-              </li>
-              <li>
-                <strong>Bước 4: Tùy biến hình ảnh & định dạng</strong>
-                <p>Tải ảnh bìa theo gợi ý prompt, chèn thêm hình ảnh minh họa bằng nút hình ảnh hoặc kéo thả ảnh vào vị trí mong muốn trong bài viết.</p>
+                <p>Bấm nút "Nhập .md" trên thanh công cụ để đưa bài viết vào hệ thống ngay lập tức.</p>
               </li>
             </ol>
           </div>
 
-          <!-- Actions Row: Download file mẫu & Sao chép Prompt -->
           <div class="format-actions-bar">
             <button type="button" class="btn-download-format" (click)="downloadFormatGuide()">
               <yin-icon name="download" [size]="16"></yin-icon>
-              <span>Tải File Mẫu Quy Định (.md)</span>
+              <span>Tải File Mẫu (.md)</span>
             </button>
 
             <button type="button" class="btn-copy-prompt" (click)="copyAiPrompt()">
               <yin-icon [name]="isCopiedPrompt() ? 'check' : 'copy'" [size]="16"></yin-icon>
-              <span>{{ isCopiedPrompt() ? 'Đã sao chép Prompt vào bộ nhớ tạm!' : 'Sao Chép Prompt AI Chuẩn SEO' }}</span>
+              <span>{{ isCopiedPrompt() ? 'Đã chép Prompt AI vào bộ nhớ!' : 'Sao Chép Prompt AI Chuẩn SEO' }}</span>
             </button>
           </div>
-
-          <!-- Format Preview -->
-          <div class="format-preview-block">
-            <div class="format-preview-label">Cấu trúc mẫu Frontmatter (.md):</div>
-            <pre class="format-preview-code"><code>---
-title: "Tiêu Đề Bài Viết Hấp Dẫn Dưới 65 Ký Tự Chuẩn SEO"
-slug: "tieu-de-bai-viet-chuan-seo"
-excerpt: "Đoạn mô tả ngắn tóm tắt giá trị bài viết từ 120-160 ký tự, giúp tối ưu thẻ Meta Description."
-category: "Công Nghệ"
-tags: ["SEO", "Công Nghệ", "Hướng Dẫn"]
-cover_image_prompt: "Minimalist modern 3D illustration of digital technology..."
----
-
-Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đầu dòng, bảng biểu...</code></pre>
-          </div>
-
         </div>
 
-        <!-- Modal Footer -->
         <div class="format-modal-footer">
           <button type="button" class="btn-modal-close" (click)="closeFormatModal()">Đóng cửa sổ</button>
           <button type="button" class="btn-modal-import" (click)="closeFormatModal(); triggerImportMarkdown()">
@@ -684,7 +840,6 @@ Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đ
     <div class="import-preview-backdrop" (click)="closeImportPreview()">
       <div class="import-preview-card" (click)="$event.stopPropagation()">
         
-        <!-- Modal Head -->
         <div class="import-preview-header">
           <div class="import-title-wrap">
             <div class="import-icon-circle">
@@ -695,18 +850,13 @@ Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đ
               <p class="import-preview-subtitle">Kiểm tra thông tin đã phân tích tự động trước khi áp dụng vào trình soạn thảo</p>
             </div>
           </div>
-          <button type="button" class="import-close-btn" (click)="closeImportPreview()" title="Đóng">
-            <yin-icon name="close" [size]="16"></yin-icon>
-          </button>
+          <button type="button" class="import-close-btn" (click)="closeImportPreview()" title="Đóng">&times;</button>
         </div>
 
-        <!-- Modal Body -->
         <div class="import-preview-body">
-          
-          <!-- Metadata Summary Cards -->
           <div class="preview-meta-grid">
             <div class="preview-meta-item">
-              <span class="preview-meta-label">Tiêu đề (Title):</span>
+              <span class="preview-meta-label">Tiêu đề:</span>
               <strong class="preview-meta-value">{{ parsed.title || '(Chưa có tiêu đề)' }}</strong>
             </div>
 
@@ -716,7 +866,7 @@ Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đ
             </div>
 
             <div class="preview-meta-item">
-              <span class="preview-meta-label">Danh mục & Thẻ:</span>
+              <span class="preview-meta-label">Danh mục & Từ khóa:</span>
               <div class="preview-tags-row">
                 @if (parsed.category) {
                   <span class="preview-cat-badge">{{ parsed.category }}</span>
@@ -731,24 +881,8 @@ Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đ
               <span class="preview-meta-label">Đoạn trích tóm tắt (Excerpt):</span>
               <p class="preview-meta-excerpt">{{ parsed.excerpt || '(Chưa có đoạn tóm tắt)' }}</p>
             </div>
-
-            @if (parsed.coverImagePrompt) {
-              <div class="preview-cover-prompt-card full-width">
-                <div class="prompt-card-header">
-                  <yin-icon name="image" [size]="15"></yin-icon>
-                  <span>Gợi ý Prompt tạo ảnh bìa:</span>
-                  <button type="button" class="btn-copy-cover-prompt" (click)="copyCoverPrompt(parsed.coverImagePrompt)">
-                    <yin-icon [name]="isCopiedCoverPrompt() ? 'check' : 'copy'" [size]="13"></yin-icon>
-                    <span>{{ isCopiedCoverPrompt() ? 'Đã sao chép prompt ảnh!' : 'Sao chép prompt tạo ảnh' }}</span>
-                  </button>
-                </div>
-                <p class="prompt-text">{{ parsed.coverImagePrompt }}</p>
-                <div class="prompt-hint">Bạn có thể dán prompt này vào Midjourney, DALL-E hoặc Canva để tạo ảnh bìa chuẩn kích thước.</div>
-              </div>
-            }
           </div>
 
-          <!-- Preview Content Tabs -->
           <div class="preview-tabs-bar">
             <button 
               type="button" 
@@ -768,7 +902,6 @@ Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đ
             </button>
           </div>
 
-          <!-- Content Render Viewport -->
           <div class="preview-content-viewport">
             @if (previewTab() === 'rendered') {
               <div class="preview-rendered-body" [innerHTML]="parsed.contentHtml"></div>
@@ -776,17 +909,13 @@ Nội dung bài viết sử dụng thẻ H2 (##), H3 (###), danh sách gạch đ
               <pre class="preview-markdown-raw"><code>{{ parsed.rawMarkdown }}</code></pre>
             }
           </div>
-
         </div>
 
-        <!-- Modal Footer Actions -->
         <div class="import-preview-footer">
-          <button type="button" class="btn-cancel-import" (click)="closeImportPreview()">
-            Hủy bỏ
-          </button>
+          <button type="button" class="btn-cancel-import" (click)="closeImportPreview()">Hủy bỏ</button>
           <button type="button" class="btn-apply-import" (click)="applyImportedArticle()">
             <yin-icon name="check" [size]="16"></yin-icon>
-            <span>Áp Dụng Vào Trình Soạn Thảo (Tiptap)</span>
+            <span>Áp Dụng Vào Trình Soạn Thảo</span>
           </button>
         </div>
 

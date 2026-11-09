@@ -128,7 +128,7 @@
                   [class]="'select-' + req.status.toLowerCase()"
                   [ngModel]="req.status"
                   (ngModelChange)="updateStatus(req, $event)"
-                  [disabled]="updatingId() === req.id">
+                  [disabled]="!db.hasPermission('support:EXECUTE') || updatingId() === req.id">
                   @for (st of availableStatuses; track st) {
                     <option [value]="st">{{ getStatusLabel(st) }}</option>
                   }

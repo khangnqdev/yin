@@ -38,6 +38,9 @@ import { LocalDbService } from '../../../core/services/local-db.service';
         @if (error()) {
           <p class="error" role="alert">{{ error() }}</p>
         }
+        @if (reauthMessage()) {
+          <p class="error" role="status">{{ reauthMessage() }}</p>
+        }
         <button type="submit" [disabled]="submitting()">
           {{ submitting() ? 'Đang đăng nhập…' : 'Đăng nhập' }}
         </button>
@@ -152,6 +155,7 @@ export class AdminLoginComponent {
   protected readonly password = signal('');
   protected readonly submitting = signal(false);
   protected readonly error = signal('');
+  protected readonly reauthMessage = this.db.reauthMessage;
 
   async submit(): Promise<void> {
     if (this.submitting()) return;
@@ -164,7 +168,9 @@ export class AdminLoginComponent {
       this.error.set(
         error instanceof HttpErrorResponse && error.status === 429
           ? 'Đã thử đăng nhập quá nhiều lần. Vui lòng đợi khoảng 15 phút.'
-          : 'Tên đăng nhập hoặc mật khẩu không đúng.',
+          : error instanceof HttpErrorResponse && error.status === 503
+            ? 'Chức năng đăng nhập đang bị lỗi hệ thống. Vui lòng thử lại sau.'
+            : 'Tên đăng nhập hoặc mật khẩu không đúng.',
       );
     } finally {
       this.submitting.set(false);

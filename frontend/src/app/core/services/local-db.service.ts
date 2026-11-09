@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 import { Article } from '../models/article.model';
 import { ContactService } from './contact.service';
 import { DynamicBlock, PageDocument, PageKey } from '../models/page-block.model';
@@ -15,6 +16,7 @@ interface AdminBootstrap {
 export class LocalDbService {
   private readonly http = inject(HttpClient);
   private readonly contactService = inject(ContactService);
+  private readonly router = inject(Router);
   private readonly tokenKey = 'yin_admin_token';
   private readonly adminUserKey = 'yin_admin_user';
 
@@ -28,6 +30,19 @@ export class LocalDbService {
   readonly adminUser = signal<{ id: string; username: string; role: string } | null>(
     this.getStoredAdminUser(),
   );
+  readonly adminSession = signal<{ role: string; rank: number; permissions: string[] } | null>(null);
+  readonly reauthMessage = signal('');
+  private readonly sessionChannel = typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined'
+    ? new BroadcastChannel('yin-admin-session') : null;
+
+  constructor() {
+    if (this.sessionChannel) this.sessionChannel.onmessage = event => {
+      if (event.data === 'reauth' && this.token()) {
+        this.requireReauthentication(false);
+        void this.router.navigate(['/admin/login']);
+      }
+    };
+  }
   readonly summary = signal<AnalyticsSummary>({
     totalPageViews: 0,
     uniqueVisitors: 0,
@@ -83,15 +98,35 @@ export class LocalDbService {
   async loadAdmin(): Promise<boolean> {
     if (!this.token()) return false;
     try {
-      const result = await firstValueFrom(this.http.get<AdminBootstrap>('/api/admin/bootstrap'));
-      if (result?.summary) {
-        this.summary.set(result.summary);
+      await this.refreshAdminSession();
+      if (this.hasPermission('dashboard:READ')) {
+        const result = await firstValueFrom(this.http.get<AdminBootstrap>('/api/admin/bootstrap'));
+        if (result?.summary) this.summary.set(result.summary);
       }
       return true;
-    } catch {
-      this.logout();
+    } catch (error) {
+      if (error instanceof HttpErrorResponse && error.status === 401) this.requireReauthentication();
+      if (error instanceof HttpErrorResponse && error.status === 503) {
+        this.loadError.set('Chức năng quản trị đang bị lỗi hệ thống. Vui lòng thử lại sau.');
+        return true;
+      }
       return false;
     }
+  }
+
+  async refreshAdminSession(): Promise<void> {
+    const session = await firstValueFrom(this.http.get<{ role: string; rank: number; permissions: string[] }>('/api/admin/session'));
+    this.adminSession.set(session);
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.adminSession()?.permissions.includes(permission) ?? false;
+  }
+
+  requireReauthentication(broadcast = true): void {
+    this.reauthMessage.set('Quyền truy cập hoặc phiên đăng nhập đã thay đổi. Vui lòng đăng nhập lại.');
+    this.logout();
+    if (broadcast) this.sessionChannel?.postMessage('reauth');
   }
 
   async login(username: string, password: string): Promise<void> {
@@ -102,6 +137,7 @@ export class LocalDbService {
       ),
     );
     sessionStorage.setItem(this.tokenKey, result.token);
+    this.reauthMessage.set('');
     if (result.user) {
       sessionStorage.setItem(this.adminUserKey, JSON.stringify(result.user));
       this.adminUser.set(result.user);
@@ -112,6 +148,7 @@ export class LocalDbService {
     sessionStorage.removeItem(this.tokenKey);
     sessionStorage.removeItem(this.adminUserKey);
     this.adminUser.set(null);
+    this.adminSession.set(null);
     this.contactService.clear();
     this.readingSessions.set([]);
     void this.loadPublic();

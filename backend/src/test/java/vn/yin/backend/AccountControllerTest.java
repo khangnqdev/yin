@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -32,6 +33,12 @@ class AccountControllerTest {
     @BeforeEach
     void setUp() {
         accounts = mock(AccountRepository.class);
+        when(accounts.roleRank("ADMIN")).thenReturn(300);
+        when(accounts.roleRank("MANAGER")).thenReturn(200);
+        when(accounts.roleRank("FIXER")).thenReturn(100);
+        when(accounts.isAdminRole("ADMIN")).thenReturn(true);
+        when(accounts.isAdminRole("MANAGER")).thenReturn(true);
+        when(accounts.isAdminRole("FIXER")).thenReturn(true);
         support = mock(SupportRepository.class);
         security = new SecurityConfig();
         var key = new SecretKeySpec("0123456789abcdef0123456789abcdef".getBytes(), "HmacSHA256");
@@ -106,6 +113,16 @@ class AccountControllerTest {
         var body = Map.<String, Object>of("username", "admin", "password", "wrong-password");
         for (int i = 0; i < 5; i++) assertStatus(HttpStatus.UNAUTHORIZED, () -> failing.adminLogin(body, request));
         assertStatus(HttpStatus.TOO_MANY_REQUESTS, () -> failing.adminLogin(body, request));
+    }
+
+    @Test
+    void loginReportsDependencyFailureInsteadOfInvalidCredentials() {
+        var unavailable = new AccountController(accounts, support,
+                input -> { throw new AuthenticationServiceException("database unavailable"); },
+                new SecurityConfig.TokenService(mock(org.springframework.security.oauth2.jwt.JwtEncoder.class), 60_000),
+                new BCryptPasswordEncoder(), new AbuseProtection(() -> 1_000_000L));
+        assertStatus(HttpStatus.SERVICE_UNAVAILABLE, () -> unavailable.adminLogin(
+                Map.of("username", "admin", "password", "correct-password"), request));
     }
 
     @Test

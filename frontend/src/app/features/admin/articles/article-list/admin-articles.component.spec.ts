@@ -26,7 +26,7 @@ describe('AdminArticlesComponent', () => {
     readingTimeMinutes: 5,
     wordCount: 1200,
     viewCount: 150,
-    authorName: 'Yin Kenna',
+    authorName: 'Yin',
     authorRole: 'Lead Architect',
     publishedAt: '2026-11-01T10:00:00Z',
     createdAt: '2026-11-01T09:00:00Z',
@@ -34,6 +34,7 @@ describe('AdminArticlesComponent', () => {
   };
 
   const mockDbService = {
+    hasPermission: vi.fn().mockReturnValue(true),
     adminUser: signal<{ id: string; username: string; role: string } | null>({
       id: 'adm_1',
       username: 'admin',
@@ -59,10 +60,7 @@ describe('AdminArticlesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AdminArticlesComponent],
-      providers: [
-        provideRouter([]),
-        { provide: LocalDbService, useValue: mockDbService },
-      ],
+      providers: [provideRouter([]), { provide: LocalDbService, useValue: mockDbService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminArticlesComponent);

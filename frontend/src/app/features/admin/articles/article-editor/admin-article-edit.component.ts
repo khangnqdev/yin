@@ -7,11 +7,14 @@ import {
   viewChild,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LocalDbService } from '../../../../core/services/local-db.service';
+import { AdminManagementService } from '../../../../core/services/admin-management.service';
+import { AuthorProfileService } from '../../../../core/services/author-profile.service';
 import { Article, ArticleStatus } from '../../../../core/models/article.model';
 import { YinIconComponent } from '../../../../core/components/icon/icon.component';
 import {
@@ -20,6 +23,14 @@ import {
   ARTICLE_AI_SYSTEM_PROMPT,
   parseArticleMarkdown,
 } from '../../../../core/constants/article-format-template';
+import {
+  APP_VARIABLES,
+  DEFAULT_AUTHOR_NAME,
+  DEFAULT_AUTHOR_ROLE,
+  DEFAULT_AUTHOR_AVATAR,
+  DEFAULT_ACTIVE_AUTHORS,
+  SystemAuthor,
+} from '../../../../core/constants/app.variables';
 
 import { Editor, Node, mergeAttributes } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -72,6 +83,8 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly db = inject(LocalDbService);
+  private readonly adminApi = inject(AdminManagementService);
+  private readonly authorProfileService = inject(AuthorProfileService);
 
   // Template Ref for Tiptap & File Inputs
   protected readonly tiptapEditorRef = viewChild<ElementRef<HTMLDivElement>>('tiptapEditorRef');
@@ -87,6 +100,9 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   protected readonly isEditorDragging = signal<boolean>(false);
   protected readonly isUploadingEditorImage = signal<boolean>(false);
 
+  // App-wide Central Variables
+  protected readonly appVars = APP_VARIABLES;
+
   // Page Mode Signals
   protected readonly isEditMode = signal<boolean>(false);
   protected readonly articleId = signal<string>('');
@@ -98,12 +114,20 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
   protected readonly categories = signal<string[]>(['Công Nghệ', 'Kiến Trúc Phần Mềm']);
   protected readonly date = signal<string>('2026-11-03');
   protected readonly coverImage = signal<string>('');
-  protected readonly authorName = signal<string>('Khang (Founder)');
-  protected readonly authorRole = signal<string>('Nhà Sáng Lập & Kỹ Sư Trưởng');
-  protected readonly authorAvatar = signal<string>('/assets/logo/icon-512.png');
+  protected readonly authorName = signal<string>(DEFAULT_AUTHOR_NAME);
+  protected readonly authorRole = signal<string>(DEFAULT_AUTHOR_ROLE);
+  protected readonly authorAvatar = signal<string>(DEFAULT_AUTHOR_AVATAR);
   protected readonly status = signal<ArticleStatus>('DRAFT');
   protected readonly initialStatus = signal<ArticleStatus>('DRAFT');
   protected readonly focusKeyword = signal<string>('');
+
+  // SEO Keywords array & input signals
+  protected readonly focusKeywords = signal<string[]>([]);
+  protected readonly keywordInput = signal<string>('');
+
+  // Dev Mode signals (HTML code vs Visual Editor)
+  protected readonly editorViewMode = signal<'visual' | 'dev'>('visual');
+  protected readonly devHtmlContent = signal<string>('');
 
   // Tiptap Editor Instance & State
   public editor: Editor | null = null;
@@ -151,23 +175,172 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
     'Case Study',
   ];
 
-  protected readonly availableAuthors = [
-    {
-      name: 'Khang (Founder)',
-      role: 'Nhà Sáng Lập & Kỹ Sư Trưởng',
-      avatar: '/assets/logo/icon-512.png',
-    },
-    {
-      name: 'Yin Tech Team',
-      role: 'Đội Ngũ Kỹ Thuật Yin',
-      avatar: '/assets/logo/yin.svg',
-    },
-  ];
+  // Active Authors loaded from system accounts
+  protected readonly availableAuthors: readonly SystemAuthor[] = DEFAULT_ACTIVE_AUTHORS;
+
+  protected readonly systemActiveAuthors = signal<SystemAuthor[]>([
+    ...DEFAULT_ACTIVE_AUTHORS,
+  ]);
+
+  // Article Quality & SEO Audit Recommendations
+  protected readonly articleAudit = computed(() => {
+    const t = this.title().trim();
+    const ex = this.excerpt().trim();
+    const kw = this.focusKeyword().trim().toLowerCase();
+    const html = this.editorViewMode() === 'dev' ? this.devHtmlContent() : (this.editor?.getHTML() || '');
+    const text = this.editor?.getText() || '';
+
+    const pMatches = html.match(/<p\b[^>]*>.*?<\/p>/gi) || [];
+    const pCount = pMatches.filter(p => p.replace(/<[^>]+>/g, '').trim().length > 0).length;
+    const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+
+    const hasH1 = /<h1\b/i.test(html);
+    const hasH2 = /<h2\b/i.test(html);
+    const hasH3 = /<h3\b/i.test(html);
+    const hasImg = /<img\b/i.test(html) || !!this.coverImage();
+    const hasDivider = /<hr\b/i.test(html);
+
+    const titleLen = t.length;
+    const titleOk = titleLen >= 30 && titleLen <= 70;
+    const excerptLen = ex.length;
+    const excerptOk = excerptLen >= 60 && excerptLen <= 180;
+
+    const keywordInTitle = kw ? t.toLowerCase().includes(kw) : false;
+    const keywordInExcerpt = kw ? ex.toLowerCase().includes(kw) : false;
+    const keywordInContent = kw ? text.toLowerCase().includes(kw) : false;
+
+    let keywordDensity = 0;
+    if (kw && wordCount > 0) {
+      const occurrences = (text.toLowerCase().match(new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+      keywordDensity = Math.round((occurrences / wordCount) * 1000) / 10;
+    }
+
+    const issues: Array<{ text: string; severity: 'error' | 'warning' | 'info'; fixTip: string }> = [];
+
+    if (!t) {
+      issues.push({ text: 'Chưa có tiêu đề bài viết', severity: 'error', fixTip: 'Nhập tiêu đề hấp dẫn từ 30-70 ký tự.' });
+    } else if (!titleOk) {
+      issues.push({
+        text: titleLen < 30 ? `Tiêu đề hơi ngắn (${titleLen}/30 ký tự)` : `Tiêu đề quá dài (${titleLen}/70 ký tự)`,
+        severity: 'warning',
+        fixTip: 'Độ dài lý tưởng là 40-60 ký tự để không bị cắt bớt trên Google.'
+      });
+    }
+
+    if (!kw) {
+      issues.push({ text: 'Chưa thiết lập Từ khóa SEO (Focus Keyword)', severity: 'warning', fixTip: 'Nhập cụm từ khóa trọng tâm để đo lường độ phủ và tối ưu tìm kiếm.' });
+    } else {
+      if (!keywordInTitle) {
+        issues.push({ text: `Từ khóa "${kw}" chưa xuất hiện trong Tiêu đề`, severity: 'warning', fixTip: 'Nên chèn từ khóa vào nửa đầu tiêu đề để tăng điểm SEO.' });
+      }
+      if (!keywordInExcerpt) {
+        issues.push({ text: `Từ khóa "${kw}" chưa xuất hiện trong Tóm tắt`, severity: 'info', fixTip: 'Đưa từ khóa vào đoạn trích để tăng tỷ lệ click (CTR).' });
+      }
+      if (!keywordInContent) {
+        issues.push({ text: `Từ khóa "${kw}" chưa xuất hiện trong Nội dung bài viết`, severity: 'warning', fixTip: 'Phân bổ từ khóa tự nhiên trong các đoạn văn.' });
+      }
+    }
+
+    if (!ex) {
+      issues.push({ text: 'Chưa có đoạn trích tóm tắt (Excerpt)', severity: 'warning', fixTip: 'Tóm tắt giúp hiển thị thẻ Meta Description trên Google Search và mạng xã hội.' });
+    } else if (!excerptOk) {
+      issues.push({ text: `Đoạn tóm tắt có độ dài ${excerptLen} ký tự`, severity: 'info', fixTip: 'Độ dài tối ưu cho Google là từ 120-160 ký tự.' });
+    }
+
+    if (!hasH2) {
+      issues.push({ text: 'Thiếu thẻ đề mục H2 (Heading 2)', severity: 'warning', fixTip: 'Bài viết cần ít nhất một đề mục H2 để phân chia các luận điểm lớn.' });
+    }
+
+    if (!hasH3) {
+      issues.push({ text: 'Chưa có tiểu mục H3 (Heading 3)', severity: 'info', fixTip: 'Nên sử dụng H3 cho các bước chi tiết hoặc mục con giúp bài viết có cấu trúc rõ ràng.' });
+    }
+
+    if (pCount < 3) {
+      issues.push({ text: `Nội dung quá ngắn (hiện có ${pCount}/3 đoạn văn)`, severity: 'error', fixTip: 'Cần ít nhất 3 đoạn văn hoàn chỉnh (mở bài, thân bài, kết luận) để bài viết có chiều sâu.' });
+    }
+
+    if (!hasImg) {
+      issues.push({ text: 'Bài viết chưa có hình ảnh minh họa', severity: 'warning', fixTip: 'Chèn ảnh minh họa kèm chú thích để tăng trải nghiệm đọc và giảm tỷ lệ thoát trang.' });
+    }
+
+    let score = 0;
+    if (t && titleOk) score += 15; else if (t) score += 8;
+    if (kw) score += 10;
+    if (keywordInTitle) score += 10;
+    if (keywordInContent) score += 10;
+    if (ex && excerptOk) score += 15; else if (ex) score += 8;
+    if (hasH2) score += 10;
+    if (hasH3) score += 5;
+    if (pCount >= 3) score += 15; else score += Math.min(10, pCount * 3);
+    if (hasImg) score += 10;
+
+    return {
+      score: Math.min(100, score),
+      wordCount,
+      pCount,
+      hasH1,
+      hasH2,
+      hasH3,
+      hasImg,
+      hasDivider,
+      titleLen,
+      excerptLen,
+      keywordDensity,
+      keywordInTitle,
+      keywordInExcerpt,
+      keywordInContent,
+      issues
+    };
+  });
 
   private initialLoadedHtml: string = '';
   private loadedPublishedAt: string | null = null;
 
+  async loadActiveAuthors(): Promise<void> {
+    try {
+      const accountsRes = await this.adminApi.getAdminAccounts(0, 50);
+      const activeAdmins = (accountsRes?.items || []).filter((a) => a.isActive);
+      if (activeAdmins.length > 0) {
+        this.systemActiveAuthors.set(
+          activeAdmins.map((acc) => ({
+            name: acc.username,
+            role:
+              acc.role === 'ADMIN'
+                ? 'Quản Trị Viên (Admin)'
+                : acc.role === 'MANAGER'
+                  ? 'Quản Lý Nội Dung (Manager)'
+                  : acc.role === 'FIXER' ? 'Kỹ Sư Hỗ Trợ (Fixer)' : acc.role,
+            avatar: '/assets/logo/icon-512.png',
+          })),
+        );
+      }
+    } catch {
+      // Giữ tác giả mặc định nếu offline
+    }
+
+    try {
+      const profile = await this.authorProfileService.load();
+      if (profile?.authorName) {
+        const currentList = this.systemActiveAuthors();
+        if (!currentList.some((a) => a.name.toLowerCase() === profile.authorName.toLowerCase())) {
+          this.systemActiveAuthors.set([
+            {
+              name: profile.authorName,
+              role: profile.authorRole || 'Tác giả bài viết',
+              avatar: '/assets/logo/icon-512.png',
+            },
+            ...currentList,
+          ]);
+        }
+      }
+    } catch {
+      // Giữ mặc định
+    }
+  }
+
   async ngOnInit(): Promise<void> {
+    void this.loadActiveAuthors();
+
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.isEditMode.set(false);
@@ -215,7 +388,7 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
 
     if (article.authorName) {
       this.authorName.set(article.authorName);
-      const match = this.availableAuthors.find(
+      const match = this.systemActiveAuthors().find(
         (a) => a.name.toLowerCase() === article.authorName.toLowerCase(),
       );
       if (match) {
@@ -226,11 +399,117 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
 
     this.status.set(article.status || 'DRAFT');
     this.initialStatus.set(article.status || 'DRAFT');
-    this.focusKeyword.set(article.focusKeyword || '');
+
+    if (article.focusKeyword) {
+      this.focusKeyword.set(article.focusKeyword);
+      const kwParts = article.focusKeyword
+        .split(',')
+        .map((k) => k.trim())
+        .filter(Boolean);
+      this.focusKeywords.set(kwParts.length > 0 ? kwParts : [article.focusKeyword]);
+    }
 
     this.initialLoadedHtml = article.contentHtml || '';
     if (this.editor && this.initialLoadedHtml) {
       this.editor.commands.setContent(this.initialLoadedHtml);
+    }
+  }
+
+  // Focus Keyword Tag Management
+  addKeyword(kw: string): void {
+    const trimmed = kw.trim();
+    if (!trimmed) return;
+    const current = this.focusKeywords();
+    if (!current.includes(trimmed)) {
+      const updated = [...current, trimmed];
+      this.focusKeywords.set(updated);
+      this.focusKeyword.set(updated.join(', '));
+    }
+    this.keywordInput.set('');
+  }
+
+  removeKeyword(index: number, event?: MouseEvent): void {
+    if (event) event.stopPropagation();
+    const updated = this.focusKeywords().filter((_, i) => i !== index);
+    this.focusKeywords.set(updated);
+    this.focusKeyword.set(updated.join(', '));
+  }
+
+  onKeywordKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.addKeyword(this.keywordInput());
+    }
+  }
+
+  editKeyword(index: number): void {
+    const current = this.focusKeywords()[index];
+    const edited = window.prompt('Chỉnh sửa cụm từ khóa SEO:', current);
+    if (edited !== null && edited.trim()) {
+      const updated = [...this.focusKeywords()];
+      updated[index] = edited.trim();
+      this.focusKeywords.set(updated);
+      this.focusKeyword.set(updated.join(', '));
+    }
+  }
+
+  // Publish Date & Schedule Management
+  setPublishImmediately(): void {
+    const now = new Date();
+    this.date.set(now.toISOString().split('T')[0]);
+    this.loadedPublishedAt = now.toISOString();
+  }
+
+  // Dev Mode (HTML Source Code vs Visual Tiptap)
+  toggleEditorMode(): void {
+    if (this.editorViewMode() === 'visual') {
+      const html = this.editor?.getHTML() || '';
+      this.devHtmlContent.set(html);
+      this.editorViewMode.set('dev');
+    } else {
+      this.editor?.commands.setContent(this.devHtmlContent());
+      this.editorViewMode.set('visual');
+    }
+  }
+
+  onDevHtmlChange(val: string): void {
+    this.devHtmlContent.set(val);
+  }
+
+  insertDevTag(tag: string): void {
+    const textarea = document.querySelector('.dev-html-textarea') as HTMLTextAreaElement | null;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const current = this.devHtmlContent();
+    const selected = current.substring(start, end);
+
+    let replacement = '';
+    if (tag === 'hr') {
+      replacement = '\n<hr />\n';
+    } else if (selected) {
+      replacement = `<${tag}>${selected}</${tag}>`;
+    } else {
+      replacement = `<${tag}>Đoạn văn...</${tag}>`;
+    }
+
+    const next = current.substring(0, start) + replacement + current.substring(end);
+    this.devHtmlContent.set(next);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(
+        start + tag.length + 2,
+        start + replacement.length - (tag === 'hr' ? 0 : tag.length + 3),
+      );
+    }, 0);
+  }
+
+  insertDivider(): void {
+    if (this.editorViewMode() === 'visual') {
+      this.editor?.chain().focus().setHorizontalRule().run();
+    } else {
+      this.insertDevTag('hr');
     }
   }
 
@@ -756,6 +1035,8 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
           categoriesToAdd.push(t);
         }
       }
+      this.focusKeywords.set(parsed.tags);
+      this.focusKeyword.set(parsed.tags.join(', '));
     }
     if (categoriesToAdd.length > 0) {
       this.categories.set(categoriesToAdd);
@@ -763,6 +1044,7 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
 
     if (parsed.contentHtml && this.editor) {
       this.editor.commands.setContent(parsed.contentHtml);
+      this.devHtmlContent.set(parsed.contentHtml);
     }
 
     this.isImportPreviewOpen.set(false);
@@ -820,12 +1102,21 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
     const cleanSlug = this.slugify(this.slug().trim() || articleTitle);
     this.slug.set(cleanSlug);
 
-    const contentHtml = this.editor?.getHTML() || '';
+    // Đồng bộ nội dung nếu đang soạn ở chế độ Dev
+    if (this.editorViewMode() === 'dev' && this.editor) {
+      this.editor.commands.setContent(this.devHtmlContent());
+    }
+
+    const contentHtml = this.editor?.getHTML() || this.devHtmlContent() || '';
     const editorJson = this.editor?.getJSON();
     const contentJson = editorJson ? JSON.stringify(editorJson) : '{"type":"doc","content":[]}';
     const textContent = this.editor?.getText() || '';
     const wordCount = textContent.trim().split(/\s+/).filter(Boolean).length;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+    const finalKeyword = this.focusKeywords().length > 0 
+      ? this.focusKeywords().join(', ') 
+      : this.focusKeyword().trim() || this.categories()[0] || 'Chung';
 
     const payload: Partial<Article> & { title: string } = {
       id: this.isEditMode() ? this.articleId() : undefined,
@@ -834,7 +1125,7 @@ export class AdminArticleEditComponent implements OnInit, AfterViewInit, OnDestr
       summary: this.excerpt().trim(),
       category: this.categories().length > 0 ? this.categories().join(', ') : 'Cong-Nghe',
       status: this.status(),
-      focusKeyword: this.focusKeyword().trim() || this.categories()[0] || 'Chung',
+      focusKeyword: finalKeyword,
       thumbnailUrl: this.coverImage().trim() || '/assets/logo/yin.svg',
       authorName: this.authorName().trim() || 'John Doe',
       publishedAt:

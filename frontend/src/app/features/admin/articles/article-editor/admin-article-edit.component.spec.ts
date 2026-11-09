@@ -4,6 +4,8 @@ import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AdminArticleEditComponent } from './admin-article-edit.component';
 import { LocalDbService } from '../../../../core/services/local-db.service';
+import { AdminManagementService } from '../../../../core/services/admin-management.service';
+import { AuthorProfileService } from '../../../../core/services/author-profile.service';
 import { Article } from '../../../../core/models/article.model';
 
 describe('AdminArticleEditComponent', () => {
@@ -44,6 +46,18 @@ describe('AdminArticleEditComponent', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: LocalDbService, useValue: mockDbService },
+        {
+          provide: AdminManagementService,
+          useValue: {
+            getAdminAccounts: vi.fn().mockResolvedValue({ items: [], total: 0 }),
+          },
+        },
+        {
+          provide: AuthorProfileService,
+          useValue: {
+            load: vi.fn().mockResolvedValue({ authorName: 'John Doe', authorRole: 'Author' }),
+          },
+        },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -88,11 +102,11 @@ describe('AdminArticleEditComponent', () => {
 
   it('should handle author selection', () => {
     component['selectAuthor']({
-      name: 'Khang (Founder)',
+      name: 'Yin (Founder)',
       role: 'Chief Architect & Founder',
       avatar: 'https://images.unsplash.com/test.jpg',
     });
-    expect(component['authorName']()).toBe('Khang (Founder)');
+    expect(component['authorName']()).toBe('Yin (Founder)');
     expect(component['authorRole']()).toBe('Chief Architect & Founder');
   });
 

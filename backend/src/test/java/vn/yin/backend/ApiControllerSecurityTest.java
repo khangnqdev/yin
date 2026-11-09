@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,12 @@ class ApiControllerSecurityTest {
                 new AbuseProtection(() -> 1_000_000L), mock(ContactService.class)));
         request = new MockHttpServletRequest();
         request.setRemoteAddr("10.0.0.1");
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken("editor", "", java.util.List.of(
+                        new org.springframework.security.core.authority.SimpleGrantedAuthority("PERM_articles:EXECUTE"))));
     }
+
+    @AfterEach void clearSecurity() { org.springframework.security.core.context.SecurityContextHolder.clearContext(); }
 
     @Test
     void rejectsArbitraryAnalyticsPathsAndSessions() {

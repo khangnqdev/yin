@@ -1,4 +1,5 @@
 <div class="admin-shell">
+  @if (db.loadError()) { <div class="system-error" role="alert">{{ db.loadError() }}</div> }
   
   <!-- Vertical Floating Sidebar (Pill Style from Reference) -->
   <aside class="admin-sidebar" [class.collapsed]="isCollapsed()">
@@ -94,14 +95,14 @@
           <div class="tree-branch-container">
             <div class="tree-line"></div>
             <div class="tree-items">
-              <a 
+              @if (db.hasPermission('analytics:READ')) { <a 
                 routerLink="/admin/analytics" 
                 routerLinkActive="active" 
                 class="tree-sub-link">
                 <span class="tree-connector"></span>
                 <span>Phân tích & Thống kê</span>
-              </a>
-              @if (canManageContent()) {
+              </a> }
+              @if (db.hasPermission('pages:WRITE')) {
               <a 
                 routerLink="/admin/pages" 
                 routerLinkActive="active" 
@@ -121,10 +122,10 @@
             <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="flyout-link">
               <span>Trang chủ quản trị</span>
             </a>
-            <a routerLink="/admin/analytics" routerLinkActive="active" class="flyout-link">
+            @if (db.hasPermission('analytics:READ')) { <a routerLink="/admin/analytics" routerLinkActive="active" class="flyout-link">
               <span>Phân tích & Thống kê</span>
-            </a>
-            @if (canManageContent()) {
+            </a> }
+            @if (db.hasPermission('pages:WRITE')) {
             <a routerLink="/admin/pages" routerLinkActive="active" class="flyout-link">
               <span>Quản lý trang</span>
             </a>
@@ -134,7 +135,7 @@
       </div>
 
       <!-- Item: Quản trị khách hàng -->
-      @if (canManageContent()) {
+      @if (db.hasPermission('clients:READ')) {
       <a routerLink="/admin/clients" routerLinkActive="active" class="nav-single-link" title="Quản trị khách hàng">
         <div class="item-icon-box">
           <yin-icon name="user" [size]="18"></yin-icon>
@@ -146,17 +147,17 @@
       }
 
       <!-- Item: Yêu cầu hỗ trợ -->
-      <a routerLink="/admin/support-requests" routerLinkActive="active" class="nav-single-link" title="Yêu cầu hỗ trợ">
+      @if (db.hasPermission('support:READ')) { <a routerLink="/admin/support-requests" routerLinkActive="active" class="nav-single-link" title="Yêu cầu hỗ trợ">
         <div class="item-icon-box">
           <yin-icon name="wallet" [size]="18"></yin-icon>
         </div>
         @if (!isCollapsed()) {
           <span class="item-label">Yêu cầu hỗ trợ</span>
         }
-      </a>
+      </a> }
 
       <!-- Item: Khảo sát & Liên hệ -->
-      @if (canManageContent()) {
+      @if (db.hasPermission('contacts:READ')) {
       <a routerLink="/admin/contacts" routerLinkActive="active" class="nav-single-link" title="Khảo sát & Liên hệ">
         <div class="item-icon-box">
           <yin-icon name="bell" [size]="18"></yin-icon>
@@ -173,17 +174,17 @@
       }
 
       <!-- Item: Quản lý bài viết -->
-      <a routerLink="/admin/articles" routerLinkActive="active" class="nav-single-link" title="Quản lý bài viết">
+      @if (db.hasPermission('articles:READ')) { <a routerLink="/admin/articles" routerLinkActive="active" class="nav-single-link" title="Quản lý bài viết">
         <div class="item-icon-box">
           <yin-icon name="file-text" [size]="18"></yin-icon>
         </div>
         @if (!isCollapsed()) {
           <span class="item-label">Quản lý bài viết</span>
         }
-      </a>
+      </a> }
 
       <!-- Item: Tài khoản quản trị -->
-      @if (canManageContent()) {
+      @if (db.hasPermission('accounts:READ')) {
       <a routerLink="/admin/accounts" routerLinkActive="active" class="nav-single-link" title="Tài khoản quản trị">
         <div class="item-icon-box">
           <yin-icon name="shield" [size]="18"></yin-icon>
@@ -194,8 +195,15 @@
       </a>
       }
 
+      @if (db.hasPermission('roles:READ')) {
+      <a routerLink="/admin/roles" routerLinkActive="active" class="nav-single-link" title="Vai trò & phân quyền">
+        <div class="item-icon-box"><yin-icon name="shield" [size]="18"></yin-icon></div>
+        @if (!isCollapsed()) { <span class="item-label">Vai trò & phân quyền</span> }
+      </a>
+      }
+
       <!-- Item: Cài đặt hệ thống -->
-      @if (canManageContent()) {
+      @if (db.hasPermission('profile:WRITE')) {
       <a routerLink="/admin/settings" routerLinkActive="active" class="nav-single-link" title="Cài đặt hệ thống">
         <div class="item-icon-box">
           <yin-icon name="settings" [size]="18"></yin-icon>

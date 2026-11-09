@@ -23,7 +23,7 @@
         @if (profileSaved()) { <p class="profile-success" role="status">Đã lưu thông tin tác giả thành công!</p> }
         <div class="form-group">
           <label class="form-label" for="authorName">Tên tác giả</label>
-          <input id="authorName" class="form-control" type="text" maxlength="200" autocomplete="name" [ngModel]="authorName()" (ngModelChange)="authorName.set($event)" placeholder="vd: Khang Nguyễn" />
+          <input id="authorName" class="form-control" type="text" maxlength="200" autocomplete="name" [ngModel]="authorName()" (ngModelChange)="authorName.set($event)" [placeholder]="appVars.author.placeholder" />
         </div>
         <div class="form-group">
           <label class="form-label" for="authorRole">Vai trò hiển thị</label>

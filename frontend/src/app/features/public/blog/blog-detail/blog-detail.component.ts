@@ -1,12 +1,12 @@
-import { 
-  Component, 
-  OnInit, 
-  OnDestroy, 
-  inject, 
-  signal, 
-  computed, 
-  ElementRef, 
-  viewChild 
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  signal,
+  computed,
+  ElementRef,
+  viewChild,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LocalDbService } from '../../../../core/services/local-db.service';
@@ -23,8 +23,8 @@ import { YinIconComponent } from '../../../../core/components/icon/icon.componen
   imports: [RouterLink, ArticleContentRendererComponent, YinIconComponent],
   host: {
     '(window:scroll)': 'onScroll()',
-    '(document:keydown.escape)': 'closeLightbox()'
-  }
+    '(document:keydown.escape)': 'closeLightbox()',
+  },
 })
 export class BlogDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -86,19 +86,29 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     }
 
     this.article.set(found);
-    void this.db.incrementArticleViews(slug).catch(() => undefined);
+
+    // Đếm lượt xem thật: Chỉ ghi nhận 1 lần trên mỗi phiên người dùng (session)
+    const viewKey = `yin_viewed_art_${found.id || slug}`;
+    if (typeof window !== 'undefined' && !sessionStorage.getItem(viewKey)) {
+      sessionStorage.setItem(viewKey, '1');
+      void this.db.incrementArticleViews(slug).catch(() => undefined);
+    }
+
     this.db.recordPageView(`/blog/${slug}`, 'internal');
     this.tracker.initTargetTracking(found.id, found.title);
 
     // Cập nhật SEO động riêng biệt cho bài viết (Title: Yin | Tên bài viết, Meta Description: trích dẫn/tóm tắt bài viết)
     this.seoService.updatePageSeo({
       title: found.title,
-      description: found.summary || found.seoDescription || `Đọc bài viết "${found.title}" về kiến trúc và thi công phần mềm tại Yin Kenna.`,
-      keywords: found.focusKeyword 
-        ? `${found.focusKeyword}, Yin, Yin Kenna, thi công phần mềm, làm phần mềm, kiến trúc công nghệ`
-        : 'Yin, Yin Kenna, thi công phần mềm, làm phần mềm, bài viết công nghệ',
+      description:
+        found.summary ||
+        found.seoDescription ||
+        `Đọc bài viết "${found.title}" về kiến trúc và thi công phần mềm tại Yin.`,
+      keywords: found.focusKeyword
+        ? `${found.focusKeyword}, Yin, thi công phần mềm, làm phần mềm, kiến trúc công nghệ`
+        : 'Yin, thi công phần mềm, làm phần mềm, bài viết công nghệ',
       ogImage: found.thumbnailUrl || '/assets/logo/icon-512.png',
-      type: 'article'
+      type: 'article',
     });
   }
 
@@ -115,8 +125,12 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.isScrolledDown.set(scrollTop > 220);
 
     // Cập nhật thanh tiến trình đọc: CHỈ TÍNH TỪ KHI THẤY TIÊU ĐỀ ĐẾN KHI HẾT NỘI DUNG BÀI VIẾT (BODY CONTENT)
-    const titleEl = (document.querySelector('.article-title') as HTMLElement) || (document.querySelector('.article-header') as HTMLElement);
-    const contentEl = (document.querySelector('.article-body-wrapper') as HTMLElement) || (document.querySelector('.article-main-body') as HTMLElement);
+    const titleEl =
+      (document.querySelector('.article-title') as HTMLElement) ||
+      (document.querySelector('.article-header') as HTMLElement);
+    const contentEl =
+      (document.querySelector('.article-body-wrapper') as HTMLElement) ||
+      (document.querySelector('.article-main-body') as HTMLElement);
 
     if (titleEl && contentEl) {
       const titleTop = titleEl.getBoundingClientRect().top + window.pageYOffset - 100;
@@ -132,7 +146,10 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       } else {
         const totalDistance = endScroll - titleTop;
         const scrolledDistance = scrollTop - titleTop;
-        const progress = Math.min(100, Math.max(0, Math.round((scrolledDistance / totalDistance) * 100)));
+        const progress = Math.min(
+          100,
+          Math.max(0, Math.round((scrolledDistance / totalDistance) * 100)),
+        );
         this.scrollProgress.set(progress);
         this.tracker.handleScrollPercentage(progress);
       }
@@ -147,7 +164,11 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     }
 
     // Đánh dấu mục lục đang active theo vị trí scroll
-    const headings = Array.from(document.querySelectorAll('.article-body-wrapper h1, .article-body-wrapper h2, .article-body-wrapper h3'));
+    const headings = Array.from(
+      document.querySelectorAll(
+        '.article-body-wrapper h1, .article-body-wrapper h2, .article-body-wrapper h3',
+      ),
+    );
     if (headings.length === 0) {
       return;
     }
@@ -199,7 +220,9 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
     // 2. Tìm dự phòng theo index trong các thẻ heading
     if (!target && typeof index === 'number') {
-      const headings = document.querySelectorAll('.article-body-wrapper h1, .article-body-wrapper h2, .article-body-wrapper h3');
+      const headings = document.querySelectorAll(
+        '.article-body-wrapper h1, .article-body-wrapper h2, .article-body-wrapper h3',
+      );
       if (headings[index]) {
         target = headings[index] as HTMLElement;
       }
@@ -207,8 +230,14 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
     // 3. Tìm dự phòng theo text content
     if (!target && id) {
-      const headings = Array.from(document.querySelectorAll('.article-body-wrapper h1, .article-body-wrapper h2, .article-body-wrapper h3'));
-      target = (headings.find(h => h.id === id || h.textContent?.trim().includes(id)) as HTMLElement) || null;
+      const headings = Array.from(
+        document.querySelectorAll(
+          '.article-body-wrapper h1, .article-body-wrapper h2, .article-body-wrapper h3',
+        ),
+      );
+      target =
+        (headings.find((h) => h.id === id || h.textContent?.trim().includes(id)) as HTMLElement) ||
+        null;
     }
 
     if (!target) {
@@ -227,7 +256,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
     window.scrollTo({
       top: Math.max(0, offsetPosition),
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
 
     // Hiệu ứng nhận diện: highlight viền vàng nhẹ trong 1.8s

@@ -24,7 +24,7 @@ describe('BlogDetailComponent', () => {
     wordCount: 500,
     readingTimeMinutes: 3,
     viewCount: 150,
-    authorName: 'Khang (Founder)',
+    authorName: 'Yin',
     createdAt: '2026-10-22T09:30:00Z',
     publishedAt: '2026-10-22T09:30:00Z',
     updatedAt: '2026-10-22T09:30:00Z'

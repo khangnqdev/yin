@@ -4,7 +4,7 @@
 
 ## Thông Tin Doanh Nghiệp
 - Tên thương hiệu: Yin
-- Tên pháp lý / Người sáng lập: Khang (Yin Kenna)
+- Tên pháp lý / Người sáng lập: Yin
 - Tên miền chính thức: https://yin.vn
 - Quốc gia: Việt Nam
 - Lĩnh vực: Công nghệ thông tin, Thiết kế kiến trúc phần mềm, Thi công phần mềm

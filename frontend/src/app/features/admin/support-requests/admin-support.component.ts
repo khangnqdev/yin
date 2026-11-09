@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminManagementService } from '../../../core/services/admin-management.service';
+import { LocalDbService } from '../../../core/services/local-db.service';
 import { AdminSupportRequest, SupportStatus } from '../../../core/models/support-request.model';
 import { YinIconComponent } from '../../../shared/components/yin-icon/yin-icon.component';
 
@@ -13,6 +14,7 @@ import { YinIconComponent } from '../../../shared/components/yin-icon/yin-icon.c
 })
 export class AdminSupportComponent implements OnInit {
   private readonly adminApi = inject(AdminManagementService);
+  protected readonly db = inject(LocalDbService);
 
   protected readonly requests = signal<AdminSupportRequest[]>([]);
   protected readonly loading = signal(true);
@@ -58,7 +60,7 @@ export class AdminSupportComponent implements OnInit {
   }
 
   async updateStatus(ticket: AdminSupportRequest, newStatus: SupportStatus): Promise<void> {
-    if (ticket.status === newStatus || this.updatingId() === ticket.id) {
+    if (!this.db.hasPermission('support:EXECUTE') || ticket.status === newStatus || this.updatingId() === ticket.id) {
       return;
     }
 

@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ClientAuthService } from '../../../core/services/client-auth.service';
 import { ClientProfile } from '../../../core/models/client-auth.model';
 import { YinIconComponent } from '../../../shared/components/yin-icon/yin-icon.component';
+import { APP_VARIABLES } from '../../../core/constants/app.variables';
 
 @Component({
   selector: 'yin-client-account',
@@ -12,6 +13,7 @@ import { YinIconComponent } from '../../../shared/components/yin-icon/yin-icon.c
   styleUrls: ['./client-account.component.css']
 })
 export class ClientAccountComponent implements OnInit {
+  protected readonly appVars = APP_VARIABLES;
   protected readonly auth = inject(ClientAuthService);
   private readonly router = inject(Router);
 

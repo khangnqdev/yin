@@ -672,3 +672,4 @@
     width: 76px;
   }
 }
+.system-error{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:9999;background:#fff1f0;color:#a51616;border:1px solid #f4b4ae;border-radius:8px;padding:10px 16px;box-shadow:0 4px 18px #0002}

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LocalDbService } from '../../../core/services/local-db.service';
@@ -11,13 +11,38 @@ import { YinIconComponent } from '../../../core/components/icon/icon.component';
   styleUrls: ['./admin-layout.component.css'],
   imports: [RouterOutlet, RouterLink, RouterLinkActive, FormsModule, YinIconComponent]
 })
-export class AdminLayoutComponent {
+export class AdminLayoutComponent implements OnInit, OnDestroy {
   protected readonly db = inject(LocalDbService);
   protected readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
 
   protected readonly adminUser = this.db.adminUser;
-  protected readonly canManageContent = () => ['ADMIN', 'MANAGER'].includes(this.adminUser()?.role || '');
+  private sessionTimer?: ReturnType<typeof setInterval>;
+
+  private readonly onVisible = () => {
+    if (document.visibilityState === 'visible') void this.checkSession();
+  };
+
+  ngOnInit(): void {
+    if (typeof window === 'undefined') return;
+    this.sessionTimer = setInterval(() => void this.checkSession(), 15_000);
+    document.addEventListener('visibilitychange', this.onVisible);
+  }
+
+  ngOnDestroy(): void {
+    if (this.sessionTimer) clearInterval(this.sessionTimer);
+    if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', this.onVisible);
+  }
+
+  private async checkSession(): Promise<void> {
+    if (!this.db.token()) return;
+    try {
+      await this.db.refreshAdminSession();
+      this.db.loadError.set('');
+    } catch (error) {
+      if (this.db.token()) this.db.loadError.set('Chức năng đang bị lỗi hệ thống. Vui lòng thử lại sau.');
+    }
+  }
   protected readonly isCollapsed = signal<boolean>(this.getStoredCollapsedState());
   protected readonly isDashboardOpen = signal<boolean>(true);
   protected readonly isProfileMenuOpen = signal<boolean>(false);
